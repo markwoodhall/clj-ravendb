@@ -1,4 +1,4 @@
-(ns ravenclo.requestbuilder
+(ns raven-clj.requestbuilder
   (:require [clj-http.client :as client])
   (:require [clojure.data.json :as json]))
 

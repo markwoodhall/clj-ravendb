@@ -1,8 +1,8 @@
-(ns ravenclo.client
+(ns raven-clj.client
   (:require [clj-http.client :as client]
             [clojure.pprint :as pprint]
-            [ravenclo.requestbuilder :as req]
-            [ravenclo.responseparser :as res]))
+            [raven-clj.requestbuilder :as req]
+            [raven-clj.responseparser :as res]))
 
 (defn- make-post
   [request]

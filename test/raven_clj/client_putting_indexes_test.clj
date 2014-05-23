@@ -1,6 +1,6 @@
-(ns ravenclo.client-putting-indexes-test
+(ns raven-clj.client-putting-indexes-test
   (:require [clojure.test :refer :all]
-            [ravenclo.client :refer :all]
+            [raven-clj.client :refer :all]
             [clojure.pprint :as pprint]))
 
 (let [url "http://localhost:8080"

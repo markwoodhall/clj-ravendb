@@ -1,3 +1,3 @@
-# Introduction to ravenclo
+# Introduction to raven-clj
 
 TODO: write [great documentation](http://jacobian.org/writing/great-documentation/what-to-write/)
