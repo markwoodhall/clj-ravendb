@@ -6,7 +6,7 @@ A clojure library designed to consume a RavenDB rest api.
 
 Loading documents by id.
 ---
-!#clojure
+#!clojure
 (ns raven-clj.client-loading-documents-test
   (:require [clojure.test :refer :all]
             [raven-clj.client :refer :all]
