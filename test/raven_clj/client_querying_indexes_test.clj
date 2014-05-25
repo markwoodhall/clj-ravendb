@@ -4,14 +4,15 @@
             [clojure.pprint :as pprint]))
 
 (let [url "http://localhost:8080"
-      database "northwind"]
+      database "northwind"
+      endpoint (endpoint url database)]
   (deftest test-query-index-returns-correct-status-code
     (testing "querying an index returns the correct status code"
       (let [qry {
                  :index "Orders/ByCompany"
                  :Count 10
                  }
-            actual (query-index url database qry)
+            actual (query-index endpoint qry)
             expected 200]
         (pprint/pprint actual)
         (is (= expected (actual  :status))))))
@@ -22,7 +23,7 @@
                  :index "Orders/ByCompany"
                  :Count 10
                  }
-            actual (query-index url database qry)
+            actual (query-index endpoint qry)
             results (actual :results)
             doc-one (first (filter 
                              (fn [i] 
@@ -43,7 +44,7 @@
                  :Count 10
                  :Total 6089.9
                  }
-            actual (query-index url database qry)
+            actual (query-index endpoint qry)
             results (actual :results)
             doc-one (first (filter 
                              (fn [i] 

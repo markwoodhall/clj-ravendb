@@ -4,7 +4,8 @@
             [clojure.pprint :as pprint]))
 
 (let [url "http://localhost:8080"
-      database "northwind"]
+      database "northwind"
+      endpoint (endpoint url database)]
   (deftest test-put-index-returns-correct-status-code
     (testing "putting an index returns the correct status code"
       (let [idx {
@@ -13,7 +14,7 @@
                  :where "doc.name == \"Test\""
                  :select "new { doc.name }"
                  }
-            actual (put-index url database idx)
+            actual (put-index endpoint idx)
             expected 201]
         (pprint/pprint actual)
         (is (= expected (actual  :status)))))))

@@ -4,19 +4,20 @@
             [clojure.pprint :as pprint]))
 
 (let [url "http://localhost:8080"
-      database "northwind"]
-  (deftest test-load-docs-returns-correct-status-code
+      database "northwind"
+      endpoint (endpoint url database)]
+  (deftest test-load-documents-returns-correct-status-code
     (testing "loading documents returns the correct status code"
       (let [doc-ids ["employees/1" "employees/2"]
-            actual (load-docs url database doc-ids)
+            actual (load-documents endpoint doc-ids)
             expected 200]
         (pprint/pprint actual)
         (is (= expected (actual :status))))))
   
-  (deftest test-load-docs-returns-correct-results
+  (deftest test-load-documents-returns-correct-results
     (testing "loading documents returns the correct results"
       (let [doc-ids ["employees/1" "employees/2"]
-            actual (load-docs url database doc-ids)
+            actual (load-documents endpoint doc-ids)
             results (actual :results)
             doc-one (first (filter 
                              (fn [i] 

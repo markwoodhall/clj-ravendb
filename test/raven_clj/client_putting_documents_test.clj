@@ -4,23 +4,21 @@
             [clojure.pprint :as pprint]))
 
 (let [url "http://localhost:8080"
-      database "northwind"]
+      database "northwind"
+      endpoint (endpoint url database)]
   (deftest test-put-returns-correct-status-code
     (testing "processing a PUT command returns the correct result"
-      (let [cmds [{
-                   :Method "PUT"
-                   :Key "Key1"
-                   :Document { :name "Test"}
-                   :Metadata { }
-                   }]
-            actual (run-cmds url database cmds)
-            expected 200]
+      (let [key "Key1"
+            document {
+                      :name "Test"
+                      }
+            actual (put-document endpoint key document) expected 200]
         (pprint/pprint actual)
         (is (= expected (actual :status))))))
-  
-  (use-fixtures :each (fn [f] (f) (run-cmds url database [
-                                                          {
-                                                           :Method "DELETE"
-                                                           :Key "Key1"
-                                                           }
-                                                          ]))))
+
+  (use-fixtures :each (fn [f] (f) (bulk-operations endpoint [
+                                                             {
+                                                              :Method "DELETE"
+                                                              :Key "Key1"
+                                                              }
+                                                             ]))))
