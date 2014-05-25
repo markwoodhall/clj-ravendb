@@ -16,8 +16,8 @@ Loading documents by id.
       database "northwind"
       endpoint (endpoint url database)
       doc-ids ["employees/1" "employees/2"]
-      actual (load-documents endpoint doc-ids)
-      results (actual :results)
+      response (load-documents endpoint doc-ids)
+      results (response :results)
       doc-one (first (filter 
                        (fn [i] 
                          (and (= (i :key) "employees/1")
