@@ -6,6 +6,15 @@
 (let [url "http://localhost:8080"
       database "northwind"
       endpoint (endpoint url database)]
+  (deftest test-query-index-with-invalid-query
+    (testing "Querying an index with an invalid query form."
+      (is (thrown? AssertionError
+                   (query-index endpoint {})))
+      (is (thrown? AssertionError
+                   (query-index endpoint {
+                                          :ind "IndexName"
+                                          })))))
+
   (deftest test-query-index-returns-correct-status-code
     (testing "querying an index returns the correct status code"
       (let [qry {
