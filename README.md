@@ -42,7 +42,7 @@ Querying an index:
 ```
 #!clojure
 
-(query-index endpoint { :index "TheIndexName" :SomePropertyToQuery "ValueToCheckFor" })
+(def results (query-index endpoint { :index "TheIndexName" :SomePropertyToQuery "ValueToCheckFor" }))
 
 ```
 
