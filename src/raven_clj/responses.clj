@@ -1,7 +1,7 @@
 (ns raven-clj.responses
   (:require [clojure.data.json :as json]))
 
-(defn parse-load-response
+(defn load-documents
   [raw-response]
   (let [body (raw-response :body)
         status (raw-response :status)
@@ -20,19 +20,23 @@
      :results mapped 
      }))
 
-(defn parse-cmd-response
+(defn bulk-operations
   [raw-response]
   {
    :status (get-in raw-response [:status])
    })
 
-(defn parse-putidx-response
+(defn put-document
+  [raw-response]
+  (bulk-operations raw-response))
+
+(defn put-index
   [raw-response]
   {
    :status (get-in raw-response [:status])
    })
 
-(defn parse-qryidx-response
+(defn query-index
   [raw-response]
   (let [body (raw-response :body)
         status (raw-response :status)
