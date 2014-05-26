@@ -16,7 +16,7 @@
   [request]
   (client/get (request :url) {:as :json-string-keys}))
 
-(defn- is-valid-endpoint?
+(defn- is-valid-endpoint
   [endpoint]
   (:address endpoint))
 
@@ -32,7 +32,7 @@
   "Loads a collection of documents represented
   by the given document ids."
   [endpoint document-ids]
-  {:pre [(is-valid-endpoint? endpoint) (not-empty document-ids)]}
+  {:pre [(is-valid-endpoint endpoint) (not-empty document-ids)]}
   (let [request (requests/load-documents (:address endpoint) document-ids)
         response (post-req request)]
     (res/parse-load-response response)))
@@ -41,7 +41,7 @@
   "Handles a given set of bulk operations that
   correspond to RavenDB batch requests."
   [endpoint operations]
-  {:pre [(is-valid-endpoint? endpoint)
+  {:pre [(is-valid-endpoint endpoint)
          (not-empty (filter 
                       (comp not nil?) 
                       (map (fn[op] 
@@ -62,7 +62,7 @@
     :select projection
   }"
   [endpoint index]
-  {:pre [(is-valid-endpoint? endpoint)
+  {:pre [(is-valid-endpoint endpoint)
          (:name index) (:alias index) (:where index) (:select index)]}
   (let [request (requests/put-index (:address endpoint) index)
         response (put-req request)]
@@ -72,7 +72,7 @@
   "Creates or updates a document by its key. Where 'document'
   is a map."
   [endpoint key document]
-  {:pre [(is-valid-endpoint? endpoint)]}
+  {:pre [(is-valid-endpoint endpoint)]}
   (let [request (requests/put-document (:address endpoint) key document)
         response (post-req request)]
     (res/parse-cmd-response response)))
@@ -85,7 +85,7 @@
     :y 2                        
   }."
   [endpoint query]
-  {:pre [(is-valid-endpoint? endpoint) (:index query)]}
+  {:pre [(is-valid-endpoint endpoint) (:index query)]}
   (let [request (requests/query-index (:address endpoint) query)
         response (get-req request)]
     (res/parse-qryidx-response response)))

@@ -8,9 +8,7 @@ Loading documents by id.
 ```
 #!clojure
 (ns raven-clj.client-loading-documents-test
-  (:require [clojure.test :refer :all]
-            [raven-clj.client :refer :all]
-            [clojure.pprint :as pprint]))
+  (:require [raven-clj.client :refer :all]))
 
 (let [url "http://localhost:8080"
       database "northwind"
