@@ -1,4 +1,4 @@
-(ns raven-clj.responseparser
+(ns raven-clj.responses
   (:require [clojure.data.json :as json]))
 
 (defn parse-load-response
