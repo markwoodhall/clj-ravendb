@@ -1,8 +1,8 @@
 (ns raven-clj.client
   (:require [clj-http.client :as client]
             [clojure.pprint :as pprint]
-            [raven-clj.requests :as requests]
-            [raven-clj.responseparser :as res]))
+            [raven-clj.requests :as req]
+            [raven-clj.responses :as res]))
 
 (defn- post-req
   [request]
@@ -38,7 +38,7 @@
   Optionally takes a response parser fn in order
   to customize response parsing."
   ([endpoint document-ids]
-   (load-documents endpoint document-ids requests/load-documents res/parse-load-response))
+   (load-documents endpoint document-ids req/load-documents res/parse-load-response))
   ([endpoint document-ids request-builder response-parser]
    {:pre [(is-valid-endpoint endpoint) (not-empty document-ids)]}
    (let [request (request-builder (:address endpoint) document-ids)
@@ -47,7 +47,7 @@
 
 (defn bulk-operations
   "Handles a given set of bulk operations that
-  correspond to RavenDB batch requests.
+  correspond to RavenDB batch req.
 
   Optionally takes a request builder fn in order 
   to customize request composition.
@@ -55,7 +55,7 @@
   Optionally takes a response parser fn in order
   to customize response parsing."
   ([endpoint operations]
-   (bulk-operations endpoint operations requests/bulk-operations res/parse-cmd-response))
+   (bulk-operations endpoint operations req/bulk-operations res/parse-cmd-response))
   ([endpoint operations request-builder response-parser]
    {:pre [(is-valid-endpoint endpoint)
           (not-empty (filter 
@@ -64,7 +64,7 @@
                               (cond 
                                 (= (:Method op) "PUT") (and (:Document op) (:Metadata op) (:Key op))
                                 (= (:Method op) "DELETE") (:Key op))) operations)))]}
-   (let [request (requests/bulk-operations (:address endpoint) operations)
+   (let [request (req/bulk-operations (:address endpoint) operations)
          response (post-req request)]
      (res/parse-cmd-response response))))
 
@@ -84,11 +84,11 @@
   Optionally takes a response parser fn in order
   to customize response parsing."
   ([endpoint index]
-   (put-index endpoint index requests/put-index res/parse-putidx-response))
+   (put-index endpoint index req/put-index res/parse-putidx-response))
   ([endpoint index request-builder response-parser]
    {:pre [(is-valid-endpoint endpoint)
           (:name index) (:alias index) (:where index) (:select index)]}
-   (let [request (requests/put-index (:address endpoint) index)
+   (let [request (req/put-index (:address endpoint) index)
          response (put-req request)]
      (res/parse-putidx-response response))))
 
@@ -102,7 +102,7 @@
   Optionally takes a response parser fn in order
   to customize response parsing."
   ([endpoint key document]
-   (put-document endpoint key document requests/put-document res/parse-cmd-response))
+   (put-document endpoint key document req/put-document res/parse-cmd-response))
   ([endpoint key document request-builder response-parser]
    {:pre [(is-valid-endpoint endpoint)]}
    (let [request (request-builder (:address endpoint) key document)
@@ -123,7 +123,7 @@
   Optionally takes a response parser fn in order
   to customize response parsing."
   ([endpoint query]
-   (query-index endpoint query requests/query-index res/parse-qryidx-response))
+   (query-index endpoint query req/query-index res/parse-qryidx-response))
   ([endpoint query request-builder response-parser]
    {:pre [(is-valid-endpoint endpoint) (:index query)]}
    (let [request (request-builder (:address endpoint) query)
