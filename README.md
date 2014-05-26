@@ -4,26 +4,46 @@ A clojure library designed to consume a RavenDB rest api.
 
 ## Usage
 
-Loading documents by id.
 ```
 #!clojure
-(ns raven-clj.client-loading-documents-test
-  (:require [raven-clj.client :refer :all]))
 
-(let [url "http://localhost:8080"
-      database "northwind"
-      endpoint (endpoint url database)
-      doc-ids ["employees/1" "employees/2"]
-      response (load-documents endpoint doc-ids)
-      results (response :results)
-      doc-one (first (filter 
-                       (fn [i] 
-                         (and (= (i :key) "employees/1")
-                              (= (-> i :doc :LastName) "Davolio"))) results))
-      doc-two (first (filter 
-                       (fn [i] 
-                         (and (= (i :key) "employees/2")
-                              (= (-> i :doc :LastName) "Fuller"))) results))]
+(:require [raven-clj.client :refer :all]))
+
+```
+
+Getting an endpoint:
+
+```
+#!clojure
+
+(def endpoint (endpoint "http://localhost:8080" "northwind"))
+
+```
+
+Loading some documents:
+
+```
+#!clojure
+(def results (:results (load-documents endpoint ["employees/1" "employees/2"]))
+
+```
+
+Putting a document:
+
+```
+#!clojure
+
+(put-document endpoint "NewDocumentKey" { :name "TestDoc" :value 1 })
+
+```
+
+Querying an index:
+
+```
+#!clojure
+
+(query-index endpoint { :index "TheIndexName" :SomePropertyToQuery "ValueToCheckFor" })
+
 ```
 
 ## License
