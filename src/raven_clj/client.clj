@@ -22,11 +22,23 @@
 
 (defn endpoint
   "Gets a client for a RavenDB endpoint at the
-  given url and database."
-  [url database]
-  (let [fragments (list url "Databases" database)
-        address (clojure.string/join "/" fragments)]
-    (assoc {} :address address)))
+  given url and database. 
+
+  Optionally queries RavenDB replication
+  to find replicated endpoints."
+  ([url database]
+   (endpoint url database false))
+  ([url database replicated?]
+   (let [fragments (list url "Databases" database)
+         address (clojure.string/join "/" fragments)
+         replications (if replicated? 
+                        (:results (res/load-replications (get-req (req/load-replications address))))
+                        '())]
+
+     {
+      :address address
+      :replications replications 
+      })))
 
 (defn load-documents
   "Loads a collection of documents represented

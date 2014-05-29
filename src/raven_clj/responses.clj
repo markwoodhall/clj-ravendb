@@ -1,6 +1,17 @@
 (ns raven-clj.responses
   (:require [clojure.data.json :as json]))
 
+(defn load-replications
+  [raw-response]
+  (let [body (raw-response :body)
+        status (raw-response :status)
+        results (body "Destinations")
+        mapped (map (fn[i] (i "Url")) results)]
+    { 
+     :status status 
+     :results mapped 
+     }))
+
 (defn load-documents
   [raw-response]
   (let [body (raw-response :body)
