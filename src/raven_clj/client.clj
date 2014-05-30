@@ -16,9 +16,12 @@
   [request]
   (client/get (request :url) {:as :json-string-keys}))
 
-(defn- is-valid-endpoint
+(defn- is-valid-endpoint?
   [endpoint]
   (:address endpoint))
+
+(def endpoint?
+  (memoize (fn [endpoint] (is-valid-endpoint? endpoint))))
 
 (defn endpoint
   "Gets a client for a RavenDB endpoint at the
@@ -52,7 +55,7 @@
   ([endpoint document-ids]
    (load-documents endpoint document-ids req/load-documents res/load-documents))
   ([endpoint document-ids request-builder response-parser]
-   {:pre [(is-valid-endpoint endpoint) (not-empty document-ids)]}
+   {:pre [(endpoint? endpoint) (not-empty document-ids)]}
    (let [request (request-builder (:address endpoint) document-ids)
          response (post-req request)]
      (response-parser response))))
@@ -69,7 +72,7 @@
   ([endpoint operations]
    (bulk-operations endpoint operations req/bulk-operations res/bulk-operations))
   ([endpoint operations request-builder response-parser]
-   {:pre [(is-valid-endpoint endpoint)
+   {:pre [(endpoint? endpoint)
           (not-empty (filter 
                        (comp not nil?) 
                        (map (fn[op] 
@@ -98,7 +101,7 @@
   ([endpoint index]
    (put-index endpoint index req/put-index res/put-index))
   ([endpoint index request-builder response-parser]
-   {:pre [(is-valid-endpoint endpoint)
+   {:pre [(endpoint? endpoint)
           (:name index) (:alias index) (:where index) (:select index)]}
    (let [request (req/put-index (:address endpoint) index)
          response (put-req request)]
@@ -116,7 +119,7 @@
   ([endpoint key document]
    (put-document endpoint key document req/put-document res/put-document))
   ([endpoint key document request-builder response-parser]
-   {:pre [(is-valid-endpoint endpoint)]}
+   {:pre [(endpoint? endpoint)]}
    (let [request (request-builder (:address endpoint) key document)
          response (post-req request)]
      (response-parser response))))
@@ -137,7 +140,7 @@
   ([endpoint query]
    (query-index endpoint query req/query-index res/query-index))
   ([endpoint query request-builder response-parser]
-   {:pre [(is-valid-endpoint endpoint) (:index query)]}
+   {:pre [(endpoint? endpoint) (:index query)]}
    (let [request (request-builder (:address endpoint) query)
          response (get-req request)]
      (response-parser response))))
