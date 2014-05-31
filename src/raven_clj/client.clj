@@ -20,14 +20,6 @@
   [endpoint]
   (:address endpoint))
 
-(defn- wrap-retry-replications
-  [endpoint request-to-wrap]
-  (try
-    (request-to-wrap)
-    (catch java.io.EOFException e) 
-    (catch java.net.ConnectException e) 
-    ))
-
 (def endpoint?
   (memoize (fn [endpoint] (is-valid-endpoint? endpoint))))
 
@@ -67,9 +59,15 @@
    (load-documents endpoint document-ids req/load-documents res/load-documents))
   ([endpoint document-ids request-builder response-parser]
    {:pre [(endpoint? endpoint) (not-empty document-ids)]}
-   (let [request (request-builder (:address endpoint) document-ids)
-         response (post-req request)]
-     (response-parser response))))
+   (let [request (request-builder endpoint document-ids)]
+     (loop [urls (:urls request)]
+       (let [response (try
+                        (response-parser (post-req (merge {:url (first urls)} request)))
+                        (catch java.net.ConnectException ce 
+                          (println (str "Failed to load document from" (first urls)))))]
+         (if (not (nil? response))
+           response
+           (recur (rest urls))))))))
 
 (defn bulk-operations
   "Handles a given set of bulk operations that
@@ -155,9 +153,3 @@
    (let [request (request-builder (:address endpoint) query)
          response (get-req request)]
      (response-parser response))))
-
-(try 
-  (req/load-documents (endpoint "http://localhost:8080" "a", {:replicated? true}) [])
-  (catch java.io.EOFException e) 
-  (catch java.net.ConnectException e))
-(res/load-replications (get-req (req/load-replications "http://localhost:8080/Databases/a")))
