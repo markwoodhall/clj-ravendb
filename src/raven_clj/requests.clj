@@ -10,7 +10,7 @@
         urls (map (fn [u] (str u "/Queries")) (:replications endpoint))
         urls (conj urls (str  url "/Queries"))]
     {
-     :urls urls
+     :urls (reverse urls)
      :body (json/write-str document-ids)
      }))
 
