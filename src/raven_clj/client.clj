@@ -20,6 +20,14 @@
   [endpoint]
   (:address endpoint))
 
+(defn- wrap-retry-replications
+  [endpoint request-to-wrap]
+  (try
+    (request-to-wrap)
+    (catch java.io.EOFException e) 
+    (catch java.net.ConnectException e) 
+    ))
+
 (def endpoint?
   (memoize (fn [endpoint] (is-valid-endpoint? endpoint))))
 
@@ -27,21 +35,24 @@
   "Gets a client for a RavenDB endpoint at the
   given url and database. 
 
-  Optionally queries RavenDB replication
-  to find replicated endpoints."
+  Optionally takes a map of options.
+  :replicated? is used to find replicated endpoints."
   ([url database]
-   (endpoint url database false))
-  ([url database replicated?]
-   (let [fragments (list url "Databases" database)
-         address (clojure.string/join "/" fragments)
-         replications (if replicated? 
-                        (:results (res/load-replications (get-req (req/load-replications address))))
-                        '())]
+   (endpoint url database {}))
+  ([url database {replicated :replicated? :or {replicated false} }]
+  (let [fragments (list url "Databases" database)
+        address (clojure.string/join "/" fragments)
+        replications (if replicated 
+                       (:results (res/load-replications (get-req (req/load-replications address))))
+                       '())]
 
-     {
-      :address address
-      :replications replications 
-      })))
+    {
+     :address address
+     :replications (map (fn 
+                          [r] 
+                          (let [fragments (list r "Databases" database)]
+                            (clojure.string/join "/" fragments))) replications) 
+     })))
 
 (defn load-documents
   "Loads a collection of documents represented
@@ -144,3 +155,9 @@
    (let [request (request-builder (:address endpoint) query)
          response (get-req request)]
      (response-parser response))))
+
+(try 
+  (req/load-documents (endpoint "http://localhost:8080" "a", {:replicated? true}) [])
+  (catch java.io.EOFException e) 
+  (catch java.net.ConnectException e))
+(res/load-replications (get-req (req/load-replications "http://localhost:8080/Databases/a")))
