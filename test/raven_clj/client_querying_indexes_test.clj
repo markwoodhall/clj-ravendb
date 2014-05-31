@@ -36,7 +36,7 @@
             results (actual :results)
             doc-one (first (filter 
                              (fn [i] 
-                               (and (= (-> i :doc :Company) "companies/59")
+                               (and (= (-> i :doc :Company) "companies/38")
                                     (= (-> i :doc :Count) 10.0))) results))
             doc-two (first (filter 
                              (fn [i] 
