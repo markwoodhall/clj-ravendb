@@ -5,10 +5,12 @@
 (defn load-documents
   "Generates a map that represents a http request
   to the queries endpoint in order to load documents"
-  [url document-ids]
-  (let [request-url (str url "/Queries")]
+  [endpoint document-ids]
+  (let [url (:address endpoint)
+        urls (map (fn [u] (str u "/Queries")) (:replications endpoint))
+        urls (conj urls (str  url "/Queries"))]
     {
-     :url request-url
+     :urls urls
      :body (json/write-str document-ids)
      }))
 
