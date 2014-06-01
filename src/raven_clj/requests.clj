@@ -5,13 +5,26 @@
 (defn load-documents
   "Generates a map that represents a http request
   to the queries endpoint in order to load documents"
-  [endpoint document-ids]
-  (let [url (:address endpoint)
-        urls (map (fn [u] (str u "/Queries")) (:replications endpoint))
-        urls (conj urls (str  url "/Queries"))]
+  [{:keys [address replications]} document-ids]
+  (let [urls (map (fn [u] (str u "/Queries")) replications)
+        urls (cons (str address "/Queries") urls)]
     {
-     :urls (reverse urls)
+     :urls urls
      :body (json/write-str document-ids)
+     }))
+
+(defn query-index
+  "Generates a map that represents a http request
+  to the indexes endpoint in order to query an index."
+  [{:keys [address replications]} qry]
+  (let [request-url (str "/indexes/" (qry :index) "?query=")
+        criteria (clojure.string/join " AND " (into []
+                                                    (for [[k v] (dissoc qry :index)]
+                                                      (str (name k) ":" v))))
+        urls (map (fn [u] (str u request-url criteria)) replications)
+        urls (cons (str address request-url criteria) urls)]
+    {
+     :urls urls
      }))
 
 (defn bulk-operations
@@ -46,18 +59,6 @@
                                    "from " (idx :alias) " in docs"
                                    " where " (idx :where) 
                                    " select " (idx :select))})
-     }))
-
-(defn query-index
-  "Generates a map that represents a http request
-  to the indexes endpoint in order to query an index."
-  [url qry]
-  (let [request-url (str url "/indexes/" (qry :index) "?query=")
-        criteria (clojure.string/join " AND " (into []
-                                                    (for [[k v] (dissoc qry :index)]
-                                                      (str (name k) ":" v))))]
-    {
-     :url (str request-url criteria)
      }))
 
 (defn load-replications
