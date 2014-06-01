@@ -18,7 +18,20 @@
 
 (defn- is-valid-endpoint?
   [endpoint]
-  (:address endpoint))
+  (and (:address endpoint)
+       (:replications endpoint)))
+
+
+(defn- wrap-retry-replicas
+  [request handle]
+  (loop [urls (:urls request)]
+    (let [response (try
+                     (handle (merge {:url (first urls)} request)) 
+                     (catch java.net.ConnectException ce 
+                       (println (str "Failed to execute request using: " (first urls)))))]
+      (if (not (nil? response))
+        response
+        (recur (rest urls))))))   
 
 (def endpoint?
   (memoize (fn [endpoint] (is-valid-endpoint? endpoint))))
@@ -59,15 +72,9 @@
    (load-documents endpoint document-ids req/load-documents res/load-documents))
   ([endpoint document-ids request-builder response-parser]
    {:pre [(endpoint? endpoint) (not-empty document-ids)]}
-   (let [request (request-builder endpoint document-ids)]
-     (loop [urls (:urls request)]
-       (let [response (try
-                        (response-parser (post-req (merge {:url (first urls)} request)))
-                        (catch java.net.ConnectException ce 
-                          (println (str "Failed to load document from" (first urls)))))]
-         (if (not (nil? response))
-           response
-           (recur (rest urls))))))))
+   (let [request (request-builder endpoint document-ids)
+         response (wrap-retry-replicas request post-req)]
+     (response-parser response))))
 
 (defn bulk-operations
   "Handles a given set of bulk operations that
@@ -150,6 +157,11 @@
    (query-index endpoint query req/query-index res/query-index))
   ([endpoint query request-builder response-parser]
    {:pre [(endpoint? endpoint) (:index query)]}
-   (let [request (request-builder (:address endpoint) query)
-         response (get-req request)]
+   (let [request (request-builder endpoint query)
+         response (wrap-retry-replicas request get-req)]
      (response-parser response))))
+
+(comment
+  (load-documents (endpoint "http://localhost:8080" "northwind") ["Orders/500"])
+  (query-index (endpoint "http://localhost:8080" "northwind") {:index "Orders/ByCompany" :Count 10})
+  )
