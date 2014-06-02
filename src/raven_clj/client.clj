@@ -4,23 +4,32 @@
             [raven-clj.requests :as req]
             [raven-clj.responses :as res]))
 
+(def not-nil? (complement nil?))
+
 (defn- post-req
-  [request]
-  (client/post (request :url) {:body (request :body) :as :json-string-keys}))
+  [{:keys [url body]}]
+  (println "Sending HTTP POST to" url "with JSON body " body)
+  (client/post url {:body body :as :json-string-keys}))
 
 (defn- put-req
-  [request]
-  (client/put (request :url) {:body (request :body) :as :json-string-keys}))
+  [{:keys [url body]}]
+  (println "Sending HTTP PUT to" url "with JSON body " body)
+  (client/put url {:body body :as :json-string-keys}))
 
 (defn- get-req
-  [request]
-  (client/get (request :url) {:as :json-string-keys}))
+  [{:keys [url]}]
+  (println "Sending HTTP GET to" url)
+  (client/get url {:as :json-string-keys}))
 
 (defn- is-valid-endpoint?
-  [endpoint]
-  (and (:address endpoint)
-       (:replications endpoint)))
+  [{:keys [address replications replicated? master-only-write?]}]
+  {:pre [(not-nil? address) (not-nil? replications) 
+         (not-nil? replicated?) (not-nil? master-only-write?)]}
+  true)
 
+(defn- no-retry-replicas
+  [{:keys [urls] :as request} handle]
+  (handle (merge {:url (first urls)} request)))   
 
 (defn- wrap-retry-replicas
   [request handle]
@@ -28,7 +37,7 @@
     (let [response (try
                      (handle (merge {:url (first urls)} request)) 
                      (catch java.net.ConnectException ce 
-                       (println (str "Failed to execute request using: " (first urls)))))]
+                       (println (str "Failed to execute request using " (first urls)))))]
       (if (not (nil? response))
         response
         (recur (rest urls))))))   
@@ -41,17 +50,23 @@
   given url and database. 
 
   Optionally takes a map of options.
-  :replicated? is used to find replicated endpoints."
+  :replicated? is used to find replicated endpoints.
+  :master-only-write? is used to indicate that write operations only go to the master"
   ([url database]
    (endpoint url database {}))
-  ([url database {replicated :replicated? :or {replicated false} }]
-  (let [fragments (list url "Databases" database)
-        address (clojure.string/join "/" fragments)
-        replications (if replicated 
-                       (:results (res/load-replications (get-req (req/load-replications address))))
-                       '())]
-
+  ([url database {replicated? :replicated? master-only-write? :master-only-write? 
+                  :or {replicated? false master-only-write? true}}]
+   (let [fragments (list url "Databases" database)
+         address (clojure.string/join "/" fragments)
+         load-replications (fn []
+                             (println "Loading replication destinations from" address)
+                             (:results (res/load-replications (get-req (req/load-replications address)))))
+         replications (if replicated? 
+                        (load-replications)
+                        '())]
     {
+     :replicated? replicated?
+     :master-only-write? master-only-write?
      :address address
      :replications (map (fn 
                           [r] 
@@ -95,9 +110,11 @@
                               (cond 
                                 (= (:Method op) "PUT") (and (:Document op) (:Metadata op) (:Key op))
                                 (= (:Method op) "DELETE") (:Key op))) operations)))]}
-   (let [request (req/bulk-operations (:address endpoint) operations)
-         response (post-req request)]
-     (response-parser response))))
+   (let [request (req/bulk-operations endpoint operations)
+         master-only-write? (:master-only-write? endpoint)]
+     (response-parser (if master-only-write? 
+                        (no-retry-replicas request post-req)
+                        (wrap-retry-replicas request post-req))))))
 
 (defn put-index 
   "Creates or updates an index, where an index takes
@@ -162,6 +179,18 @@
      (response-parser response))))
 
 (comment
-  (load-documents (endpoint "http://localhost:8080" "northwind") ["Orders/500"])
-  (query-index (endpoint "http://localhost:8080" "northwind") {:index "Orders/ByCompany" :Count 10})
-  )
+  (def ep (endpoint "http://localhost:8080" "a" {:replicated? true})) 
+  (load-documents ep ["Orders/400"])
+  (bulk-operations ep [
+                             {
+                              :Method "PUT"
+                              :Key "Key1"
+                              :Document {:t "Test"}
+                              :Metadata {}
+                              }
+                             {
+                              :Method "DELETE"
+                              :Key "Key1"
+                              }
+                             ])
+  (query-index ep {:index "Orders/ByCompany" :Count 10}))

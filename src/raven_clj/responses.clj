@@ -2,10 +2,8 @@
   (:require [clojure.data.json :as json]))
 
 (defn load-replications
-  [raw-response]
-  (let [body (raw-response :body)
-        status (raw-response :status)
-        results (body "Destinations")
+  [{:keys [body status]}]
+  (let [results (body "Destinations")
         mapped (map (fn[i] (i "Url")) results)]
     { 
      :status status 
@@ -13,10 +11,8 @@
      }))
 
 (defn load-documents
-  [raw-response]
-  (let [body (raw-response :body)
-        status (raw-response :status)
-        results (body "Results")
+  [{:keys [body status]}]
+  (let [results (body "Results")
         mapped (map (fn
                       [col] 
                       (let [metadata (col "@metadata")]
@@ -32,9 +28,9 @@
      }))
 
 (defn bulk-operations
-  [raw-response]
+  [{:keys [status]}]
   {
-   :status (get-in raw-response [:status])
+   :status status
    })
 
 (defn put-document
@@ -42,16 +38,14 @@
   (bulk-operations raw-response))
 
 (defn put-index
-  [raw-response]
+  [{:keys [status]}]
   {
-   :status (get-in raw-response [:status])
+   :status status
    })
 
 (defn query-index
-  [raw-response]
-  (let [body (raw-response :body)
-        status (raw-response :status)
-        results (body "Results")
+  [{:keys [body status]}]
+  (let [results (body "Results")
         mapped (map (fn
                       [col] 
                       (let [metadata (col "@metadata")]
