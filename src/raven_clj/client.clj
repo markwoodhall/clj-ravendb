@@ -151,11 +151,12 @@
   to customize response parsing."
   ([endpoint key document]
    (put-document endpoint key document req/put-document res/put-document))
-  ([endpoint key document request-builder response-parser]
+  ([{:keys [master-only-writes?] :as endpoint} key document request-builder response-parser]
    {:pre [(endpoint? endpoint)]}
-   (let [request (request-builder (:address endpoint) key document)
-         response (post-req request)]
-     (response-parser response))))
+   (let [request (request-builder endpoint key document)]
+     (response-parser (if master-only-writes?
+                        (no-retry-replicas request post-req)
+                        (wrap-retry-replicas request post-req))))))
 
 (defn query-index 
   "Query an index, where the 'query' takes the form:
