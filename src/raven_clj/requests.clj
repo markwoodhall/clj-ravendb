@@ -26,7 +26,7 @@
                                                     (for [[k v] (dissoc qry :index)]
                                                       (str (name k) ":" v))))]
     {
-     :urls (all-urls address replications request-url)
+     :urls (all-urls address replications (str request-url criteria))
      }))
 
 (defn bulk-operations
@@ -42,13 +42,13 @@
 (defn put-document
   "Generates a map that represents a http request
   to the bulk_docs endpoint in order put a document."
-  [url key document]
-  (bulk-operations url [{
-                         :Method "PUT"
-                         :Key key
-                         :Document document
-                         :Metadata { }
-                         }]))
+  [endpoint key document]
+  (bulk-operations endpoint [{
+                              :Method "PUT"
+                              :Key key
+                              :Document document
+                              :Metadata { }
+                              }]))
 
 (defn put-index
   "Generates a map that represents a http request
