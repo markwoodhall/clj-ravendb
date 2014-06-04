@@ -28,7 +28,7 @@ Loading some documents:
 
 ```
 
-Returns a map with a sequence of maps like:
+Returns a map with a sequence of results like:
 
 ```
 #!clojure
@@ -99,8 +99,40 @@ Querying an index:
 ```
 #!clojure
 
-(def results (query-index endpoint { :index "TheIndexName" :SomePropertyToQuery "ValueToCheckFor" }))
+(query-index endpoint { :index "ByCompany" :Count 10 })
 
+```
+
+Returns a map with a sequence of results like:
+
+```
+#!clojure
+
+{:status 200,
+ :results
+ ({:key nil,
+   :doc {:Company "companies/38", :Count 10.0, :Total 6146.3}}
+  {:key nil,
+   :doc {:Company "companies/49", :Count 10.0, :Total 7176.215}}
+  {:key nil,
+   :doc {:Company "companies/11", :Count 10.0, :Total 6089.9}}
+  {:key nil,
+   :doc {:Company "companies/30", :Count 10.0, :Total 11446.36}}
+  {:key nil,
+   :doc {:Company "companies/84", :Count 10.0, :Total 9182.43}}
+  {:key nil,
+   :doc {:Company "companies/56", :Count 10.0, :Total 12496.2}}
+  {:key nil,
+   :doc {:Company "companies/55", :Count 10.0, :Total 15177.4625}}
+  {:key nil,
+   :doc {:Company "companies/86", :Count 10.0, :Total 9588.425}}
+  {:key nil,
+   :doc {:Company "companies/59", :Count 10.0, :Total 23128.86}}
+  {:key nil,
+   :doc {:Company "companies/68", :Count 10.0, :Total 19343.779}}
+  {:key nil,
+   :doc {:Company "companies/80", :Count 10.0, :Total 10812.15}})}
+   
 ```
 
 The tests for this project assume an instance of RavenDB is running at http://localhost:8080. They also assume that the instance contains the sample northwind database. The sample northwind database is available [here](https://github.com/ayende/ravendb/blob/2.5/Raven.Studio/Assets/EmbeddedData/Northwind.dump)
