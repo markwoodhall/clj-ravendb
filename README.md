@@ -28,7 +28,7 @@ Loading some documents:
 
 ```
 
-Returns a sequence of maps like:
+Returns a map with a sequence of maps like:
 
 ```
 #!clojure
