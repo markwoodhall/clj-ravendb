@@ -85,7 +85,7 @@ Putting a document:
 
 ```
 
-Returns a map with key to indicate the HTTP status
+Returns a map with a key to indicate the HTTP status:
 
 ```
 #!clojure 
