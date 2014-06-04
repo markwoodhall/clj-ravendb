@@ -81,7 +81,7 @@ Putting a document:
 ```
 #!clojure
 
-(put-document endpoint "NewDocumentKey" { :name "TestDoc" :value 1 })
+(put-document endpoint "Employees/10" { :FirstName "David" :LastName "Smith" :age 50 })
 
 ```
 
