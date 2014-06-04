@@ -168,7 +168,7 @@ When this endpoint is used to load-documents or query-index if the master, http:
 
 ###  Master Only Write
 
-If you've created an endpoint that support replication by default write operations will only go to the master, you can change this behavior using the following:
+If you've created an endpoint that supports replication by default write operations will only go to the master, you can change this behavior using the following:
 
 ```
 #!clojure
@@ -177,7 +177,7 @@ If you've created an endpoint that support replication by default write operatio
 
 ```
 
-The endpoint will be represents by a map that looks like:
+The endpoint will be represented by a map that looks like:
 
 ```
 #!clojure
