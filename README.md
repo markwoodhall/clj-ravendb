@@ -30,7 +30,7 @@ Loading some documents:
 
 Returns a sequence of maps like:
 
----
+```
 #!clojure
 
 {:status 200,
