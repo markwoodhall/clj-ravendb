@@ -85,6 +85,15 @@ Putting a document:
 
 ```
 
+Returns a map with key to indicate the HTTP status
+
+```
+#!clojure 
+
+{:status 200}
+
+```
+
 Querying an index:
 
 ```
