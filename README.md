@@ -166,6 +166,33 @@ When this option is used creating the endpoint will also query the master url, i
 
 When this endpoint is used to load-documents or query-index if the master, http://localhost:8080, is down then one of the replications will be used.
 
+###  Master Only Write
+
+If you've created an endpoint that support replication by default write operations will only go to the master, you can change this behavior using the following:
+
+```
+#!clojure
+
+(def endpoint (endpoint "http://localhost:8080" "northwind" {:replicated? true :master-only-write? false}))
+
+```
+
+The endpoint will be represents by a map that looks like:
+
+```
+#!clojure
+
+{
+  :replicated? true
+  :master-only-write? false
+  :address "http://localhost:8080"
+  :replications ("http://localhost:8081" "http://localhost:8082")
+}
+
+```
+
+When this endpoint is used to put-document, put-index or for bulk-operations if the master, http://localhost:8080, is down then one of the replications will be used for write operations.
+
 ## Build & Test
 
 lein test
