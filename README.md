@@ -135,6 +135,37 @@ Returns a map with a sequence of results like:
    
 ```
 
+## Options
+
+There are a number of "configuration" options that can be used when creating an endpoint. 
+
+###  Replication
+
+To create an endpoint that supports replication:
+
+```
+#!clojure
+
+(def endpoint (endpoint "http://localhost:8080" "northwind" {:replicated? true}))
+
+```
+
+When this option is used creating the endpoint will also query the master url, in this case http://localhost:8080, for replication destinations. The endpoint will be represents by a map that looks like:
+
+```
+#!clojure
+
+{
+  :replicated? true
+  :master-only-write? true
+  :address "http://localhost:8080"
+  :replications ("http://localhost:8081" "http://localhost:8082")
+}
+
+```
+
+When this endpoint is used to load-documents or query-index if the master, http://localhost:8080, is down then one of the replications will be used.
+
 ## Build & Test
 
 lein test
