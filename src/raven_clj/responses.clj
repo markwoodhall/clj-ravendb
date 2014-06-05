@@ -46,6 +46,7 @@
 (defn query-index
   [{:keys [body status]}]
   (let [results (body "Results")
+        stale? (body "IsStale")
         mapped (map (fn
                       [col] 
                       (let [metadata (col "@metadata")]
@@ -57,5 +58,6 @@
                          })) results)]
     {
      :status status
+     :stale? stale?
      :results mapped
      }))
