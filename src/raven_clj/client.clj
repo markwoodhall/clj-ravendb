@@ -180,7 +180,7 @@
      (response-parser response))))
 
 (comment
-  (def ep (endpoint "http://localhost:8080" "a" {:replicated? true})) 
+  (def ep (endpoint "http://localhost:8080" "northwind" {:replicated? true})) 
   (load-documents ep ["Orders/400"])
   (bulk-operations ep [
                              {
