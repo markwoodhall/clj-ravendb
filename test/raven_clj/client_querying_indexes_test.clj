@@ -36,12 +36,12 @@
             results (actual :results)
             doc-one (first (filter 
                              (fn [i] 
-                               (and (= (-> i :doc :Company) "companies/38")
-                                    (= (-> i :doc :Count) 10.0))) results))
+                               (and (= (-> i :Company) "companies/38")
+                                    (= (-> i :Count) 10.0))) results))
             doc-two (first (filter 
                              (fn [i] 
-                               (and (= (-> i :doc :Company) "companies/68")
-                                    (= (-> i :doc :Count) 10.0))) results))]
+                               (and (= (-> i :Company) "companies/68")
+                                    (= (-> i :Count) 10.0))) results))]
         (pprint/pprint actual)
         (and (is (not= nil doc-one))
              (is (not= nil doc-two))))))
@@ -57,9 +57,9 @@
             results (actual :results)
             doc-one (first (filter 
                              (fn [i] 
-                               (and (= (-> i :doc :Company) "companies/11")
-                                    (= (-> i :doc :Count) 10.0)
-                                    (= (-> i :doc :Total) 6089.9))) results))]
+                               (and (= (-> i :Company) "companies/11")
+                                    (= (-> i :Count) 10.0)
+                                    (= (-> i :Total) 6089.9))) results))]
         (pprint/pprint actual)
         (and (is (not= nil doc-one))
              (is (= 1 (count results))))))))
