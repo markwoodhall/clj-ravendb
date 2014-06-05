@@ -112,7 +112,8 @@ Returns a map with a sequence of results like:
 ```
 #!clojure
 
-{:status 200,
+{:status 200
+ :stale? false ;; indicates if the queried index is currently stale
  :results
  ({:key nil,
    :doc {:Company "companies/38", :Count 10.0, :Total 6146.3}}
