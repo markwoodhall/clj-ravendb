@@ -2,6 +2,10 @@
 
 A clojure library designed to consume a RavenDB rest api. 
 
+## Status
+
+This is currently a work in progress and under active development, its not stable or production ready.  
+
 ## Usage
 
 ```
