@@ -150,7 +150,7 @@ To create an endpoint that supports replication:
 
 ```
 
-When this option is used creating the endpoint will also query the master url, in this case http://localhost:8080, for replication destinations. The endpoint will be represents by a map that looks like:
+When this option is used creating the endpoint will also query the master url for replication destinations. The endpoint will be represented by a map that looks like:
 
 ```
 #!clojure
@@ -164,11 +164,11 @@ When this option is used creating the endpoint will also query the master url, i
 
 ```
 
-When this endpoint is used to load-documents or query-index if the master, http://localhost:8080, is down then one of the replications will be used.
+When this endpoint is used to (load-documents) or (query-index) if the master is down then one of the replications will be used.
 
 ###  Master Only Write
 
-If you've created an endpoint that supports replication by default write operations will only go to the master, you can change this behavior using the following:
+If you've created an endpoint that supports replication by default write operations will only go to the master, you can change this behaviour using the following:
 
 ```
 #!clojure
@@ -191,7 +191,7 @@ The endpoint will be represented by a map that looks like:
 
 ```
 
-When this endpoint is used to put-document, put-index or for bulk-operations if the master, http://localhost:8080, is down then one of the replications will be used for write operations.
+When this endpoint is used to (put-document), (put-index) or for (bulk-operations) if the master is down then one of the replications will be used for write operations.
 
 ## Build & Test
 
