@@ -105,6 +105,15 @@ Querying an index:
 
 (query-index endpoint { :index "ByCompany" :Count 10 })
 
+;; By default if the index is stale (query-index) will retry 5 times, waiting
+;; 100 milliseconds between each try.
+
+;; If the index is stale retry a maximum of 10 times.
+(query-index endpoint { :index "ByCompany" :Count 10 } { :max-attempts 10 })
+
+;; If the index is stale retry every 500 milliseconds.
+(query-index endpoint { :index "ByCompany" :Count 10 } { :wait 500 })
+
 ```
 
 Returns a map with a sequence of results like:

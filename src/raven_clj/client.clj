@@ -54,7 +54,7 @@
   :master-only-write? is used to indicate that write operations only go to the master"
   ([url database]
    (endpoint url database {}))
-  ([url database {replicated? :replicated? master-only-write? :master-only-write? 
+  ([url database {:keys [replicated? master-only-write?] 
                   :or {replicated? false master-only-write? true}}]
    (let [fragments (list url "Databases" database)
          address (clojure.string/join "/" fragments)
@@ -172,15 +172,28 @@
   Optionally takes a response parser fn in order
   to customize response parsing."
   ([endpoint query]
-   (query-index endpoint query req/query-index res/query-index))
-  ([endpoint query request-builder response-parser]
+   (query-index endpoint query {} req/query-index res/query-index))
+  ([endpoint query options]
+   (query-index endpoint query options req/query-index res/query-index))
+  ([endpoint query {:keys [max-attempts wait]
+                    :or {max-attempts 5 wait 100}} request-builder response-parser]
    {:pre [(endpoint? endpoint) (:index query)]}
-   (let [request (request-builder endpoint query)
-         response (wrap-retry-replicas request get-req)]
-     (response-parser response))))
+   (let [get-result (fn
+                      []
+                      (response-parser 
+                        (wrap-retry-replicas 
+                          (request-builder endpoint query) get-req)))]
+     (loop [result (get-result) attempt 0]
+       (if (or (not (:stale? result)) 
+               (= attempt max-attempts))
+         result
+         (do
+           (println (str "Index " (:index query) " is stale, waiting " wait "ms before trying again."))
+           (Thread/sleep wait)
+           (recur (get-result) (inc attempt))))))))
 
 (comment
-  (def ep (endpoint "http://localhost:8080" "northwind" {:replicated? true})) 
+  (def ep (endpoint "http://localhost:8080" "northwind" {:replicated? false})) 
   (load-documents ep ["Orders/400"])
   (bulk-operations ep [
                              {
