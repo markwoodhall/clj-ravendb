@@ -1,6 +1,5 @@
 (ns raven-clj.client
   (:require [clj-http.client :as client]
-            [clojure.pprint :as pprint]
             [raven-clj.requests :as req]
             [raven-clj.responses :as res]))
 
