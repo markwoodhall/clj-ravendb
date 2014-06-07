@@ -1,6 +1,6 @@
-(ns raven-clj.client-loading-documents-test
+(ns clj-ravendb.client-loading-documents-test
   (:require [clojure.test :refer :all]
-            [raven-clj.client :refer :all]
+            [clj-ravendb.client :refer :all]
             [clojure.pprint :as pprint]))
 
 (let [url "http://localhost:8080"

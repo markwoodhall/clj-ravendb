@@ -1,4 +1,4 @@
-# raven-clj
+# clj-ravendb
 
 A clojure library designed to consume a RavenDB rest api. 
 
@@ -11,7 +11,7 @@ This is currently a work in progress and under active development, its not stabl
 ```
 #!clojure
 
-(:require [raven-clj.client :refer :all]))
+(:require [clj-ravendb.client :refer :all]))
 
 ```
 
