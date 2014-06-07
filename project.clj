@@ -1,4 +1,4 @@
-(defproject markwoodhall/clj-ravendb "0.1.0"
+(defproject clj-ravendb "0.1.0"
   :description "A clojure library for consuming a RavenDB rest api."
   :url "https://bitbucket.org/markwoodhall/clj-ravendb"
   :license {:name "Eclipse Public License"
