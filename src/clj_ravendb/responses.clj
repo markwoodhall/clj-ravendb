@@ -1,4 +1,4 @@
-(ns raven-clj.responses
+(ns clj-ravendb.responses
   (:require [clojure.data.json :as json]))
 
 (defn load-replications

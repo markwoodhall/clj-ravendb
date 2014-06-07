@@ -1,7 +1,7 @@
-(ns raven-clj.client
+(ns clj-ravendb.client
   (:require [clj-http.client :as client]
-            [raven-clj.requests :as req]
-            [raven-clj.responses :as res]))
+            [clj-ravendb.requests :as req]
+            [clj-ravendb.responses :as res]))
 
 (def not-nil? (complement nil?))
 

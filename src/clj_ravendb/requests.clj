@@ -1,4 +1,4 @@
-(ns raven-clj.requests
+(ns clj-ravendb.requests
   (:require [clj-http.client :as client])
   (:require [clojure.data.json :as json]))
 
