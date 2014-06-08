@@ -14,7 +14,7 @@ This is currently a work in progress and under active development, its not stabl
 ```
 #!clojure
 
-[clj-ravendb "0.1.0"]
+[clj-ravendb "0.1.2"]
 
 ```
 
