@@ -1,6 +1,8 @@
 (ns clj-ravendb.client-querying-indexes-test
   (:require [clojure.test :refer :all]
             [clj-ravendb.client :refer :all]
+            [clj-ravendb.requests :as req]
+            [clj-ravendb.responses :as res]
             [clojure.pprint :as pprint]))
 
 (let [url "http://localhost:8080"
@@ -62,4 +64,34 @@
                                     (= (-> i :Total) 6089.9))) results))]
         (pprint/pprint actual)
         (and (is (not= nil doc-one))
-             (is (= 1 (count results))))))))
+             (is (= 1 (count results)))))))
+  
+  (deftest test-query-index-uses-custom-req-builder
+    (testing "querying indexes uses custom request builder"
+      (let [qry {
+                 :index "Orders/ByCompany"
+                 :Count 10
+                 :Total 6089.9
+                 }
+            req-builder (fn [client query]
+                          (throw (Exception. "CustomRequestBuilderError")))]
+        (is (thrown-with-msg? Exception #"CustomRequestBuilderError" 
+                              (query-index client qry {
+                                                       :request-builder req-builder 
+                                                       :response-parser res/query-index
+                                                       }))))))
+  
+  (deftest test-query-index-uses-custom-res-parser
+    (testing "querying indexes uses custom response parser"
+      (let [qry {
+                 :index "Orders/ByCompany"
+                 :Count 10
+                 :Total 6089.9
+                 }
+            res-parser (fn [raw-response]
+                          (throw (Exception. "CustomResponseParserError")))]
+        (is (thrown-with-msg? Exception #"CustomResponseParserError" 
+                              (query-index client qry {
+                                                       :request-builder req/query-index 
+                                                       :response-parser res-parser
+                                                       })))))))

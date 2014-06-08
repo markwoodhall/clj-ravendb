@@ -1,6 +1,8 @@
 (ns clj-ravendb.client-loading-documents-test
   (:require [clojure.test :refer :all]
             [clj-ravendb.client :refer :all]
+            [clj-ravendb.requests :as req]
+            [clj-ravendb.responses :as res]
             [clojure.pprint :as pprint]))
 
 (let [url "http://localhost:8080"
@@ -19,7 +21,23 @@
             expected 200]
         (pprint/pprint actual)
         (is (= expected (actual :status))))))
+
+  (deftest test-load-documents-uses-custom-req-builder
+    (testing "loading documents uses custom request builder"
+      (let [doc-ids ["employees/1" "employees/2"]
+            req-builder (fn [client document-ids]
+                          (throw (Exception. "CustomRequestBuilderError")))]
+        (is (thrown-with-msg? Exception #"CustomRequestBuilderError" 
+                              (load-documents client doc-ids req-builder res/load-documents))))))
   
+  (deftest test-load-documents-uses-custom-res-parser
+    (testing "loading documents uses custom response parser"
+      (let [doc-ids ["employees/1" "employees/2"]
+            res-parser (fn [raw-response]
+                          (throw (Exception. "CustomResponseParserError")))]
+        (is (thrown-with-msg? Exception #"CustomResponseParserError" 
+                              (load-documents client doc-ids req/load-documents res-parser))))))
+
   (deftest test-load-documents-returns-correct-results
     (testing "loading documents returns the correct results"
       (let [doc-ids ["employees/1" "employees/2"]

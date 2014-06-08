@@ -1,6 +1,8 @@
 (ns clj-ravendb.client-putting-indexes-test
   (:require [clojure.test :refer :all]
             [clj-ravendb.client :refer :all]
+            [clj-ravendb.requests :as req]
+            [clj-ravendb.responses :as res]
             [clojure.pprint :as pprint]))
 
 (let [url "http://localhost:8080"
@@ -37,4 +39,30 @@
             actual (put-index client idx)
             expected 201]
         (pprint/pprint actual)
-        (is (= expected (actual  :status)))))))
+        (is (= expected (actual  :status))))))
+  
+  (deftest test-putting-index-uses-custom-req-builder
+    (testing "putting indexes uses custom request builder"
+      (let [idx {
+                 :name "DocumentsByName"
+                 :alias "doc"
+                 :where "doc.name == \"Test\""
+                 :select "new { doc.name }"
+                 }
+            req-builder (fn [url index]
+                          (throw (Exception. "CustomRequestBuilderError")))]
+        (is (thrown-with-msg? Exception #"CustomRequestBuilderError" 
+                              (put-index client idx req-builder res/query-index))))))
+  
+  (deftest test-putting-index-uses-custom-res-parser
+    (testing "putting indexes uses custom response parser"
+      (let [idx {
+                 :name "DocumentsByName"
+                 :alias "doc"
+                 :where "doc.name == \"Test\""
+                 :select "new { doc.name }"
+                 }
+            res-parser (fn [raw-response]
+                          (throw (Exception. "CustomResponseParserError")))]
+        (is (thrown-with-msg? Exception #"CustomResponseParserError" 
+                              (put-index client idx req/put-index res-parser))))))) 
