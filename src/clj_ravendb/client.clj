@@ -135,7 +135,7 @@
   ([client index request-builder response-parser]
    {:pre [(client? client)
           (:name index) (:alias index) (:where index) (:select index)]}
-   (let [request (req/put-index (:address client) index)
+   (let [request (request-builder (:address client) index)
          response (put-req request)]
      (response-parser response))))
 
@@ -171,11 +171,11 @@
   Optionally takes a response parser fn in order
   to customize response parsing."
   ([client query]
-   (query-index client query {} req/query-index res/query-index))
-  ([client query options]
-   (query-index client query options req/query-index res/query-index))
-  ([client query {:keys [max-attempts wait]
-                    :or {max-attempts 5 wait 100}} request-builder response-parser]
+   (query-index client query {}))
+  ([client query {:keys [max-attempts wait request-builder response-parser]
+                    :or {max-attempts 5 wait 100 
+                         request-builder req/query-index 
+                         response-parser res/query-index}}]
    {:pre [(client? client) (:index query)]}
    (let [get-result (fn
                       []
