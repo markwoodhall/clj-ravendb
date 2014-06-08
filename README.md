@@ -9,7 +9,8 @@ This is currently a work in progress and under active development, its not stabl
 ## Installation
 
 
-```clj-ravendb``` is available from [Clojars](https://clojars.org/clj-ravendb):
+```clj-ravendb``` is available from [Clojars](https://clojars.org/clj-ravendb)
+
 
 ```
 #!clojure
