@@ -6,17 +6,20 @@ A clojure library designed to consume a RavenDB rest api.
 
 This is currently a work in progress and under active development, its not stable or production ready.  
 
-## Installation:
+## Installation
 
-=clj-http= is available from [[http://clojars.org/clj-ravendb][Clojars]]:
+
+```clj-ravendb``` is available from [Clojars](https://clojars.org/clj-ravendb):
 
 ```
-
 #!clojure
 
 [clj-ravendb "0.1.0"]
 
 ```
+
+## Usage
+
 ```
 #!clojure
 
