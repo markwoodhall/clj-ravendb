@@ -5,22 +5,22 @@
 
 (let [url "http://localhost:8080"
       database "northwind"
-      endpoint (endpoint url database)]
+      client (client url database)]
   (deftest test-put-index-with-invalid-index-throws
     (testing "Putting an index with an invalid form."
       (is (thrown? AssertionError 
-                   (put-index endpoint {})))
+                   (put-index client {})))
       (is (thrown? AssertionError 
-                   (put-index endpoint {
+                   (put-index client {
                                         :name "Test"
                                         })))
       (is (thrown? AssertionError 
-                   (put-index endpoint {
+                   (put-index client {
                                         :name "Test" 
                                         :alias "Alias"
                                         })))
       (is (thrown? AssertionError 
-                   (put-index endpoint {
+                   (put-index client {
                                         :name "Test"
                                         :alias "Alias"
                                         :where "Where"
@@ -34,7 +34,7 @@
                  :where "doc.name == \"Test\""
                  :select "new { doc.name }"
                  }
-            actual (put-index endpoint idx)
+            actual (put-index client idx)
             expected 201]
         (pprint/pprint actual)
         (is (= expected (actual  :status)))))))

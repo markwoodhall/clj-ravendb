@@ -20,7 +20,7 @@
   (println "Sending HTTP GET to" url)
   (client/get url {:as :json-string-keys}))
 
-(defn- is-valid-endpoint?
+(defn- is-valid-client?
   [{:keys [address replications replicated? master-only-write?]}]
   {:pre [(not-nil? address) (not-nil? replications) 
          (not-nil? replicated?) (not-nil? master-only-write?)]}
@@ -41,10 +41,10 @@
         response
         (recur (rest urls))))))   
 
-(def endpoint?
-  (memoize (fn [endpoint] (is-valid-endpoint? endpoint))))
+(def client?
+  (memoize (fn [client] (is-valid-client? client))))
 
-(defn endpoint
+(defn client
   "Gets a client for a RavenDB endpoint at the
   given url and database. 
 
@@ -52,7 +52,7 @@
   :replicated? is used to find replicated endpoints.
   :master-only-write? is used to indicate that write operations only go to the master"
   ([url database]
-   (endpoint url database {}))
+   (client url database {}))
   ([url database {:keys [replicated? master-only-write?] 
                   :or {replicated? false master-only-write? true}}]
    (let [fragments (list url "Databases" database)
@@ -82,11 +82,11 @@
 
   Optionally takes a response parser fn in order
   to customize response parsing."
-  ([endpoint document-ids]
-   (load-documents endpoint document-ids req/load-documents res/load-documents))
-  ([endpoint document-ids request-builder response-parser]
-   {:pre [(endpoint? endpoint) (not-empty document-ids)]}
-   (let [request (request-builder endpoint document-ids)
+  ([client document-ids]
+   (load-documents client document-ids req/load-documents res/load-documents))
+  ([client document-ids request-builder response-parser]
+   {:pre [(client? client) (not-empty document-ids)]}
+   (let [request (request-builder client document-ids)
          response (wrap-retry-replicas request post-req)]
      (response-parser response))))
 
@@ -99,18 +99,18 @@
 
   Optionally takes a response parser fn in order
   to customize response parsing."
-  ([endpoint operations]
-   (bulk-operations endpoint operations req/bulk-operations res/bulk-operations))
-  ([endpoint operations request-builder response-parser]
-   {:pre [(endpoint? endpoint)
+  ([client operations]
+   (bulk-operations client operations req/bulk-operations res/bulk-operations))
+  ([client operations request-builder response-parser]
+   {:pre [(client? client)
           (not-empty (filter 
                        (comp not nil?) 
                        (map (fn[op] 
                               (cond 
                                 (= (:Method op) "PUT") (and (:Document op) (:Metadata op) (:Key op))
                                 (= (:Method op) "DELETE") (:Key op))) operations)))]}
-   (let [request (req/bulk-operations endpoint operations)
-         master-only-write? (:master-only-write? endpoint)]
+   (let [request (req/bulk-operations client operations)
+         master-only-write? (:master-only-write? client)]
      (response-parser (if master-only-write? 
                         (no-retry-replicas request post-req)
                         (wrap-retry-replicas request post-req))))))
@@ -130,12 +130,12 @@
 
   Optionally takes a response parser fn in order
   to customize response parsing."
-  ([endpoint index]
-   (put-index endpoint index req/put-index res/put-index))
-  ([endpoint index request-builder response-parser]
-   {:pre [(endpoint? endpoint)
+  ([client index]
+   (put-index client index req/put-index res/put-index))
+  ([client index request-builder response-parser]
+   {:pre [(client? client)
           (:name index) (:alias index) (:where index) (:select index)]}
-   (let [request (req/put-index (:address endpoint) index)
+   (let [request (req/put-index (:address client) index)
          response (put-req request)]
      (response-parser response))))
 
@@ -148,11 +148,11 @@
 
   Optionally takes a response parser fn in order
   to customize response parsing."
-  ([endpoint key document]
-   (put-document endpoint key document req/put-document res/put-document))
-  ([{:keys [master-only-writes?] :as endpoint} key document request-builder response-parser]
-   {:pre [(endpoint? endpoint)]}
-   (let [request (request-builder endpoint key document)]
+  ([client key document]
+   (put-document client key document req/put-document res/put-document))
+  ([{:keys [master-only-writes?] :as client} key document request-builder response-parser]
+   {:pre [(client? client)]}
+   (let [request (request-builder client key document)]
      (response-parser (if master-only-writes?
                         (no-retry-replicas request post-req)
                         (wrap-retry-replicas request post-req))))))
@@ -170,18 +170,18 @@
 
   Optionally takes a response parser fn in order
   to customize response parsing."
-  ([endpoint query]
-   (query-index endpoint query {} req/query-index res/query-index))
-  ([endpoint query options]
-   (query-index endpoint query options req/query-index res/query-index))
-  ([endpoint query {:keys [max-attempts wait]
+  ([client query]
+   (query-index client query {} req/query-index res/query-index))
+  ([client query options]
+   (query-index client query options req/query-index res/query-index))
+  ([client query {:keys [max-attempts wait]
                     :or {max-attempts 5 wait 100}} request-builder response-parser]
-   {:pre [(endpoint? endpoint) (:index query)]}
+   {:pre [(client? client) (:index query)]}
    (let [get-result (fn
                       []
                       (response-parser 
                         (wrap-retry-replicas 
-                          (request-builder endpoint query) get-req)))]
+                          (request-builder client query) get-req)))]
      (loop [result (get-result) attempt 0]
        (if (or (not (:stale? result)) 
                (= attempt max-attempts))
@@ -190,20 +190,3 @@
            (println (str "Index " (:index query) " is stale, waiting " wait "ms before trying again."))
            (Thread/sleep wait)
            (recur (get-result) (inc attempt))))))))
-
-(comment
-  (def ep (endpoint "http://localhost:8080" "northwind" {:replicated? false})) 
-  (load-documents ep ["Orders/400"])
-  (bulk-operations ep [
-                             {
-                              :Method "PUT"
-                              :Key "Key1"
-                              :Document {:t "Test"}
-                              :Metadata {}
-                              }
-                             {
-                              :Method "DELETE"
-                              :Key "Key1"
-                              }
-                             ])
-  (query-index ep {:index "Orders/ByCompany" :Count 10}))

@@ -5,13 +5,13 @@
 
 (let [url "http://localhost:8080"
       database "northwind"
-      endpoint (endpoint url database)]
+      client (client url database)]
   (deftest test-query-index-with-invalid-query
     (testing "Querying an index with an invalid query form."
       (is (thrown? AssertionError
-                   (query-index endpoint {})))
+                   (query-index client {})))
       (is (thrown? AssertionError
-                   (query-index endpoint {
+                   (query-index client {
                                           :ind "IndexName"
                                           })))))
 
@@ -21,7 +21,7 @@
                  :index "Orders/ByCompany"
                  :Count 10
                  }
-            actual (query-index endpoint qry)
+            actual (query-index client qry)
             expected 200]
         (pprint/pprint actual)
         (is (= expected (actual  :status))))))
@@ -32,7 +32,7 @@
                  :index "Orders/ByCompany"
                  :Count 10
                  }
-            actual (query-index endpoint qry)
+            actual (query-index client qry)
             results (actual :results)
             doc-one (first (filter 
                              (fn [i] 
@@ -53,7 +53,7 @@
                  :Count 10
                  :Total 6089.9
                  }
-            actual (query-index endpoint qry)
+            actual (query-index client qry)
             results (actual :results)
             doc-one (first (filter 
                              (fn [i] 
