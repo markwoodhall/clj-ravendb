@@ -5,17 +5,17 @@
 
 (let [url "http://localhost:8080"
       database "northwind"
-      endpoint (endpoint url database)]
+      client (client url database)]
   (deftest test-load-documents-with-no-document-ids-throws
     (testing "Loading documents without specifying document ids
              throws an assertion error."
-      (is (thrown? AssertionError (load-documents endpoint [])))
-      (is (thrown? AssertionError (load-documents endpoint nil)))))
+      (is (thrown? AssertionError (load-documents client [])))
+      (is (thrown? AssertionError (load-documents client nil)))))
 
   (deftest test-load-documents-returns-correct-status-code
     (testing "loading documents returns the correct status code"
       (let [doc-ids ["employees/1" "employees/2"]
-            actual (load-documents endpoint doc-ids)
+            actual (load-documents client doc-ids)
             expected 200]
         (pprint/pprint actual)
         (is (= expected (actual :status))))))
@@ -23,7 +23,7 @@
   (deftest test-load-documents-returns-correct-results
     (testing "loading documents returns the correct results"
       (let [doc-ids ["employees/1" "employees/2"]
-            actual (load-documents endpoint doc-ids)
+            actual (load-documents client doc-ids)
             results (actual :results)
             doc-one (first (filter 
                              (fn [i] 

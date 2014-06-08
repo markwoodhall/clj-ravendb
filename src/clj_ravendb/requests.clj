@@ -42,8 +42,8 @@
 (defn put-document
   "Generates a map that represents a http request
   to the bulk_docs endpoint in order put a document."
-  [endpoint key document]
-  (bulk-operations endpoint [{
+  [client key document]
+  (bulk-operations client [{
                               :Method "PUT"
                               :Key key
                               :Document document

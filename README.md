@@ -6,8 +6,17 @@ A clojure library designed to consume a RavenDB rest api.
 
 This is currently a work in progress and under active development, its not stable or production ready.  
 
-## Usage
+## Installation:
 
+=clj-http= is available from [[http://clojars.org/clj-ravendb][Clojars]]:
+
+```
+
+#!clojure
+
+[clj-ravendb "0.1.0"]
+
+```
 ```
 #!clojure
 
@@ -15,12 +24,12 @@ This is currently a work in progress and under active development, its not stabl
 
 ```
 
-Getting an endpoint:
+Getting a RavenDB client:
 
 ```
 #!clojure
 
-(def endpoint (endpoint "http://localhost:8080" "northwind"))
+(def northwind (client "http://localhost:8080" "northwind"))
 
 ```
 
@@ -28,7 +37,7 @@ Loading some documents:
 
 ```
 #!clojure
-(load-documents endpoint ["employees/1" "employees/2"])
+(load-documents northwind ["employees/1" "employees/2"])
 
 ```
 
@@ -85,7 +94,7 @@ Putting a document:
 ```
 #!clojure
 
-(put-document endpoint "Employees/10" { :FirstName "David" :LastName "Smith" :age 50 })
+(put-document northwind "Employees/10" { :FirstName "David" :LastName "Smith" :age 50 })
 
 ```
 
@@ -103,16 +112,16 @@ Querying an index:
 ```
 #!clojure
 
-(query-index endpoint { :index "ByCompany" :Count 10 })
+(query-index northwind { :index "ByCompany" :Count 10 })
 
 ;; By default if the index is stale (query-index) will retry 5 times, waiting
 ;; 100 milliseconds between each try.
 
 ;; If the index is stale retry a maximum of 10 times.
-(query-index endpoint { :index "ByCompany" :Count 10 } { :max-attempts 10 })
+(query-index northwind { :index "ByCompany" :Count 10 } { :max-attempts 10 })
 
 ;; If the index is stale retry every 500 milliseconds.
-(query-index endpoint { :index "ByCompany" :Count 10 } { :wait 500 })
+(query-index northwind { :index "ByCompany" :Count 10 } { :wait 500 })
 
 ```
 
@@ -139,20 +148,20 @@ Returns a map with a sequence of results like:
 
 ## Options
 
-There are a number of "configuration" options that can be used when creating an endpoint. 
+There are a number of "configuration" options that can be used when creating a client: 
 
 ###  Replication
 
-To create an endpoint that supports replication:
+To create an client that supports replication:
 
 ```
 #!clojure
 
-(def endpoint (endpoint "http://localhost:8080" "northwind" {:replicated? true}))
+(def northwind (client "http://localhost:8080" "northwind" {:replicated? true}))
 
 ```
 
-When this option is used creating the endpoint will also query the master url for replication destinations. The endpoint will be represented by a map that looks like:
+When this option is used creating the client will also query the master url for replication destinations. The client will be represented by a map that looks like:
 
 ```
 #!clojure
@@ -166,20 +175,20 @@ When this option is used creating the endpoint will also query the master url fo
 
 ```
 
-When this endpoint is used to (load-documents) or (query-index) if the master is down then one of the replications will be used.
+When this client is used to (load-documents) or (query-index) if the master is down then one of the replications will be used.
 
 ###  Master Only Write
 
-If you've created an endpoint that supports replication by default write operations will only go to the master, you can change this behaviour using the following:
+If you've created a client that supports replication by default write operations will only go to the master, you can change this behaviour using the following:
 
 ```
 #!clojure
 
-(def endpoint (endpoint "http://localhost:8080" "northwind" {:replicated? true :master-only-write? false}))
+(def northwind (client "http://localhost:8080" "northwind" {:replicated? true :master-only-write? false}))
 
 ```
 
-The endpoint will be represented by a map that looks like:
+The client will be represented by a map that looks like:
 
 ```
 #!clojure
@@ -193,7 +202,7 @@ The endpoint will be represented by a map that looks like:
 
 ```
 
-When this endpoint is used to (put-document), (put-index) or for (bulk-operations) if the master is down then one of the replications will be used for write operations.
+When this client is used to (put-document), (put-index) or for (bulk-operations) if the master is down then one of the replications will be used for write operations.
 
 ## Build & Test
 
