@@ -4,7 +4,13 @@ A clojure library designed to consume a RavenDB rest api.
 
 ## Status
 
-This is currently a work in progress and under active development, its not stable or production ready.  
+This is currently a work in progress and under active development, it is liable to substantial change. It currently has the following features:
+
+* Store new documents
+* Load documents
+* Store new indexes
+* Query indexes
+* Replication aware  
 
 ## Installation
 
