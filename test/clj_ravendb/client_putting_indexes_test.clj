@@ -36,11 +36,15 @@
       (let [req-builder (fn [url index]
                           (throw (Exception. "CustomRequestBuilderError")))]
         (is (thrown-with-msg? Exception #"CustomRequestBuilderError" 
-                              (put-index client idx req-builder res/query-index))))))
+                              (put-index client idx 
+                                         {:request-builder req-builder 
+                                          :response-parser res/query-index}))))))
 
   (deftest test-putting-index-uses-custom-res-parser
     (testing "putting indexes uses custom response parser"
       (let [res-parser (fn [raw-response]
                          (throw (Exception. "CustomResponseParserError")))]
         (is (thrown-with-msg? Exception #"CustomResponseParserError" 
-                              (put-index client idx req/put-index res-parser))))))) 
+                              (put-index client idx 
+                                         {:request-builder req/put-index 
+                                          :response-parser res-parser}))))))) 

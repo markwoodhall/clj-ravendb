@@ -77,14 +77,14 @@
   "Loads a collection of documents represented
   by the given document ids. 
 
-  Optionally takes a request builder fn in order 
-  to customize request composition.
-
-  Optionally takes a response parser fn in order
-  to customize response parsing."
+  Optionally takes a map of options.
+  :request-builder is a custom request builder fn.
+  :response-parser is a customer response parser fn."
   ([client document-ids]
-   (load-documents client document-ids req/load-documents res/load-documents))
-  ([client document-ids request-builder response-parser]
+   (load-documents client document-ids {}))
+  ([client document-ids 
+    {:keys [request-builder response-parser]
+     :or {request-builder req/load-documents response-parser res/load-documents}}]
    {:pre [(client? client) (not-empty document-ids)]}
    (let [request (request-builder client document-ids)
          response (wrap-retry-replicas request post-req)]
@@ -94,14 +94,14 @@
   "Handles a given set of bulk operations that
   correspond to RavenDB batch req.
 
-  Optionally takes a request builder fn in order 
-  to customize request composition.
-
-  Optionally takes a response parser fn in order
-  to customize response parsing."
+  Optionally takes a map of options.
+  :request-builder is a custom request builder fn.
+  :response-parser is a customer response parser fn."
   ([client operations]
-   (bulk-operations client operations req/bulk-operations res/bulk-operations))
-  ([client operations request-builder response-parser]
+   (bulk-operations client operations {}))
+  ([client operations 
+    {:keys [request-builder response-parser]
+     :or {request-builder req/bulk-operations response-parser res/bulk-operations}}]
    {:pre [(client? client)
           (not-empty (filter 
                        (comp not nil?) 
@@ -125,14 +125,14 @@
     :select projection
   }
 
-  Optionally takes a request builder fn in order 
-  to customize request composition.
-
-  Optionally takes a response parser fn in order
-  to customize response parsing."
+  Optionally takes a map of options.
+  :request-builder is a custom request builder fn.
+  :response-parser is a customer response parser fn."
   ([client index]
-   (put-index client index req/put-index res/put-index))
-  ([client index request-builder response-parser]
+   (put-index client index {}))
+  ([client index 
+    {:keys [request-builder response-parser]
+     :or {request-builder req/put-index response-parser res/put-index}}]
    {:pre [(client? client)
           (:name index) (:alias index) (:where index) (:select index)]}
    (let [request (request-builder client index)
@@ -143,14 +143,15 @@
   "Creates or updates a document by its key. Where 'document'
   is a map.
 
-  Optionally takes a request builder fn in order 
-  to customize request composition.
-
-  Optionally takes a response parser fn in order
-  to customize response parsing."
+  Optionally takes a map of options.
+  :request-builder is a custom request builder fn.
+  :response-parser is a customer response parser fn."
   ([client key document]
-   (put-document client key document req/put-document res/put-document))
-  ([{:keys [master-only-writes?] :as client} key document request-builder response-parser]
+   (put-document client key document {}))
+  ([{:keys [master-only-writes?] :as client} 
+    key document 
+    {:keys [request-builder response-parser]
+     :or {request-builder req/put-document response-parser res/put-document}}]
    {:pre [(client? client)]}
    (let [request (request-builder client key document)]
      (response-parser (if master-only-writes?
@@ -165,11 +166,13 @@
     :y 2                        
   }.
 
-  Optionally takes a request builder fn in order 
-  to customize request composition.
-
-  Optionally takes a response parser fn in order
-  to customize response parsing."
+  Optionally takes a map of options. 
+  :max-attempts is the maximum number of times to try
+  and hit a non stale index.
+  :wat is the time interval to wait before trying to
+  hit a non stale index.
+  :request-builder is a custom request builder fn.
+  :response-parser is a customer response parser fn."
   ([client query]
    (query-index client query {}))
   ([client query {:keys [max-attempts wait request-builder response-parser]
