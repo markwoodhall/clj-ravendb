@@ -7,62 +7,40 @@
 
 (let [url "http://localhost:8080"
       database "northwind"
-      client (client url database)]
+      client (client url database)
+      idx {:name "DocumentsByName" :alias "doc" :where "doc.name ==\"Test\"" :select "new { doc.name }"}]
   (deftest test-put-index-with-invalid-index-throws
     (testing "Putting an index with an invalid form."
       (is (thrown? AssertionError 
                    (put-index client {})))
       (is (thrown? AssertionError 
-                   (put-index client {
-                                        :name "Test"
-                                        })))
+                   (put-index client {:name "Test"})))
       (is (thrown? AssertionError 
-                   (put-index client {
-                                        :name "Test" 
-                                        :alias "Alias"
-                                        })))
+                   (put-index client {:select "Test"})))
       (is (thrown? AssertionError 
-                   (put-index client {
-                                        :name "Test"
-                                        :alias "Alias"
-                                        :where "Where"
-                                        })))))
+                   (put-index client {:where "Test"})))
+      (is (thrown? AssertionError 
+                   (put-index client {:name "Test" :alias "Alias"})))
+      (is (thrown? AssertionError 
+                   (put-index client {:name "Test" :alias "Alias" :where "Where"})))))
 
   (deftest test-put-index-returns-correct-status-code
     (testing "putting an index returns the correct status code"
-      (let [idx {
-                 :name "DocumentsByName"
-                 :alias "doc"
-                 :where "doc.name == \"Test\""
-                 :select "new { doc.name }"
-                 }
-            actual (put-index client idx)
+      (let [actual (put-index client idx)
             expected 201]
         (pprint/pprint actual)
-        (is (= expected (actual  :status))))))
-  
+        (is (= expected (actual :status))))))
+
   (deftest test-putting-index-uses-custom-req-builder
     (testing "putting indexes uses custom request builder"
-      (let [idx {
-                 :name "DocumentsByName"
-                 :alias "doc"
-                 :where "doc.name == \"Test\""
-                 :select "new { doc.name }"
-                 }
-            req-builder (fn [url index]
+      (let [req-builder (fn [url index]
                           (throw (Exception. "CustomRequestBuilderError")))]
         (is (thrown-with-msg? Exception #"CustomRequestBuilderError" 
                               (put-index client idx req-builder res/query-index))))))
-  
+
   (deftest test-putting-index-uses-custom-res-parser
     (testing "putting indexes uses custom response parser"
-      (let [idx {
-                 :name "DocumentsByName"
-                 :alias "doc"
-                 :where "doc.name == \"Test\""
-                 :select "new { doc.name }"
-                 }
-            res-parser (fn [raw-response]
-                          (throw (Exception. "CustomResponseParserError")))]
+      (let [res-parser (fn [raw-response]
+                         (throw (Exception. "CustomResponseParserError")))]
         (is (thrown-with-msg? Exception #"CustomResponseParserError" 
                               (put-index client idx req/put-index res-parser))))))) 
