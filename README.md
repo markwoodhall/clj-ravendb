@@ -227,5 +227,4 @@ The tests for this project assume an instance of RavenDB is running at http://lo
 
 Copyright © 2014 Mark Woodhall
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+Released under the MIT License: http://www.opensource.org/licenses/mit-license.php
