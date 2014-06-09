@@ -44,11 +44,11 @@
   to the bulk_docs endpoint in order put a document."
   [client key document]
   (bulk-operations client [{
-                              :Method "PUT"
-                              :Key key
-                              :Document document
-                              :Metadata { }
-                              }]))
+                            :Method "PUT"
+                            :Key key
+                            :Document document
+                            :Metadata { }
+                            }]))
 
 (defn put-index
   "Generates a map that represents a http request

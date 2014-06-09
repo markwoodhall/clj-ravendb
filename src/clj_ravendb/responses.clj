@@ -29,9 +29,7 @@
 
 (defn bulk-operations
   [{:keys [status]}]
-  {
-   :status status
-   })
+  {:status status})
 
 (defn put-document
   [raw-response]
@@ -39,9 +37,7 @@
 
 (defn put-index
   [{:keys [status]}]
-  {
-   :status status
-   })
+  {:status status})
 
 (defn query-index
   [{:keys [body status]}]
