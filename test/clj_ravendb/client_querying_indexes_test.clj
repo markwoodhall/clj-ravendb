@@ -7,34 +7,25 @@
 
 (let [url "http://localhost:8080"
       database "northwind"
-      client (client url database)]
+      client (client url database)
+      qry {:index "Orders/ByCompany" :Count 10}]
   (deftest test-query-index-with-invalid-query
     (testing "Querying an index with an invalid query form."
       (is (thrown? AssertionError
                    (query-index client {})))
       (is (thrown? AssertionError
-                   (query-index client {
-                                          :ind "IndexName"
-                                          })))))
+                   (query-index client {:ind "IndexName"})))))
 
   (deftest test-query-index-returns-correct-status-code
     (testing "querying an index returns the correct status code"
-      (let [qry {
-                 :index "Orders/ByCompany"
-                 :Count 10
-                 }
-            actual (query-index client qry)
+      (let [actual (query-index client qry)
             expected 200]
         (pprint/pprint actual)
-        (is (= expected (actual  :status))))))
-  
+        (is (= expected (actual :status))))))
+
   (deftest test-query-index-returns-correct-results
     (testing "querying an index returns the correct results"
-      (let [qry {
-                 :index "Orders/ByCompany"
-                 :Count 10
-                 }
-            actual (query-index client qry)
+      (let [actual (query-index client qry)
             results (actual :results)
             doc-one (first (filter 
                              (fn [i] 
@@ -47,15 +38,10 @@
         (pprint/pprint actual)
         (and (is (not= nil doc-one))
              (is (not= nil doc-two))))))
-  
+
   (deftest test-query-index-with-multiple-clauses-returns-correct-results
     (testing "querying an index with multiple clauses returns the correct results"
-      (let [qry {
-                 :index "Orders/ByCompany"
-                 :Count 10
-                 :Total 6089.9
-                 }
-            actual (query-index client qry)
+      (let [actual (query-index client (assoc qry :Total 6089.9))
             results (actual :results)
             doc-one (first (filter 
                              (fn [i] 
@@ -65,31 +51,21 @@
         (pprint/pprint actual)
         (and (is (not= nil doc-one))
              (is (= 1 (count results)))))))
-  
+
   (deftest test-query-index-uses-custom-req-builder
     (testing "querying indexes uses custom request builder"
-      (let [qry {
-                 :index "Orders/ByCompany"
-                 :Count 10
-                 :Total 6089.9
-                 }
-            req-builder (fn [client query]
+      (let [req-builder (fn [client query]
                           (throw (Exception. "CustomRequestBuilderError")))]
         (is (thrown-with-msg? Exception #"CustomRequestBuilderError" 
                               (query-index client qry {
                                                        :request-builder req-builder 
                                                        :response-parser res/query-index
                                                        }))))))
-  
+
   (deftest test-query-index-uses-custom-res-parser
     (testing "querying indexes uses custom response parser"
-      (let [qry {
-                 :index "Orders/ByCompany"
-                 :Count 10
-                 :Total 6089.9
-                 }
-            res-parser (fn [raw-response]
-                          (throw (Exception. "CustomResponseParserError")))]
+      (let [res-parser (fn [raw-response]
+                         (throw (Exception. "CustomResponseParserError")))]
         (is (thrown-with-msg? Exception #"CustomResponseParserError" 
                               (query-index client qry {
                                                        :request-builder req/query-index 
