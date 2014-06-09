@@ -53,8 +53,8 @@
 (defn put-index
   "Generates a map that represents a http request
   to the indexes endpoint in order to put an index."
-  [url {:keys [name alias where select]}]
-  (let [request-url (str url "/indexes/" name)]
+  [{:keys [address]} {:keys [name alias where select]}]
+  (let [request-url (str address "/indexes/" name)]
     {
      :url request-url
      :body (json/write-str {:Map (str 

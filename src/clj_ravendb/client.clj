@@ -135,7 +135,7 @@
   ([client index request-builder response-parser]
    {:pre [(client? client)
           (:name index) (:alias index) (:where index) (:select index)]}
-   (let [request (request-builder (:address client) index)
+   (let [request (request-builder client index)
          response (put-req request)]
      (response-parser response))))
 
