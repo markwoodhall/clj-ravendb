@@ -21,9 +21,9 @@
   (client/get url {:as :json-string-keys}))
 
 (defn- is-valid-client?
-  [{:keys [address replications replicated? master-only-write?]}]
+  [{:keys [address replications replicated? master-only-writes?]}]
   {:pre [(not-nil? address) (not-nil? replications) 
-         (not-nil? replicated?) (not-nil? master-only-write?)]}
+         (not-nil? replicated?) (not-nil? master-only-writes?)]}
   true)
 
 (defn- no-retry-replicas
@@ -50,11 +50,11 @@
 
   Optionally takes a map of options.
   :replicated? is used to find replicated endpoints.
-  :master-only-write? is used to indicate that write operations only go to the master"
+  :master-only-writes? is used to indicate that write operations only go to the master"
   ([url database]
    (client url database {}))
-  ([url database {:keys [replicated? master-only-write?] 
-                  :or {replicated? false master-only-write? true}}]
+  ([url database {:keys [replicated? master-only-writes?] 
+                  :or {replicated? false master-only-writes? true}}]
    (let [fragments (list url "Databases" database)
          address (clojure.string/join "/" fragments)
          load-replications (fn []
@@ -65,7 +65,7 @@
                         '())]
     {
      :replicated? replicated?
-     :master-only-write? master-only-write?
+     :master-only-writes? master-only-writes?
      :address address
      :replications (map (fn 
                           [r] 
@@ -86,9 +86,9 @@
     {:keys [request-builder response-parser]
      :or {request-builder req/load-documents response-parser res/load-documents}}]
    {:pre [(client? client) (not-empty document-ids)]}
-   (let [request (request-builder client document-ids)
-         response (wrap-retry-replicas request post-req)]
-     (response-parser response))))
+   (-> (request-builder client document-ids)
+       (wrap-retry-replicas post-req)
+       (response-parser))))
 
 (defn bulk-operations
   "Handles a given set of bulk operations that
@@ -99,19 +99,19 @@
   :response-parser is a customer response parser fn."
   ([client operations]
    (bulk-operations client operations {}))
-  ([client operations 
+  ([{:keys [master-only-writes?] :as client} 
+    operations 
     {:keys [request-builder response-parser]
      :or {request-builder req/bulk-operations response-parser res/bulk-operations}}]
    {:pre [(client? client)
           (not-empty (filter 
                        (comp not nil?) 
-                       (map (fn[op] 
+                       (map (fn[{:keys [Method Document Metadata Key]}] 
                               (cond 
-                                (= (:Method op) "PUT") (and (:Document op) (:Metadata op) (:Key op))
-                                (= (:Method op) "DELETE") (:Key op))) operations)))]}
-   (let [request (req/bulk-operations client operations)
-         master-only-write? (:master-only-write? client)]
-     (response-parser (if master-only-write? 
+                                (= Method "PUT") (and Document Metadata Key)
+                                (= Method "DELETE") Key)) operations)))]}
+   (let [request (req/bulk-operations client operations)]
+     (response-parser (if master-only-writes? 
                         (no-retry-replicas request post-req)
                         (wrap-retry-replicas request post-req))))))
 
@@ -135,9 +135,9 @@
      :or {request-builder req/put-index response-parser res/put-index}}]
    {:pre [(client? client)
           (:name index) (:alias index) (:where index) (:select index)]}
-   (let [request (request-builder client index)
-         response (put-req request)]
-     (response-parser response))))
+   (-> (request-builder client index)
+       (put-req)
+       (response-parser))))
 
 (defn put-document 
   "Creates or updates a document by its key. Where 'document'
@@ -180,11 +180,10 @@
                          request-builder req/query-index 
                          response-parser res/query-index}}]
    {:pre [(client? client) (:index query)]}
-   (let [get-result (fn
-                      []
-                      (response-parser 
-                        (wrap-retry-replicas 
-                          (request-builder client query) get-req)))]
+   (let [get-result (fn[]
+                      (-> (request-builder client query)
+                          (wrap-retry-replicas get-req)
+                          (response-parser)))]
      (loop [result (get-result) attempt 0]
        (if (or (not (:stale? result)) 
                (= attempt max-attempts))
