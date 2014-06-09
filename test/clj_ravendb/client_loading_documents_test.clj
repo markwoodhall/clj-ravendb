@@ -28,7 +28,9 @@
             req-builder (fn [client document-ids]
                           (throw (Exception. "CustomRequestBuilderError")))]
         (is (thrown-with-msg? Exception #"CustomRequestBuilderError" 
-                              (load-documents client doc-ids req-builder res/load-documents))))))
+                              (load-documents client doc-ids 
+                                              {:request-builder req-builder 
+                                               :response-parser res/load-documents}))))))
   
   (deftest test-load-documents-uses-custom-res-parser
     (testing "loading documents uses custom response parser"
@@ -36,7 +38,9 @@
             res-parser (fn [raw-response]
                           (throw (Exception. "CustomResponseParserError")))]
         (is (thrown-with-msg? Exception #"CustomResponseParserError" 
-                              (load-documents client doc-ids req/load-documents res-parser))))))
+                              (load-documents client doc-ids 
+                                              {:request-builder req/load-documents 
+                                               :response-parser res-parser}))))))
 
   (deftest test-load-documents-returns-correct-results
     (testing "loading documents returns the correct results"
