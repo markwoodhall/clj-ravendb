@@ -145,17 +145,17 @@ Returns a map with a sequence of results like:
 {:status 200,
  :stale? false,
  :results
- ({:doc {:Company "companies/38", :Count 10.0, :Total 6146.3}}
-  {:doc {:Company "companies/49", :Count 10.0, :Total 7176.215}}
-  {:doc {:Company "companies/11", :Count 10.0, :Total 6089.9}}
-  {:doc {:Company "companies/30", :Count 10.0, :Total 11446.36}}
-  {:doc {:Company "companies/84", :Count 10.0, :Total 9182.43}}
-  {:doc {:Company "companies/56", :Count 10.0, :Total 12496.2}}
-  {:doc {:Company "companies/55", :Count 10.0, :Total 15177.4625}}
-  {:doc {:Company "companies/86", :Count 10.0, :Total 9588.425}}
-  {:doc {:Company "companies/59", :Count 10.0, :Total 23128.86}}
-  {:doc {:Company "companies/68", :Count 10.0, :Total 19343.779}}
-  {:doc {:Company "companies/80", :Count 10.0, :Total 10812.15}})}
+ ({:Company "companies/38", :Count 10.0, :Total 6146.3}
+  {:Company "companies/49", :Count 10.0, :Total 7176.215}
+  {:Company "companies/11", :Count 10.0, :Total 6089.9}
+  {:Company "companies/30", :Count 10.0, :Total 11446.36}
+  {:Company "companies/84", :Count 10.0, :Total 9182.43}
+  {:Company "companies/56", :Count 10.0, :Total 12496.2}
+  {:Company "companies/55", :Count 10.0, :Total 15177.4625}
+  {:Company "companies/86", :Count 10.0, :Total 9588.425}
+  {:Company "companies/59", :Count 10.0, :Total 23128.86}
+  {:Company "companies/68", :Count 10.0, :Total 19343.779}
+  {:Company "companies/80", :Count 10.0, :Total 10812.15})}
    
 ```
 
