@@ -24,7 +24,7 @@ Add the following to ```project.clj``` ```:dependencies```:
 ```
 #!clojure
 
-[clj-ravendb "0.1.2"]
+[clj-ravendb "0.2.0"]
 
 ```
 
