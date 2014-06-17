@@ -182,7 +182,7 @@ Watching for document changes:
 ;; Or non-blocking in a go block
 (go (<! ch))
 
-;; You can stop watching using :stop, this will close the channel and future-cancel
+;; You can stop watching using :stop, this will close the channel and stop
 ;; the future
 ((:stop watcher))
 
@@ -210,7 +210,7 @@ Watching for index changes:
 ;; Or non-blocking in a go block
 (go (<! ch))
 
-;; You can stop watching using :stop, this will close the channel and future-cancel
+;; You can stop watching using :stop, this will close the channel and stop
 ;; the future
 ((:stop watcher))
 
