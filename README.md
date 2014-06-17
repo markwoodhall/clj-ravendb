@@ -173,6 +173,9 @@ Watching for document changes:
 (let [ch (chan)]
  (def watcher (watch-documents northwind ["Companies/80","Companies/79"] ch)))
 
+;; If you dont pass in a channel, you can access the newly created one
+(let [ch (:channel watcher)])
+
 ;; You can take from the channel like so
 (def change (<!! ch))
 
@@ -194,8 +197,12 @@ Watching for index changes:
 ;; It creates a future that continuosly calls load-document and monitors
 ;; the results, each time they are different they are put on the channel. 
 (def watcher (watch-index northwind {:index "SomeIndexToWatch"}))
+
 (let [ch (chan)]
  (def watcher (watch-index northwind {:index "SomeIndexToWatch"} ch)))
+
+;; If you dont pass in a channel, you can access the newly created one
+(let [ch (:channel watcher)])
 
 ;; You can take from the channel like so
 (def change (<!! ch))
