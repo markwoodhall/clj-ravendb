@@ -1,6 +1,7 @@
 (ns clj-ravendb.client
   (:require [clj-http.client :as client]
             [clj-ravendb.requests :as req]
+            [clojure.core.async :refer [go chan close! <!! >!! <! >!]]
             [clj-ravendb.responses :as res]))
 
 (def not-nil? (complement nil?))
@@ -192,3 +193,41 @@
            (println (str "Index " (:index query) " is stale, waiting " wait "ms before trying again."))
            (Thread/sleep wait)
            (recur (get-result) (inc attempt))))))))
+
+(defn- watch
+  ([client watch]
+   (watch client watch (chan)))
+  ([client watch channel]
+   (let [f (future 
+             (println "Watching" watch "for changes")
+             (loop [last-value {}]
+               (println last-value)
+               (let [latest (watch)]
+                 (if (and (not= last-value {})
+                          (not= last-value latest))
+                   (go (>! channel latest)))
+                 (recur latest))))]
+     {:channel channel :stop (fn []
+                               (println "Closing channel" channel "and trying to cancel future" f)
+                               (close! channel)
+                               (future-cancel f))})))
+
+(defn watch-documents
+  "Watch a collections of documents for changes 
+  and place the changed document(s) on a channel 
+  when there are differences."
+  ([client document-ids]
+   (watch-documents client document-ids (chan)))
+  ([client document-ids channel]
+   (watch client (fn []
+                   (load-documents client document-ids)) channel)))
+
+(defn watch-index
+  "Watch the results of an index query for changes 
+  and place the changed result(s) on a channel 
+  when there are differences."
+  ([client query]
+   (watch-index client query (chan)))
+  ([client query channel]
+   (watch client (fn []
+                   (query-index client query)) channel)))

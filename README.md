@@ -11,6 +11,8 @@ This is currently a work in progress and under active development, it is liable 
 * Store new indexes
 * Query indexes
 * Replication aware  
+* Watch document(s) for changes
+* Watch index queries for changes
 
 ## Installation
 
@@ -157,6 +159,54 @@ Returns a map with a sequence of results like:
   {:Company "companies/68", :Count 10.0, :Total 19343.779}
   {:Company "companies/80", :Count 10.0, :Total 10812.15})}
    
+```
+
+Watching for document changes:
+
+```
+#!clojure
+;; Watching documents makes use of core.async channels. 
+;; You can either pass in a channel or have watch-documents create one. 
+;; It creates a future that continuosly calls load-document and monitors
+;; the results, each time they are different they are put on the channel. 
+(def watcher (watch-document northwind ["Companies/80", "Companies/79"]))
+(let [ch (chan)]
+ (def watcher (watch-documents northwind ["Companies/80","Companies/79"] ch)))
+
+;; You can take from the channel like so
+(def change (<!! ch))
+
+;; Or non-blocking in a go block
+(go (<! ch))
+
+;; You can stop watching using :stop, this will close the channel future-cancel
+;; the future
+((:stop watcher))
+
+```
+
+Watching for index changes:
+
+```
+#!clojure
+;; Watching documents makes use of core.async channels. 
+;; You can either pass in a channel or have watch-documents create one. 
+;; It creates a future that continuosly calls load-document and monitors
+;; the results, each time they are different they are put on the channel. 
+(def watcher (watch-index northwind {:index "SomeIndexToWatch"}))
+(let [ch (chan)]
+ (def watcher (watch-index northwind {:index "SomeIndexToWatch"} ch)))
+
+;; You can take from the channel like so
+(def change (<!! ch))
+
+;; Or non-blocking in a go block
+(go (<! ch))
+
+;; You can stop watching using :stop, this will close the channel future-cancel
+;; the future
+((:stop watcher))
+
 ```
 
 ## Options
