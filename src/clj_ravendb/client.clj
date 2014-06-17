@@ -190,7 +190,7 @@
                (= attempt max-attempts))
          result
          (do
-           (println (str "Index " (:index query) " is stale, waiting " wait "ms before trying again."))
+           (println "Index" (:index query) "is stale, waiting" wait "ms before trying again.")
            (Thread/sleep wait)
            (recur (get-result) (inc attempt))))))))
 
@@ -198,7 +198,8 @@
   ([client watch]
    (watch client watch (chan)))
   ([client watch channel]
-   (let [f (future 
+   (let [keep-watching? (atom true)
+         f (future 
              (println "Watching" watch "for changes")
              (loop [last-value {}]
                (println last-value)
@@ -206,11 +207,13 @@
                  (if (and (not= last-value {})
                           (not= last-value latest))
                    (go (>! channel latest)))
-                 (recur latest))))]
-     {:channel channel :stop (fn []
-                               (println "Closing channel" channel "and trying to cancel future" f)
-                               (close! channel)
-                               (future-cancel f))})))
+                 (if @keep-watching? 
+                   (recur latest)))))]
+     {:channel channel 
+      :stop (fn []
+              (println "Closing channel" channel "and trying to cancel future" f)
+              (reset! keep-watching? false)
+              (close! channel))})))
 
 (defn watch-documents
   "Watch a collections of documents for changes 
