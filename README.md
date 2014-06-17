@@ -276,7 +276,9 @@ When this client is used to (put-document), (put-index) or for (bulk-operations)
 
 ## Build & Test
 
+```
 lein test
+```
 
 The tests for this project assume an instance of RavenDB is running at http://localhost:8080. They also assume that the instance contains the sample northwind database. The sample northwind database is available [here](https://github.com/ayende/ravendb/blob/2.5/Raven.Studio/Assets/EmbeddedData/Northwind.dump)
 
