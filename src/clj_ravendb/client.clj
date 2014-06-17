@@ -37,7 +37,7 @@
     (let [response (try
                      (handle (merge {:url (first urls)} request)) 
                      (catch java.net.ConnectException ce 
-                       (println (str "Failed to execute request using " (first urls)))))]
+                       (println "Failed to execute request using " (first urls))))]
       (if (not (nil? response))
         response
         (recur (rest urls))))))   
