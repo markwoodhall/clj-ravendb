@@ -1,7 +1,7 @@
 (ns clj-ravendb.client
   (:require [clj-http.client :as client]
             [clj-ravendb.requests :as req]
-            [clojure.core.async :refer [go chan close! <!! >!! <! >!]]
+            [clojure.core.async :refer [go chan close! timeout <!! >!! <! >!]]
             [clj-ravendb.responses :as res]))
 
 (def not-nil? (complement nil?))
@@ -195,42 +195,51 @@
            (recur (get-result) (inc attempt))))))))
 
 (defn- watch
-  ([client watch]
-   (watch client watch (chan)))
-  ([client watch channel]
+  ([client watch-fn channel]
+   (watch client watch-fn channel {}))
+  ([client watch-fn channel {:keys [wait]
+                          :or {wait 500}}]
    (let [keep-watching? (atom true)
          f (future 
              (println "Watching" watch "for changes")
              (loop [last-value {}]
-               (println last-value)
-               (let [latest (watch)]
+               (let [latest (watch-fn)]
                  (if (and (not= last-value {})
                           (not= last-value latest))
                    (go (>! channel latest)))
                  (if @keep-watching? 
-                   (recur latest)))))]
+                   (do 
+                     (println "Waiting" wait "ms until next 'watch'")
+                     (Thread/sleep wait)
+                     (recur latest))))))]
      {:channel channel 
       :stop (fn []
-              (println "Closing channel" channel "and trying to cancel future" f)
+              (println "Closing channel" channel "and trying to end future" f)
               (reset! keep-watching? false)
               (close! channel))})))
 
 (defn watch-documents
   "Watch a collections of documents for changes 
   and place the changed document(s) on a channel 
-  when there are differences."
+  when there are differences.
+  
+  Options is a map and can contain,
+  :wait - milliseconds to wait between watch calls."
   ([client document-ids]
    (watch-documents client document-ids (chan)))
-  ([client document-ids channel]
+  ([client document-ids channel options]
    (watch client (fn []
-                   (load-documents client document-ids)) channel)))
+                   (load-documents client document-ids)) channel options)))
 
 (defn watch-index
   "Watch the results of an index query for changes 
   and place the changed result(s) on a channel 
-  when there are differences."
+  when there are differences.
+  
+  Options is a map and can contain, 
+  :wait - milliseconds to wait between watch calls."
   ([client query]
    (watch-index client query (chan)))
-  ([client query channel]
+  ([client query channel options]
    (watch client (fn []
-                   (query-index client query)) channel)))
+                   (query-index client query)) channel options)))
