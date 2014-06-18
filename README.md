@@ -173,6 +173,9 @@ Watching for document changes:
 (let [ch (chan)]
  (def watcher (watch-documents northwind ["Companies/80","Companies/79"] ch)))
 
+;; You can optionally tell the watcher to wait x milliseconds between 'checks'.
+(def watcher (watch-documents northwind ["Companies/80","Companies/79"] ch {:wait 1000}))
+
 ;; If you dont pass in a channel, you can access the newly created one
 (let [ch (:channel watcher)])
 
@@ -200,6 +203,9 @@ Watching for index changes:
 
 (let [ch (chan)]
  (def watcher (watch-index northwind {:index "SomeIndexToWatch"} ch)))
+
+;; You can optionally tell the watcher to wait x milliseconds between 'checks'.
+(def watcher (watch-index northwind {: index "SomeIndexToWatch"} ch {:wait 1000}))
 
 ;; If you dont pass in a channel, you can access the newly created one
 (let [ch (:channel watcher)])
