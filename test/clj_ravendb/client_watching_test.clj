@@ -15,7 +15,7 @@
       (let [key "TestDocToWatch"
             document {:test 2 :name "WatchedDocument"}
             ch (chan)
-            watcher (watch-documents client ["TestDocToWatch"] ch)
+            watcher (watch-documents client ["TestDocToWatch"] ch {:wait 0})
             _ (Thread/sleep 1000)
             _ (put-document client key document) 
             actual (first (:results (<!! ch)))] 
@@ -27,7 +27,7 @@
       (let [key "TestDocToWatch"
             document {:test 2 :name "WatchedDocument"}
             ch (chan)
-            watcher (watch-index client {:index "WatchedDocuments"} ch)
+            watcher (watch-index client {:index "WatchedDocuments"} ch {:wait 0})
             _ (Thread/sleep 1000)
             _ (put-document client key document) 
             actual (first (:results (<!! ch)))]
