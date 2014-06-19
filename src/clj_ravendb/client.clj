@@ -198,7 +198,7 @@
   ([client watch-fn channel]
    (watch client watch-fn channel {}))
   ([client watch-fn channel {:keys [wait]
-                          :or {wait 500}}]
+                             :or {wait 500}}]
    (let [keep-watching? (atom true)
          f (future 
              (println "Watching" watch "for changes")
