@@ -23,12 +23,8 @@ This is currently a work in progress and under active development, it is liable 
  
 Add the following to ```project.clj``` ```:dependencies```:
 
-```
-#!clojure
+[![Clojars Project](http://clojars.org/clj-ravendb/latest-version.svg)](http://clojars.org/clj-ravendb)
 
-[clj-ravendb "0.2.0"]
-
-```
 
 ## Usage
 
