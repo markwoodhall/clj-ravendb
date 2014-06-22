@@ -4,21 +4,26 @@
             [clojure.core.async :refer [go chan close! timeout <!! >!! <! >!]]
             [clj-ravendb.responses :as res]))
 
+(def ^:dynamic *debug* false)
+(defmacro debug-do [& body]
+  (when *debug*
+    `(do ~@body)))
+
 (def not-nil? (complement nil?))
 
 (defn- post-req
   [{:keys [url body]}]
-  (println "Sending HTTP POST to" url "with JSON body " body)
+  (debug-do (println "Sending HTTP POST to" url "with JSON body " body))
   (client/post url {:body body :as :json-string-keys}))
 
 (defn- put-req
   [{:keys [url body]}]
-  (println "Sending HTTP PUT to" url "with JSON body " body)
+  (debug-do (println "Sending HTTP PUT to" url "with JSON body " body))
   (client/put url {:body body :as :json-string-keys}))
 
 (defn- get-req
   [{:keys [url]}]
-  (println "Sending HTTP GET to" url)
+  (debug-do (println "Sending HTTP GET to" url))
   (client/get url {:as :json-string-keys}))
 
 (defn- is-valid-client?
@@ -37,7 +42,7 @@
     (let [response (try
                      (handle (merge {:url (first urls)} request)) 
                      (catch java.net.ConnectException ce 
-                       (println "Failed to execute request using " (first urls))))]
+                       (debug-do (println "Failed to execute request using " (first urls)))))]
       (if (not (nil? response))
         response
         (recur (rest urls))))))   
@@ -59,7 +64,7 @@
    (let [fragments (list url "Databases" database)
          address (clojure.string/join "/" fragments)
          load-replications (fn []
-                             (println "Loading replication destinations from" address)
+                             (debug-do (println "Loading replication destinations from" address))
                              (:results (res/load-replications (get-req (req/load-replications address)))))
          replications (if replicated? 
                         (load-replications)
@@ -190,7 +195,7 @@
                (= attempt max-attempts))
          result
          (do
-           (println "Index" (:index query) "is stale, waiting" wait "ms before trying again.")
+           (debug-do (println "Index" (:index query) "is stale, waiting" wait "ms before trying again."))
            (Thread/sleep wait)
            (recur (get-result) (inc attempt))))))))
 
@@ -201,7 +206,7 @@
                              :or {wait 500}}]
    (let [keep-watching? (atom true)
          f (future 
-             (println "Watching" watch "for changes")
+             (debug-do (println "Watching" watch "for changes"))
              (loop [last-value {}]
                (let [latest (watch-fn)]
                  (if (and (not= last-value {})
@@ -209,12 +214,12 @@
                    (go (>! channel latest)))
                  (if @keep-watching? 
                    (do 
-                     (println "Waiting" wait "ms until next 'watch'")
+                     (debug-do (println "Waiting" wait "ms until next 'watch'"))
                      (Thread/sleep wait)
                      (recur latest))))))]
      {:channel channel 
       :stop (fn []
-              (println "Closing channel" channel "and trying to end future" f)
+              (debug-do (println "Closing channel" channel "and trying to end future" f))
               (reset! keep-watching? false)
               (close! channel))})))
 
@@ -227,6 +232,8 @@
   :wait - milliseconds to wait between watch calls."
   ([client document-ids]
    (watch-documents client document-ids (chan)))
+  ([client document-ids channel]
+   (watch-documents client document-ids channel {}))
   ([client document-ids channel options]
    (watch client (fn []
                    (load-documents client document-ids)) channel options)))
@@ -240,6 +247,8 @@
   :wait - milliseconds to wait between watch calls."
   ([client query]
    (watch-index client query (chan)))
+  ([client query channel]
+   (watch-index client query channel {}))
   ([client query channel options]
    (watch client (fn []
                    (query-index client query)) channel options)))
