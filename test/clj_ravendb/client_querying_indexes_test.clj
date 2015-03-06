@@ -27,12 +27,12 @@
     (testing "querying an index returns the correct results"
       (let [actual (query-index client qry)
             results (actual :results)
-            doc-one (first (filter 
-                             (fn [i] 
+            doc-one (first (filter
+                             (fn [i]
                                (and (= (-> i :Company) "companies/38")
                                     (= (-> i :Count) 10.0))) results))
-            doc-two (first (filter 
-                             (fn [i] 
+            doc-two (first (filter
+                             (fn [i]
                                (and (= (-> i :Company) "companies/68")
                                     (= (-> i :Count) 10.0))) results))]
         (pprint/pprint actual)
@@ -43,8 +43,8 @@
     (testing "querying an index with multiple clauses returns the correct results"
       (let [actual (query-index client (assoc qry :Total 6089.9))
             results (actual :results)
-            doc-one (first (filter 
-                             (fn [i] 
+            doc-one (first (filter
+                             (fn [i]
                                (and (= (-> i :Company) "companies/11")
                                     (= (-> i :Count) 10.0)
                                     (= (-> i :Total) 6089.9))) results))]
@@ -56,9 +56,9 @@
     (testing "querying indexes uses custom request builder"
       (let [req-builder (fn [client query]
                           (throw (Exception. "CustomRequestBuilderError")))]
-        (is (thrown-with-msg? Exception #"CustomRequestBuilderError" 
+        (is (thrown-with-msg? Exception #"CustomRequestBuilderError"
                               (query-index client qry {
-                                                       :request-builder req-builder 
+                                                       :request-builder req-builder
                                                        :response-parser res/query-index
                                                        }))))))
 
@@ -66,8 +66,8 @@
     (testing "querying indexes uses custom response parser"
       (let [res-parser (fn [raw-response]
                          (throw (Exception. "CustomResponseParserError")))]
-        (is (thrown-with-msg? Exception #"CustomResponseParserError" 
+        (is (thrown-with-msg? Exception #"CustomResponseParserError"
                               (query-index client qry {
-                                                       :request-builder req/query-index 
+                                                       :request-builder req/query-index
                                                        :response-parser res-parser
                                                        })))))))

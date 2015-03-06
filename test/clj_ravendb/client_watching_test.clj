@@ -4,8 +4,7 @@
             [clj-ravendb.requests :as req]
             [clj-ravendb.responses :as res]
             [clojure.core.async :refer [go chan thread <!! >!! <! >!]]
-            [clojure.pprint :as pprint]
-            ))
+            [clojure.pprint :as pprint]))
 
 (let [url "http://localhost:8080"
       database "northwind"
@@ -39,15 +38,10 @@
                                            :alias "doc" 
                                            :where "doc.name ==\"WatchedDocument\"" 
                                            :select "new { doc.name }"}) 
-                        (bulk-operations client [{
-                                                  :Method "PUT"
+                        (bulk-operations client [{:Method "PUT"
                                                   :Key "TestDocToWatch"
                                                   :Document {:test 1 :name "WatchedDocument"}
-                                                  :Metadata {}
-                                                  }])
+                                                  :Metadata }])
                         (f) 
-                        (bulk-operations client [{
-                                                  :Method "DELETE"
-                                                  :Key "TestDocToWatch"
-                                                  }
-                                                 ]))))
+                        (bulk-operations client [{:Method "DELETE"
+                                                  :Key "TestDocToWatch"}]))))
