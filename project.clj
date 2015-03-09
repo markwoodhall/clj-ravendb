@@ -1,8 +1,8 @@
 (defproject clj-ravendb "0.4.0"
-  :description "A clojure library for consuming a RavenDB rest api."
-  :url "https://bitbucket.org/markwoodhall/clj-ravendb"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :description "A Clojure library for consuming a RavenDB rest api."
+  :url "https://github.com/markwoodhall/clj-ravendb"
+  :license {:name "MIT License"
+            :url "http://opensource.org/licenses/mit-license.php"}
   :plugins [[quickie "0.2.5"]]
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [clj-http "0.9.2"]
@@ -11,5 +11,5 @@
   :deploy-repositories [
     ["clojars" {:sign-releases false}]
   ]
-  :scm {:name "bitbucket"
-        :url "https://bitbucket.org/markwoodhall/clj-ravendb"})
+  :scm {:name "github"
+        :url "https://github.com/markwoodhall/clj-ravendb"})
