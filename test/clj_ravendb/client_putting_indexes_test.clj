@@ -3,11 +3,10 @@
             [clj-ravendb.client :refer :all]
             [clj-ravendb.requests :as req]
             [clj-ravendb.responses :as res]
+            [clj-ravendb.config :refer :all]
             [clojure.pprint :as pprint]))
 
-(let [url "http://localhost:8080"
-      database "northwind"
-      client (client url database)
+(let [client (client ravendb-url ravendb-database)
       idx {:name "DocumentsByName" :alias "doc" :where "doc.name ==\"Test\"" :select "new { doc.name }"}]
   (deftest test-put-index-with-invalid-index-throws
     (testing "Putting an index with an invalid form."

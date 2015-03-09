@@ -3,11 +3,10 @@
             [clj-ravendb.client :refer :all]
             [clj-ravendb.requests :as req]
             [clj-ravendb.responses :as res]
+            [clj-ravendb.config :refer :all]
             [clojure.pprint :as pprint]))
 
-(let [url "http://localhost:8080"
-      database "northwind"
-      client (client url database)]
+(let [client (client ravendb-url ravendb-database)]
   (deftest test-put-returns-correct-status-code
     (testing "processing a PUT command returns the correct result"
       (let [key "Key1"
@@ -38,9 +37,5 @@
                                             {:request-builder req/put-document 
                                              :response-parser res-parser}))))))
 
-  (use-fixtures :each (fn [f] (f) (bulk-operations client [
-                                                             {
-                                                              :Method "DELETE"
-                                                              :Key "Key1"
-                                                              }
-                                                             ]))))
+  (use-fixtures :each (fn [f] (f) (bulk-operations client [{:Method "DELETE"
+                                                            :Key "Key1"}]))))

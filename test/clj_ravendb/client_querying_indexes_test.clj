@@ -3,11 +3,10 @@
             [clj-ravendb.client :refer :all]
             [clj-ravendb.requests :as req]
             [clj-ravendb.responses :as res]
+            [clj-ravendb.config :refer :all]
             [clojure.pprint :as pprint]))
 
-(let [url "http://localhost:8080"
-      database "northwind"
-      client (client url database)
+(let [client (client ravendb-url ravendb-database)
       qry {:index "Orders/ByCompany" :Count 10}]
   (deftest test-query-index-with-invalid-query
     (testing "Querying an index with an invalid query form."
@@ -59,8 +58,7 @@
         (is (thrown-with-msg? Exception #"CustomRequestBuilderError"
                               (query-index client qry {
                                                        :request-builder req-builder
-                                                       :response-parser res/query-index
-                                                       }))))))
+                                                       :response-parser res/query-index}))))))
 
   (deftest test-query-index-uses-custom-res-parser
     (testing "querying indexes uses custom response parser"
@@ -69,5 +67,4 @@
         (is (thrown-with-msg? Exception #"CustomResponseParserError"
                               (query-index client qry {
                                                        :request-builder req/query-index
-                                                       :response-parser res-parser
-                                                       })))))))
+                                                       :response-parser res-parser})))))))

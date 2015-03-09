@@ -3,12 +3,11 @@
             [clj-ravendb.client :refer :all]
             [clj-ravendb.requests :as req]
             [clj-ravendb.responses :as res]
+            [clj-ravendb.config :refer :all]
             [clojure.core.async :refer [go chan thread <!! >!! <! >!]]
             [clojure.pprint :as pprint]))
 
-(let [url "http://localhost:8080"
-      database "northwind"
-      client (client url database)]
+(let [client (client ravendb-url ravendb-database)]
   (deftest test-watching-document-puts-to-channel-on-document-change
     (testing "Watching a document puts to a channel on document change"
       (let [key "TestDocToWatch"
@@ -41,7 +40,7 @@
                         (bulk-operations client [{:Method "PUT"
                                                   :Key "TestDocToWatch"
                                                   :Document {:test 1 :name "WatchedDocument"}
-                                                  :Metadata }])
+                                                  :Metadata {}}])
                         (f) 
                         (bulk-operations client [{:Method "DELETE"
                                                   :Key "TestDocToWatch"}]))))

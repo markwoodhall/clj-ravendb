@@ -3,11 +3,10 @@
             [clj-ravendb.client :refer :all]
             [clj-ravendb.requests :as req]
             [clj-ravendb.responses :as res]
+            [clj-ravendb.config :refer :all]
             [clojure.pprint :as pprint]))
 
-(let [url "http://localhost:8080"
-      database "northwind"
-      client (client url database)]
+(let [client (client ravendb-url ravendb-database)]
   (deftest test-load-documents-with-no-document-ids-throws
     (testing "Loading documents without specifying document ids
              throws an assertion error."
