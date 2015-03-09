@@ -1,5 +1,5 @@
 (ns clj-ravendb.client
-  (:require [clj-http.client :as client]
+  (:require [clj-http.client :as http]
             [clj-ravendb.requests :as req]
             [clojure.core.async :refer [go chan close! timeout <!! >!! <! >!]]
             [clj-ravendb.responses :as res]))
@@ -14,17 +14,17 @@
 (defn- post-req
   [{:keys [url body]}]
   (debug-do (println "Sending HTTP POST to" url "with JSON body " body))
-  (client/post url {:body body :as :json-string-keys}))
+  (http/post url {:body body :as :json-string-keys}))
 
 (defn- put-req
   [{:keys [url body]}]
   (debug-do (println "Sending HTTP PUT to" url "with JSON body " body))
-  (client/put url {:body body :as :json-string-keys}))
+  (http/put url {:body body :as :json-string-keys}))
 
 (defn- get-req
   [{:keys [url]}]
   (debug-do (println "Sending HTTP GET to" url))
-  (client/get url {:as :json-string-keys}))
+  (http/get url {:as :json-string-keys}))
 
 (defn- is-valid-client?
   [{:keys [address replications replicated? master-only-writes?]}]
