@@ -28,8 +28,7 @@ Add the following to ```project.clj``` ```:dependencies```:
 
 ## Usage
 
-```
-#!clojure
+```clojure
 
 (:require [clj-ravendb.client :refer :all]))
 
@@ -37,8 +36,7 @@ Add the following to ```project.clj``` ```:dependencies```:
 
 Getting a RavenDB client:
 
-```
-#!clojure
+```clojure
 
 (def northwind (client "http://localhost:8080" "northwind"))
 
@@ -46,16 +44,14 @@ Getting a RavenDB client:
 
 Loading some documents:
 
-```
-#!clojure
+```clojure
 (load-documents northwind ["employees/1" "employees/2"])
 
 ```
 
 Returns a map with a sequence of results like:
 
-```
-#!clojure
+```clojure
 
 {:status 200,
  :results
@@ -102,8 +98,7 @@ Returns a map with a sequence of results like:
 
 Putting a document:
 
-```
-#!clojure
+```clojure
 
 (put-document northwind "Employees/10" { :FirstName "David" :LastName "Smith" :age 50 })
 
@@ -111,8 +106,7 @@ Putting a document:
 
 Returns a map with a key to indicate the HTTP status:
 
-```
-#!clojure 
+```clojure 
 
 {:status 200}
 
@@ -120,8 +114,7 @@ Returns a map with a key to indicate the HTTP status:
 
 Querying an index:
 
-```
-#!clojure
+```clojure
 
 (query-index northwind { :index "ByCompany" :Count 10 })
 
@@ -138,8 +131,7 @@ Querying an index:
 
 Returns a map with a sequence of results like:
 
-```
-#!clojure
+```clojure
 {:status 200,
  :stale? false,
  :results
@@ -159,8 +151,7 @@ Returns a map with a sequence of results like:
 
 Watching for document changes:
 
-```
-#!clojure
+```clojure
 ;; Watching documents makes use of core.async channels. 
 ;; You can either pass in a channel or have watch-documents create one. 
 ;; It creates a future that continuosly calls load-document and monitors
@@ -189,8 +180,7 @@ Watching for document changes:
 
 Watching for index changes:
 
-```
-#!clojure
+```clojure
 ;; Watching documents makes use of core.async channels. 
 ;; You can either pass in a channel or have watch-documents create one. 
 ;; It creates a future that continuosly calls load-document and monitors
@@ -226,8 +216,7 @@ There are a number of "configuration" options that can be used when creating a c
 
 To create an client that supports replication:
 
-```
-#!clojure
+```clojure
 
 (def northwind (client "http://localhost:8080" "northwind" {:replicated? true}))
 
@@ -235,8 +224,7 @@ To create an client that supports replication:
 
 When this option is used creating the client will also query the master url for replication destinations. The client will be represented by a map that looks like:
 
-```
-#!clojure
+```clojure
 
 {
   :replicated? true
@@ -253,8 +241,7 @@ When this client is used to (load-documents) or (query-index) if the master is d
 
 If you've created a client that supports replication by default write operations will only go to the master, you can change this behaviour using the following:
 
-```
-#!clojure
+```clojure
 
 (def northwind (client "http://localhost:8080" "northwind" {:replicated? true :master-only-write? false}))
 
@@ -262,8 +249,7 @@ If you've created a client that supports replication by default write operations
 
 The client will be represented by a map that looks like:
 
-```
-#!clojure
+```clojure
 
 {
   :replicated? true
