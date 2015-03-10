@@ -56,8 +56,7 @@
       (let [req-builder (fn [client query]
                           (throw (Exception. "CustomRequestBuilderError")))]
         (is (thrown-with-msg? Exception #"CustomRequestBuilderError"
-                              (query-index client qry {
-                                                       :request-builder req-builder
+                              (query-index client qry {:request-builder req-builder
                                                        :response-parser res/query-index}))))))
 
   (deftest test-query-index-uses-custom-res-parser
@@ -65,6 +64,5 @@
       (let [res-parser (fn [raw-response]
                          (throw (Exception. "CustomResponseParserError")))]
         (is (thrown-with-msg? Exception #"CustomResponseParserError"
-                              (query-index client qry {
-                                                       :request-builder req/query-index
+                              (query-index client qry {:request-builder req/query-index
                                                        :response-parser res-parser})))))))

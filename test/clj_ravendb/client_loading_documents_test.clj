@@ -26,19 +26,19 @@
       (let [doc-ids ["employees/1" "employees/2"]
             req-builder (fn [client document-ids]
                           (throw (Exception. "CustomRequestBuilderError")))]
-        (is (thrown-with-msg? Exception #"CustomRequestBuilderError" 
-                              (load-documents client doc-ids 
-                                              {:request-builder req-builder 
+        (is (thrown-with-msg? Exception #"CustomRequestBuilderError"
+                              (load-documents client doc-ids
+                                              {:request-builder req-builder
                                                :response-parser res/load-documents}))))))
-  
+
   (deftest test-load-documents-uses-custom-res-parser
     (testing "loading documents uses custom response parser"
       (let [doc-ids ["employees/1" "employees/2"]
             res-parser (fn [raw-response]
                           (throw (Exception. "CustomResponseParserError")))]
-        (is (thrown-with-msg? Exception #"CustomResponseParserError" 
-                              (load-documents client doc-ids 
-                                              {:request-builder req/load-documents 
+        (is (thrown-with-msg? Exception #"CustomResponseParserError"
+                              (load-documents client doc-ids
+                                              {:request-builder req/load-documents
                                                :response-parser res-parser}))))))
 
   (deftest test-load-documents-returns-correct-results
@@ -46,12 +46,12 @@
       (let [doc-ids ["employees/1" "employees/2"]
             actual (load-documents client doc-ids)
             results (actual :results)
-            doc-one (first (filter 
-                             (fn [i] 
+            doc-one (first (filter
+                             (fn [i]
                                (and (= (i :key) "employees/1")
                                     (= (-> i :doc :LastName) "Davolio"))) results))
-            doc-two (first (filter 
-                             (fn [i] 
+            doc-two (first (filter
+                             (fn [i]
                                (and (= (i :key) "employees/2")
                                     (= (-> i :doc :LastName) "Fuller"))) results))]
         (pprint/pprint actual)
