@@ -94,7 +94,7 @@
        (wrap-retry-replicas post-req)
        (response-parser))))
 
-(defn bulk-operations
+(defn bulk-operations!
   "Handles a given set of bulk operations that
   correspond to RavenDB batch req.
 
@@ -102,7 +102,7 @@
   :request-builder is a custom request builder fn.
   :response-parser is a customer response parser fn."
   ([client operations]
-   (bulk-operations client operations {}))
+   (bulk-operations! client operations {}))
   ([{:keys [master-only-writes?] :as client}
     operations
     {:keys [request-builder response-parser]
@@ -119,7 +119,7 @@
                         (no-retry-replicas request post-req)
                         (wrap-retry-replicas request post-req))))))
 
-(defn put-index
+(defn put-index!
   "Creates or updates an index, where an index takes
   the form:
   idx {
@@ -133,7 +133,7 @@
   :request-builder is a custom request builder fn.
   :response-parser is a customer response parser fn."
   ([client index]
-   (put-index client index {}))
+   (put-index! client index {}))
   ([client index
     {:keys [request-builder response-parser]
      :or {request-builder req/put-index response-parser res/put-index}}]
@@ -143,7 +143,7 @@
        (put-req)
        (response-parser))))
 
-(defn put-document
+(defn put-document!
   "Creates or updates a document by its key. Where 'document'
   is a map.
 
@@ -151,7 +151,7 @@
   :request-builder is a custom request builder fn.
   :response-parser is a customer response parser fn."
   ([client key document]
-   (put-document client key document {}))
+   (put-document! client key document {}))
   ([{:keys [master-only-writes?] :as client}
     key document
     {:keys [request-builder response-parser]

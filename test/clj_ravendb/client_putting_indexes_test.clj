@@ -11,21 +11,21 @@
   (deftest test-put-index-with-invalid-index-throws
     (testing "Putting an index with an invalid form."
       (is (thrown? AssertionError
-                   (put-index client {})))
+                   (put-index! client {})))
       (is (thrown? AssertionError
-                   (put-index client {:name "Test"})))
+                   (put-index! client {:name "Test"})))
       (is (thrown? AssertionError
-                   (put-index client {:select "Test"})))
+                   (put-index! client {:select "Test"})))
       (is (thrown? AssertionError
-                   (put-index client {:where "Test"})))
+                   (put-index! client {:where "Test"})))
       (is (thrown? AssertionError
-                   (put-index client {:name "Test" :alias "Alias"})))
+                   (put-index! client {:name "Test" :alias "Alias"})))
       (is (thrown? AssertionError
-                   (put-index client {:name "Test" :alias "Alias" :where "Where"})))))
+                   (put-index! client {:name "Test" :alias "Alias" :where "Where"})))))
 
   (deftest test-put-index-returns-correct-status-code
     (testing "putting an index returns the correct status code"
-      (let [actual (put-index client idx)
+      (let [actual (put-index! client idx)
             expected 201]
         (pprint/pprint actual)
         (is (= expected (actual :status))))))
@@ -35,7 +35,7 @@
       (let [req-builder (fn [url index]
                           (throw (Exception. "CustomRequestBuilderError")))]
         (is (thrown-with-msg? Exception #"CustomRequestBuilderError"
-                              (put-index client idx
+                              (put-index! client idx
                                          {:request-builder req-builder
                                           :response-parser res/query-index}))))))
 
@@ -44,6 +44,6 @@
       (let [res-parser (fn [raw-response]
                          (throw (Exception. "CustomResponseParserError")))]
         (is (thrown-with-msg? Exception #"CustomResponseParserError"
-                              (put-index client idx
+                              (put-index! client idx
                                          {:request-builder req/put-index
                                           :response-parser res-parser})))))))

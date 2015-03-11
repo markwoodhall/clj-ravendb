@@ -100,7 +100,7 @@ Putting a document:
 
 ```clojure
 
-(put-document northwind "Employees/10" { :FirstName "David" :LastName "Smith" :age 50 })
+(put-document! northwind "Employees/10" { :FirstName "David" :LastName "Smith" :age 50 })
 
 ```
 
@@ -260,7 +260,7 @@ The client will be represented by a map that looks like:
 
 ```
 
-When this client is used to (put-document), (put-index) or for (bulk-operations) if the master is down then one of the replications will be used for write operations.
+When this client is used to (put-document!), (put-index!) or for (bulk-operations!) if the master is down then one of the replications will be used for write operations.
 
 ## Build & Test
 
