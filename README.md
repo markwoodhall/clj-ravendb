@@ -6,10 +6,12 @@ A clojure library designed to consume a RavenDB rest api.
 
 This is currently a work in progress and under active development, it is liable to substantial change and currently has the following features:
 
-* Store new documents
 * Load documents
+* Store new documents
+* Delete documents
 * Store new indexes
 * Query indexes
+* Create indexes
 * Replication aware  
 * Watch document(s) for changes
 * Watch index queries for changes
@@ -112,6 +114,21 @@ Returns a map with a key to indicate the HTTP status:
 
 ```
 
+Deleting a document:
+
+```clojure
+(bulk-operations! northwind [{:method "DELETE"
+		              :key "Key1"}])
+```
+
+Returns a map with a key to indicate the HTTP status:
+
+```clojure 
+
+{:status 200}
+
+```
+
 Querying an index:
 
 ```clojure
@@ -147,6 +164,23 @@ Returns a map with a sequence of results like:
   {:Company "companies/68", :Count 10.0, :Total 19343.779}
   {:Company "companies/80", :Count 10.0, :Total 10812.15})}
    
+```
+
+Creating an index:
+
+```clojure
+(put-index! northwind {:name "DocumentsByName"
+                       :alias "doc"
+                       :where "doc.name ==\"Test\""
+                       :select "new { doc.name }"})
+```
+
+Returns a map with a key to indicate the HTTP status:
+
+```clojure 
+
+{:status 200}
+
 ```
 
 Watching for document changes:
@@ -272,7 +306,7 @@ The client will be represented by a map that looks like:
 
 ```
 
-When this client is used to (put-document!), (put-index!) or for (bulk-operations!) if the master is down then one of the replications will be used for write operations.
+When this client is used to (put-document!), (put-index!) or for `bulk-operations!` if the master is down then one of the replications will be used for write operations.
 
 ## Build & Test
 

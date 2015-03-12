@@ -40,13 +40,13 @@
   [{:keys [bulk-operations! rest-client] :as client} & args]
   (let [rest-bulk-operations! (:bulk-operations! rest-client)
         operations (first args)
-        dels (map :Key (filter #(= (:Method %) "DELETE") operations))
-        puts (filter #(= (:Method %) "PUT") operations)
+        dels (map :key (filter #(= (:method %) "DELETE") operations))
+        puts (filter #(= (:method %) "PUT") operations)
         {:keys [status] :as response} (apply rest-bulk-operations! client args)]
     (if (= 200 status)
       (do
         (reset! client-cache (remove (fn [{:keys [key]}] (some #{key} dels)) @client-cache))
-        (swap! client-cache concat (map (fn [{:keys [Key Document]}] {:key Key :document Document}) puts))))
+        (swap! client-cache concat (map (fn [{:keys [key document]}] {:key key :document document}) puts))))
     response))
 
 (defn put-document!

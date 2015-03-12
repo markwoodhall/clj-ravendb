@@ -46,12 +46,12 @@
             doc-id-3 "Key3"
             _ (put-document! client doc-id {})
             _ (put-document! client doc-id-2 {})
-            _ (bulk-operations! client [{:Method "DELETE"
-                                         :Key doc-id}
-                                        {:Method "PUT"
-                                         :Document {}
-                                         :Metadata {}
-                                         :Key doc-id-3}])
+            _ (bulk-operations! client [{:method "DELETE"
+                                         :key doc-id}
+                                        {:method "PUT"
+                                         :document {}
+                                         :metadata {}
+                                         :key doc-id-3}])
             doc (first (filter (fn [d]
                                  (= (:key d) doc-id)) @client-cache))
             doc2 (first (filter (fn [d]
@@ -62,7 +62,7 @@
         (is (= doc-id-2 (:key doc2)))
         (is (= doc-id-3 (:key doc3))))))
 
-  (use-fixtures :each (fn [f] (f) (bulk-operations! client [{:Method "DELETE"
-                                                             :Key "Key1"}
-                                                            {:Method "DELETE"
-                                                             :Key "Key2"}]))))
+  (use-fixtures :each (fn [f] (f) (bulk-operations! client [{:method "DELETE"
+                                                             :key "Key1"}
+                                                            {:method "DELETE"
+                                                             :key "Key2"}]))))

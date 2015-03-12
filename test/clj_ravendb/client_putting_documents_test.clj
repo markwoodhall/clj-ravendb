@@ -21,21 +21,21 @@
             document {:name "Test"}
             req-builder (fn [client key document]
                           (throw (Exception. "CustomRequestBuilderError")))]
-        (is (thrown-with-msg? Exception #"CustomRequestBuilderError" 
-                              (put-document! client key document 
-                                            {:request-builder req-builder 
+        (is (thrown-with-msg? Exception #"CustomRequestBuilderError"
+                              (put-document! client key document
+                                            {:request-builder req-builder
                                              :response-parser res/put-document}))))))
-  
+
   (deftest test-put-document-uses-custom-res-parser
     (testing "putting documents uses custom response parser"
       (let [key "Key1"
             document {:name "Test"}
             res-parser (fn [raw-response]
                           (throw (Exception. "CustomResponseParserError")))]
-        (is (thrown-with-msg? Exception #"CustomResponseParserError" 
-                              (put-document! client key document 
-                                            {:request-builder req/put-document 
+        (is (thrown-with-msg? Exception #"CustomResponseParserError"
+                              (put-document! client key document
+                                            {:request-builder req/put-document
                                              :response-parser res-parser}))))))
 
-  (use-fixtures :each (fn [f] (f) (bulk-operations! client [{:Method "DELETE"
-                                                            :Key "Key1"}]))))
+  (use-fixtures :each (fn [f] (f) (bulk-operations! client [{:method "DELETE"
+                                                             :key "Key1"}]))))
