@@ -212,9 +212,21 @@ Watching for index changes:
 
 There are a number of "configuration" options that can be used when creating a client: 
 
+### Caching
+
+To create a client that supports caching:
+
+```clojure
+
+(def northwind (client "http://localhost:8080" "northwind" {:caching? true}))
+
+```
+
+When this option is used documents loading using ```load-documents``` will be cached. put-document! and bulk-operations! will update this local cache as well as the server.
+
 ###  Replication
 
-To create an client that supports replication:
+To create a client that supports replication:
 
 ```clojure
 
