@@ -284,6 +284,6 @@ The tests for this project assume an instance of RavenDB is running at http://lo
 
 ## License
 
-Copyright © 2014 Mark Woodhall
+Copyright © 2015 Mark Woodhall
 
 Released under the MIT License: http://www.opensource.org/licenses/mit-license.php
