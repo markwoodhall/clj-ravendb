@@ -222,7 +222,7 @@ To create a client that supports caching:
 
 ```
 
-When this option is used documents loading using ```load-documents``` will be cached. put-document! and bulk-operations! will update this local cache as well as the server.
+When this option is used documents loaded using `load-documents` will be cached. `put-document!` and `bulk-operations!` will update this local cache as well as the server.
 
 ###  Replication
 
@@ -247,7 +247,7 @@ When this option is used creating the client will also query the master url for 
 
 ```
 
-When this client is used to (load-documents) or (query-index) if the master is down then one of the replications will be used.
+When this client is used to `load-documents` or `query-index` if the master is down then one of the replications will be used.
 
 ###  Master Only Write
 
