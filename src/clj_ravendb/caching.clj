@@ -65,7 +65,9 @@
         doc (second args)
         id (first args)]
     (if (= 200 status)
-      (swap! client-cache conj (merge {:key id :cached? true} doc)))
+      (do
+        (reset! client-cache (remove (fn [{:keys [key]}] (some #{key} id)) @client-cache))
+        (swap! client-cache conj (merge {:key id :cached? true} doc))))
     response))
 
 (defn caching-client
