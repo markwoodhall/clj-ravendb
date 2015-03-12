@@ -109,10 +109,9 @@
                          request-builder req/query-index
                          response-parser res/query-index}}]
    {:pre [(:index query)]}
-   (let [get-result (fn[]
-                      (-> (request-builder client query)
+   (let [get-result #(-> (request-builder client query)
                           (wrap-retry-replicas get-req)
-                          (response-parser)))]
+                          (response-parser))]
      (loop [result (get-result) attempt 0]
        (if (or (not (:stale? result))
                (= attempt max-attempts))
