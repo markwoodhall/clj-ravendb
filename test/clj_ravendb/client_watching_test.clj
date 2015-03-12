@@ -15,7 +15,7 @@
             ch (chan)
             watcher (watch-documents client ["TestDocToWatch"] ch {:wait 0})
             _ (Thread/sleep 1000)
-            _ (put-document client key document) 
+            _ (put-document! client key document) 
             actual (first (:results (<!! ch)))] 
         ((:stop watcher))   
         (is (= actual {:key key :doc document})))))
@@ -27,20 +27,20 @@
             ch (chan)
             watcher (watch-index client {:index "WatchedDocuments"} ch {:wait 0})
             _ (Thread/sleep 1000)
-            _ (put-document client key document) 
+            _ (put-document! client key document) 
             actual (first (:results (<!! ch)))]
         ((:stop watcher))   
         (is (= actual document)))))
 
   (use-fixtures :each (fn [f] 
-                        (put-index client {:name "WatchedDocuments" 
+                        (put-index! client {:name "WatchedDocuments" 
                                            :alias "doc" 
                                            :where "doc.name ==\"WatchedDocument\"" 
                                            :select "new { doc.name }"}) 
-                        (bulk-operations client [{:Method "PUT"
+                        (bulk-operations! client [{:Method "PUT"
                                                   :Key "TestDocToWatch"
                                                   :Document {:test 1 :name "WatchedDocument"}
                                                   :Metadata {}}])
                         (f) 
-                        (bulk-operations client [{:Method "DELETE"
+                        (bulk-operations! client [{:Method "DELETE"
                                                   :Key "TestDocToWatch"}]))))

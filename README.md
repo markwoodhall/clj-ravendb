@@ -100,7 +100,7 @@ Putting a document:
 
 ```clojure
 
-(put-document northwind "Employees/10" { :FirstName "David" :LastName "Smith" :age 50 })
+(put-document! northwind "Employees/10" { :FirstName "David" :LastName "Smith" :age 50 })
 
 ```
 
@@ -212,9 +212,21 @@ Watching for index changes:
 
 There are a number of "configuration" options that can be used when creating a client: 
 
+### Caching
+
+To create a client that supports caching:
+
+```clojure
+
+(def northwind (client "http://localhost:8080" "northwind" {:caching? true}))
+
+```
+
+When this option is used documents loading using ```load-documents``` will be cached. put-document! and bulk-operations! will update this local cache as well as the server.
+
 ###  Replication
 
-To create an client that supports replication:
+To create a client that supports replication:
 
 ```clojure
 
@@ -260,7 +272,7 @@ The client will be represented by a map that looks like:
 
 ```
 
-When this client is used to (put-document), (put-index) or for (bulk-operations) if the master is down then one of the replications will be used for write operations.
+When this client is used to (put-document!), (put-index!) or for (bulk-operations!) if the master is down then one of the replications will be used for write operations.
 
 ## Build & Test
 
