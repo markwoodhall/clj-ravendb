@@ -118,7 +118,7 @@ Deleting a document:
 
 ```clojure
 (bulk-operations! northwind [{:method "DELETE"
-		              :key "Key1"}])
+                              :key "Key1"}])
 ```
 
 Returns a map with a key to indicate the HTTP status:
