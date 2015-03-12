@@ -7,7 +7,10 @@
             [clojure.pprint :as pprint]))
 
 (let [client (client ravendb-url ravendb-database)
-      idx {:name "DocumentsByName" :alias "doc" :where "doc.name ==\"Test\"" :select "new { doc.name }"}]
+      idx {:name "DocumentsByName"
+           :alias "doc"
+           :where "doc.name ==\"Test\""
+           :select "new { doc.name }"}]
   (deftest test-put-index-with-invalid-index-throws
     (testing "Putting an index with an invalid form."
       (is (thrown? AssertionError
