@@ -20,9 +20,8 @@
   to the indexes endpoint in order to query an index."
   [{:keys [address replications]} qry]
   (let [request-url (str "/indexes/" (qry :index) "?query=")
-        criteria (clojure.string/join " AND " (into []
-                                                    (for [[k v] (dissoc qry :index)]
-                                                      (str (name k) ":" v))))]
+        criteria (clojure.string/join " AND " (vec (for [[k v] (dissoc qry :index)]
+                                                     (str (name k) ":" v))))]
     {:urls (all-urls address replications (str request-url criteria))}))
 
 (defn bulk-operations
