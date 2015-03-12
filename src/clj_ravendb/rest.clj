@@ -37,10 +37,10 @@
      :or {request-builder req/bulk-operations response-parser res/bulk-operations}}]
    {:pre [(= (count (filter
                        (comp not nil?)
-                       (map (fn[{:keys [Method Document Metadata Key]}]
+                       (map (fn[{:keys [method document metadata key]}]
                               (cond
-                                (= Method "PUT") (and Document Metadata Key)
-                                (= Method "DELETE") Key)) operations))) (count operations))]}
+                                (= method "PUT") (and document metadata key)
+                                (= method "DELETE") key)) operations))) (count operations))]}
    (let [request (req/bulk-operations client operations)]
      (response-parser (if master-only-writes?
                         (no-retry-replicas request post-req)

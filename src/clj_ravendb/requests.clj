@@ -29,16 +29,20 @@
   [{:keys [address replications]} operations]
   (let [request-url (str address "/bulk_docs")]
     {:urls (all-urls address replications "/bulk_docs")
-     :body (json/write-str operations)}))
+     :body (json/write-str (map (fn [{:keys [method key document metadata]}]
+                                  {:Method method
+                                   :Key key
+                                   :Document document
+                                   :Metadata metadata}) operations))}))
 
 (defn put-document
   "Generates a map that represents a http request
   to the bulk_docs endpoint in order put a document."
   [client key document]
-  (bulk-operations client [{:Method "PUT"
-                            :Key key
-                            :Document document
-                            :Metadata { }}]))
+  (bulk-operations client [{:method "PUT"
+                            :key key
+                            :document document
+                            :metadata { }}]))
 
 (defn put-index
   "Generates a map that represents a http request
