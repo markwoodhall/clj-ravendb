@@ -1,5 +1,6 @@
 (ns clj-ravendb.client
-  (:require [clj-ravendb.rest :refer :all]))
+  (:require [clj-ravendb.rest :refer [rest-client]]
+            [clj-ravendb.caching :refer [caching-client]]))
 
 (defn client
   "Gets a client for a RavenDB endpoint at the
@@ -7,11 +8,14 @@
 
   Optionally takes a map of options.
   :replicated? is used to find replicated endpoints.
-  :master-only-writes? is used to indicate that write operations only go to the master"
+  :master-only-writes? is used to indicate that write operations only go to the master
+  :caching? is used to indicate if documents should be cached locally"
   ([url database]
    (client url database {}))
-  ([url database options]
-   (rest-client url database options)))
+  ([url database {:keys [caching?] :as options}]
+   (if caching?
+     (caching-client url database options)
+     (rest-client url database options))))
 
 (defn load-documents
   [{:keys [load-documents] :as client} & args]
