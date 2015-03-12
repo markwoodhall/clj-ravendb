@@ -158,8 +158,7 @@
   ([client document-ids channel]
    (watch-documents client document-ids channel {}))
   ([client document-ids channel options]
-   (watch client (fn []
-                   (load-documents client document-ids)) channel options)))
+   (watch client #(load-documents client document-ids) channel options)))
 
 (defn- watch-index
   "Watch the results of an index query for changes
@@ -173,8 +172,7 @@
   ([client query channel]
    (watch-index client query channel {}))
   ([client query channel options]
-   (watch client (fn []
-                   (query-index client query)) channel options)))
+   (watch client #(query-index client query) channel options)))
 
 (defn rest-client
   "Gets a client for a RavenDB endpoint at the
