@@ -1,6 +1,6 @@
 # clj-ravendb
 
-A clojure library designed to consume a RavenDB rest api. 
+A clojure library designed to consume a RavenDB rest api.
 
 ## Status
 
@@ -12,7 +12,7 @@ This is currently a work in progress and under active development, it is liable 
 * Store new indexes
 * Query indexes
 * Create indexes
-* Replication aware  
+* Replication aware
 * Watch document(s) for changes
 * Watch index queries for changes
 
@@ -22,7 +22,7 @@ This is currently a work in progress and under active development, it is liable 
 ```clj-ravendb``` is available from [Clojars](https://clojars.org/clj-ravendb)
 
 #
- 
+
 Add the following to ```project.clj``` ```:dependencies```:
 
 [![Clojars Project](http://clojars.org/clj-ravendb/latest-version.svg)](http://clojars.org/clj-ravendb)
@@ -57,7 +57,7 @@ Returns a map with a sequence of results like:
 
 {:status 200,
  :results
- ({:key "employees/1",
+ ({:id "employees/1",
    :doc
    {:Territories ["06897" "19713"],
     :HomePhone "(206) 555-9857",
@@ -76,7 +76,7 @@ Returns a map with a sequence of results like:
     :Extension "5467",
     :Notes nil,
     :HiredAt "1992-05-01T00:00:00.0000000"}}
-  {:key "employees/2",
+  {:id "employees/2",
    :doc
    {:Territories
     ["01581" "01730" "01833" "02116" "02139" "02184" "40222"],
@@ -108,7 +108,7 @@ Putting a document:
 
 Returns a map with a key to indicate the HTTP status:
 
-```clojure 
+```clojure
 
 {:status 200}
 
@@ -118,12 +118,12 @@ Deleting a document:
 
 ```clojure
 (bulk-operations! northwind [{:method "DELETE"
-                              :key "Key1"}])
+                              :id "Key1"}])
 ```
 
 Returns a map with a key to indicate the HTTP status:
 
-```clojure 
+```clojure
 
 {:status 200}
 
@@ -163,7 +163,7 @@ Returns a map with a sequence of results like:
   {:Company "companies/59", :Count 10.0, :Total 23128.86}
   {:Company "companies/68", :Count 10.0, :Total 19343.779}
   {:Company "companies/80", :Count 10.0, :Total 10812.15})}
-   
+
 ```
 
 Creating an index:
@@ -177,7 +177,7 @@ Creating an index:
 
 Returns a map with a key to indicate the HTTP status:
 
-```clojure 
+```clojure
 
 {:status 200}
 
@@ -186,10 +186,10 @@ Returns a map with a key to indicate the HTTP status:
 Watching for document changes:
 
 ```clojure
-;; Watching documents makes use of core.async channels. 
-;; You can either pass in a channel or have watch-documents create one. 
+;; Watching documents makes use of core.async channels.
+;; You can either pass in a channel or have watch-documents create one.
 ;; It creates a future that continuosly calls load-document and monitors
-;; the results, each time they are different they are put on the channel. 
+;; the results, each time they are different they are put on the channel.
 (def watcher (watch-document northwind ["Companies/80", "Companies/79"]))
 (let [ch (chan)]
  (def watcher (watch-documents northwind ["Companies/80","Companies/79"] ch)))
@@ -215,10 +215,10 @@ Watching for document changes:
 Watching for index changes:
 
 ```clojure
-;; Watching documents makes use of core.async channels. 
-;; You can either pass in a channel or have watch-documents create one. 
+;; Watching documents makes use of core.async channels.
+;; You can either pass in a channel or have watch-documents create one.
 ;; It creates a future that continuosly calls load-document and monitors
-;; the results, each time they are different they are put on the channel. 
+;; the results, each time they are different they are put on the channel.
 (def watcher (watch-index northwind {:index "SomeIndexToWatch"}))
 
 (let [ch (chan)]
@@ -244,7 +244,7 @@ Watching for index changes:
 
 ## Options
 
-There are a number of "configuration" options that can be used when creating a client: 
+There are a number of "configuration" options that can be used when creating a client:
 
 ### Caching
 
