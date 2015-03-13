@@ -23,22 +23,22 @@
       (let [doc-ids ["employees/2"]
             _ (load-documents client doc-ids)
             doc (first (filter (fn [d]
-                                 (= (:key d) "employees/2")) @client-cache))]
-        (is (= "employees/2" (:key doc)))))
+                                 (= (:id d) "employees/2")) @client-cache))]
+        (is (= "employees/2" (:id doc)))))
     (testing "put documents get added to the cache"
       (let [doc-id "Key1"
             _ (put-document! client doc-id {})
             doc (first (filter (fn [d]
-                                 (= (:key d) doc-id)) @client-cache))]
-        (is (= doc-id (:key doc)))))
+                                 (= (:id d) doc-id)) @client-cache))]
+        (is (= doc-id (:id doc)))))
     (testing "put documents get updated in the cache"
       (let [doc-id "Key1"
             _ (put-document! client doc-id {})
             _ (put-document! client doc-id {:updated 1})
             doc (first (filter (fn [d]
-                                 (= (:key d) doc-id)) @client-cache))
+                                 (= (:id d) doc-id)) @client-cache))
             _ (println doc)]
-        (is (and (= doc-id (:key doc))
+        (is (and (= doc-id (:id doc))
                  (= 1 (:updated doc))))))
     (testing "bulk operations result in add and remove from the cache"
       (let [doc-id "Key1"
@@ -47,22 +47,22 @@
             _ (put-document! client doc-id {})
             _ (put-document! client doc-id-2 {})
             _ (bulk-operations! client [{:method "DELETE"
-                                         :key doc-id}
+                                         :id doc-id}
                                         {:method "PUT"
                                          :document {}
                                          :metadata {}
-                                         :key doc-id-3}])
+                                         :id doc-id-3}])
             doc (first (filter (fn [d]
-                                 (= (:key d) doc-id)) @client-cache))
+                                 (= (:id d) doc-id)) @client-cache))
             doc2 (first (filter (fn [d]
-                                 (= (:key d) doc-id-2)) @client-cache))
+                                 (= (:id d) doc-id-2)) @client-cache))
             doc3 (first (filter (fn [d]
-                                 (= (:key d) doc-id-3)) @client-cache))]
+                                 (= (:id d) doc-id-3)) @client-cache))]
         (is (nil? doc))
-        (is (= doc-id-2 (:key doc2)))
-        (is (= doc-id-3 (:key doc3))))))
+        (is (= doc-id-2 (:id doc2)))
+        (is (= doc-id-3 (:id doc3))))))
 
   (use-fixtures :each (fn [f] (f) (bulk-operations! client [{:method "DELETE"
-                                                             :key "Key1"}
+                                                             :id "Key1"}
                                                             {:method "DELETE"
-                                                             :key "Key2"}]))))
+                                                             :id "Key2"}]))))

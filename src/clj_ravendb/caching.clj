@@ -18,14 +18,14 @@
   [{:keys [load-documents rest-client] :as client} & args]
   (let [rest-load-documents (:load-documents rest-client)
         doc-ids (first args)
-        cached-ids (map :key @client-cache)
+        cached-ids (map :id @client-cache)
         not-cached (difference (set doc-ids) (set cached-ids))]
     (when-let [response (apply rest-load-documents client (assoc (vec args) 1 not-cached))]
       (when-let [results (:results response)]
         (swap! client-cache concat (map (fn [r]
                                           (assoc r :cached? true)) results)))
       {:status (:status response)
-       :results (filter (fn [{:keys [key]}] (some #{key} doc-ids)) @client-cache)})))
+       :results (filter (fn [{:keys [id]}] (some #{id} doc-ids)) @client-cache)})))
 
 (defn bulk-operations!
   "Handles a given set of bulk operations that
@@ -40,13 +40,13 @@
   [{:keys [bulk-operations! rest-client] :as client} & args]
   (let [rest-bulk-operations! (:bulk-operations! rest-client)
         operations (first args)
-        dels (map :key (filter #(= (:method %) "DELETE") operations))
+        dels (map :id (filter #(= (:method %) "DELETE") operations))
         puts (filter #(= (:method %) "PUT") operations)
         {:keys [status] :as response} (apply rest-bulk-operations! client args)]
     (if (= 200 status)
       (do
-        (reset! client-cache (remove (fn [{:keys [key]}] (some #{key} dels)) @client-cache))
-        (swap! client-cache concat (map (fn [{:keys [key document]}] {:key key :document document}) puts))))
+        (reset! client-cache (remove (fn [{:keys [id]}] (some #{id} dels)) @client-cache))
+        (swap! client-cache concat (map (fn [{:keys [id document]}] {:id id :document document}) puts))))
     response))
 
 (defn put-document!
@@ -63,11 +63,11 @@
   (let [rest-put-document! (:put-document! rest-client)
         {:keys [status] :as response} (apply rest-put-document! client args)
         doc (second args)
-        id (first args)]
+        doc-id (first args)]
     (if (= 200 status)
       (do
-        (reset! client-cache (remove (fn [{:keys [key]}] (some #{key} id)) @client-cache))
-        (swap! client-cache conj (merge {:key id :cached? true} doc))))
+        (reset! client-cache (remove (fn [{:keys [id]}] (some #{id} doc-id)) @client-cache))
+        (swap! client-cache conj (merge {:id doc-id :cached? true} doc))))
     response))
 
 (defn caching-client

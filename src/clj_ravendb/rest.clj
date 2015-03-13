@@ -1,9 +1,10 @@
 (ns clj-ravendb.rest
   (:require [clj-ravendb.util :refer :all]
             [clj-ravendb.replication :refer :all]
+            [clj-ravendb.validation :as valid]
             [clj-ravendb.requests :as req]
-            [clojure.core.async :refer [go chan close! timeout <!! >!! <! >!]]
-            [clj-ravendb.responses :as res]))
+            [clj-ravendb.responses :as res]
+            [clojure.core.async :refer [go chan close! timeout <!! >!! <! >!]]))
 
 (defn- load-documents
   "Loads a collection of documents represented
@@ -35,12 +36,7 @@
     operations
     {:keys [request-builder response-parser]
      :or {request-builder req/bulk-operations response-parser res/bulk-operations}}]
-   {:pre [(= (count (filter
-                       (comp not nil?)
-                       (map (fn[{:keys [method document metadata key]}]
-                              (cond
-                                (= method "PUT") (and document metadata key)
-                                (= method "DELETE") key)) operations))) (count operations))]}
+   {:pre [(valid/validate-bulk-operations operations)]}
    (let [request (req/bulk-operations client operations)]
      (response-parser (if master-only-writes?
                         (no-retry-replicas request post-req)
@@ -70,19 +66,19 @@
        (response-parser))))
 
 (defn- put-document!
-  "Creates or updates a document by its key. Where 'document'
+  "Creates or updates a document by its id where 'document'
   is a map.
 
   Optionally takes a map of options.
   :request-builder is a custom request builder fn.
   :response-parser is a customer response parser fn."
-  ([client key document]
-   (put-document! client key document {}))
+  ([client id document]
+   (put-document! client id document {}))
   ([{:keys [master-only-writes?] :as client}
-    key document
+    id document
     {:keys [request-builder response-parser]
      :or {request-builder req/put-document response-parser res/put-document}}]
-   (let [request (request-builder client key document)]
+   (let [request (request-builder client id document)]
      (response-parser (if master-only-writes?
                         (no-retry-replicas request post-req)
                         (wrap-retry-replicas request post-req))))))
@@ -131,6 +127,8 @@
              (debug-do (println "Watching" watch "for changes"))
              (loop [last-value {}]
                (let [latest (watch-fn)]
+
+                 (debug-do (println latest))
                  (if (and (not= last-value {})
                           (not= last-value latest))
                    (go (>! channel latest)))
