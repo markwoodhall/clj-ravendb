@@ -9,33 +9,33 @@
 (let [client (client ravendb-url ravendb-database)]
   (deftest test-put-returns-correct-status-code
     (testing "processing a PUT command returns the correct result"
-      (let [key "Key1"
+      (let [id "Key1"
             document {:name "Test"}
-            actual (put-document! client key document) expected 200]
+            actual (put-document! client id document) expected 200]
         (pprint/pprint actual)
         (is (= expected (actual :status))))))
 
   (deftest test-put-document-uses-custom-req-builder
     (testing "putting documents uses custom request builder"
-      (let [key "Key1"
+      (let [id "Key1"
             document {:name "Test"}
-            req-builder (fn [client key document]
+            req-builder (fn [client id document]
                           (throw (Exception. "CustomRequestBuilderError")))]
         (is (thrown-with-msg? Exception #"CustomRequestBuilderError"
-                              (put-document! client key document
+                              (put-document! client id document
                                             {:request-builder req-builder
                                              :response-parser res/put-document}))))))
 
   (deftest test-put-document-uses-custom-res-parser
     (testing "putting documents uses custom response parser"
-      (let [key "Key1"
+      (let [id "Key1"
             document {:name "Test"}
             res-parser (fn [raw-response]
                           (throw (Exception. "CustomResponseParserError")))]
         (is (thrown-with-msg? Exception #"CustomResponseParserError"
-                              (put-document! client key document
+                              (put-document! client id document
                                             {:request-builder req/put-document
                                              :response-parser res-parser}))))))
 
   (use-fixtures :each (fn [f] (f) (bulk-operations! client [{:method "DELETE"
-                                                             :key "Key1"}]))))
+                                                             :id "Key1"}]))))

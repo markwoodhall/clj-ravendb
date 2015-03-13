@@ -66,19 +66,19 @@
        (response-parser))))
 
 (defn- put-document!
-  "Creates or updates a document by its key. Where 'document'
+  "Creates or updates a document by its id where 'document'
   is a map.
 
   Optionally takes a map of options.
   :request-builder is a custom request builder fn.
   :response-parser is a customer response parser fn."
-  ([client key document]
-   (put-document! client key document {}))
+  ([client id document]
+   (put-document! client id document {}))
   ([{:keys [master-only-writes?] :as client}
-    key document
+    id document
     {:keys [request-builder response-parser]
      :or {request-builder req/put-document response-parser res/put-document}}]
-   (let [request (request-builder client key document)]
+   (let [request (request-builder client id document)]
      (response-parser (if master-only-writes?
                         (no-retry-replicas request post-req)
                         (wrap-retry-replicas request post-req))))))
@@ -127,6 +127,8 @@
              (debug-do (println "Watching" watch "for changes"))
              (loop [last-value {}]
                (let [latest (watch-fn)]
+
+                 (debug-do (println latest))
                  (if (and (not= last-value {})
                           (not= last-value latest))
                    (go (>! channel latest)))

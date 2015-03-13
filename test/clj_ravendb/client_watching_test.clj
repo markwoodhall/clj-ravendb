@@ -10,24 +10,24 @@
 (let [client (client ravendb-url ravendb-database)]
   (deftest test-watching-document-puts-to-channel-on-document-change
     (testing "Watching a document puts to a channel on document change"
-      (let [key "TestDocToWatch"
+      (let [id "TestDocToWatch"
             document {:test 2 :name "WatchedDocument"}
             ch (chan)
             watcher (watch-documents client ["TestDocToWatch"] ch {:wait 0})
             _ (Thread/sleep 1000)
-            _ (put-document! client key document)
+            _ (put-document! client id document)
             actual (first (:results (<!! ch)))]
         ((:stop watcher))
-        (is (= actual {:key key :doc document})))))
+        (is (= actual {:id id :doc document})))))
 
   (deftest test-watching-index-puts-to-channel-on-index-change
     (testing "Watching a index puts to a channel on index change"
-      (let [key "TestDocToWatch"
+      (let [id "TestDocToWatch"
             document {:test 2 :name "WatchedDocument"}
             ch (chan)
             watcher (watch-index client {:index "WatchedDocuments"} ch {:wait 0})
             _ (Thread/sleep 1000)
-            _ (put-document! client key document)
+            _ (put-document! client id document)
             actual (first (:results (<!! ch)))]
         ((:stop watcher))
         (is (= actual document)))))
@@ -38,9 +38,9 @@
                                             :where "doc.name ==\"WatchedDocument\""
                                             :select "new { doc.name }"})
                         (bulk-operations! client [{:method "PUT"
-                                                   :key "TestDocToWatch"
+                                                   :id "TestDocToWatch"
                                                    :document {:test 1 :name "WatchedDocument"}
                                                    :metadata {}}])
                         (f)
                         (bulk-operations! client [{:method "DELETE"
-                                                   :key "TestDocToWatch"}]))))
+                                                   :id "TestDocToWatch"}]))))

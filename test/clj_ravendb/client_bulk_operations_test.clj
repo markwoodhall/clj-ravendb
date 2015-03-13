@@ -16,4 +16,4 @@
     (testing "Bulk operations with invalid operation
              throws an assertion error."
       (is (thrown? AssertionError (bulk-operations! client [{:method "PUT"}])))
-      (is (thrown? AssertionError (bulk-operations! client [{:method "DELETE"} {:method "PUT" :key "1" :document {} :metadata {}}]))))))
+      (is (thrown? AssertionError (bulk-operations! client [{:method "DELETE"} {:method "PUT" :id "1" :document {} :metadata {}}]))))))

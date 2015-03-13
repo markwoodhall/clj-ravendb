@@ -1,10 +1,10 @@
 (ns clj-ravendb.validation)
 
 (defn- nilify-invalid-operations
-  [{:keys [method document metadata key]}]
+  [{:keys [method document metadata id]}]
   (cond
-    (= method "PUT") (and document metadata key)
-    (= method "DELETE") key))
+    (= method "PUT") (and document metadata id)
+    (= method "DELETE") id))
 
 (defn validate-bulk-operations
   "Validates a given sequence of bulk operations to apply. 
