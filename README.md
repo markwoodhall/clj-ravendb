@@ -59,6 +59,7 @@ Returns a map with a sequence of results like:
  :results
  ({:id "employees/1",
    :last-modified-date "2013-11-12T14:48:11.2943076Z",
+   :etag "01000000-0000-0001-0000-00000000006A",
    :document
    {:Territories ["06897" "19713"],
     :HomePhone "(206) 555-9857",
@@ -79,6 +80,7 @@ Returns a map with a sequence of results like:
     :HiredAt "1992-05-01T00:00:00.0000000"}}
   {:id "employees/2",
    :last-modified-date "2013-11-12T14:48:11.2943076Z",
+   :etag "01000000-0000-0001-0000-000000000069",
    :document
    {:Territories
     ["01581" "01730" "01833" "02116" "02139" "02184" "40222"],
