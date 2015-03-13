@@ -15,6 +15,7 @@
                       [col]
                       (let [metadata (col "@metadata")]
                         {:id (metadata "@id")
+                         :last-modified-date (metadata "Last-Modified")
                          :document (into {}
                                          (for[[k v] (dissoc col "@metadata")]
                                            [(keyword k) v]))})) results)]

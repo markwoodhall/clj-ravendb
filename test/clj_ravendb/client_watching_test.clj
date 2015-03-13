@@ -16,7 +16,7 @@
             watcher (watch-documents client ["TestDocToWatch"] ch {:wait 0})
             _ (Thread/sleep 1000)
             _ (put-document! client id document)
-            actual (first (:results (<!! ch)))]
+            actual (dissoc (first (:results (<!! ch))) :last-modified-date)]
         ((:stop watcher))
         (is (= actual {:id id :document document})))))
 
