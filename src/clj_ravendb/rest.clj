@@ -1,9 +1,10 @@
 (ns clj-ravendb.rest
   (:require [clj-ravendb.util :refer :all]
             [clj-ravendb.replication :refer :all]
+            [clj-ravendb.validation :as valid]
             [clj-ravendb.requests :as req]
-            [clojure.core.async :refer [go chan close! timeout <!! >!! <! >!]]
-            [clj-ravendb.responses :as res]))
+            [clj-ravendb.responses :as res]
+            [clojure.core.async :refer [go chan close! timeout <!! >!! <! >!]]))
 
 (defn- load-documents
   "Loads a collection of documents represented
@@ -35,12 +36,7 @@
     operations
     {:keys [request-builder response-parser]
      :or {request-builder req/bulk-operations response-parser res/bulk-operations}}]
-   {:pre [(= (count (filter
-                       (comp not nil?)
-                       (map (fn[{:keys [method document metadata key]}]
-                              (cond
-                                (= method "PUT") (and document metadata key)
-                                (= method "DELETE") key)) operations))) (count operations))]}
+   {:pre [(valid/validate-bulk-operations operations)]}
    (let [request (req/bulk-operations client operations)]
      (response-parser (if master-only-writes?
                         (no-retry-replicas request post-req)
