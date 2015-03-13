@@ -18,7 +18,7 @@
             _ (put-document! client id document)
             actual (first (:results (<!! ch)))]
         ((:stop watcher))
-        (is (= actual {:id id :doc document})))))
+        (is (= actual {:id id :document document})))))
 
   (deftest test-watching-index-puts-to-channel-on-index-change
     (testing "Watching a index puts to a channel on index change"

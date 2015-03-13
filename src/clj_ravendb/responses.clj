@@ -15,9 +15,9 @@
                       [col]
                       (let [metadata (col "@metadata")]
                         {:id (metadata "@id")
-                         :doc (into {}
-                                    (for[[k v] (dissoc col "@metadata")]
-                                      [(keyword k) v]))})) results)]
+                         :document (into {}
+                                         (for[[k v] (dissoc col "@metadata")]
+                                           [(keyword k) v]))})) results)]
     {:status status
      :results mapped}))
 

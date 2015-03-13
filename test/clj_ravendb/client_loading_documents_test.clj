@@ -49,11 +49,11 @@
             doc-one (first (filter
                              (fn [i]
                                (and (= (i :id) "employees/1")
-                                    (= (-> i :doc :LastName) "Davolio"))) results))
+                                    (= (-> i :document :LastName) "Davolio"))) results))
             doc-two (first (filter
                              (fn [i]
                                (and (= (i :id) "employees/2")
-                                    (= (-> i :doc :LastName) "Fuller"))) results))]
+                                    (= (-> i :document :LastName) "Fuller"))) results))]
         (pprint/pprint actual)
         (and (is (not= nil doc-one))
              (is (not= nil doc-two)))))))
