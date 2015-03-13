@@ -37,7 +37,7 @@
     {:keys [request-builder response-parser]
      :or {request-builder req/bulk-operations response-parser res/bulk-operations}}]
    {:pre [(valid/validate-bulk-operations operations)]}
-   (let [request (req/bulk-operations client operations)]
+   (let [request (request-builder client operations)]
      (response-parser (if master-only-writes?
                         (no-retry-replicas request post-req)
                         (wrap-retry-replicas request post-req))))))
@@ -67,21 +67,12 @@
 
 (defn- put-document!
   "Creates or updates a document by its id where 'document'
-  is a map.
-
-  Optionally takes a map of options.
-  :request-builder is a custom request builder fn.
-  :response-parser is a customer response parser fn."
-  ([client id document]
-   (put-document! client id document {}))
-  ([{:keys [master-only-writes?] :as client}
-    id document
-    {:keys [request-builder response-parser]
-     :or {request-builder req/put-document response-parser res/put-document}}]
-   (let [request (request-builder client id document)]
-     (response-parser (if master-only-writes?
-                        (no-retry-replicas request post-req)
-                        (wrap-retry-replicas request post-req))))))
+  is a map."
+  [client id document]
+  (bulk-operations! client [{:method "PUT" 
+                             :id id 
+                             :document document 
+                             :metadata {}}]))
 
 (defn- query-index
   "Query an index, where the 'query' takes the form:
