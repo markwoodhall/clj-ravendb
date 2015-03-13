@@ -16,6 +16,7 @@
                       (let [metadata (col "@metadata")]
                         {:id (metadata "@id")
                          :last-modified-date (metadata "Last-Modified")
+                         :etag (metadata "@etag")
                          :document (into {}
                                          (for[[k v] (dissoc col "@metadata")]
                                            [(keyword k) v]))})) results)]
