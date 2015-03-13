@@ -56,4 +56,6 @@
                                     (= (-> i :document :LastName) "Fuller"))) results))]
         (pprint/pprint actual)
         (and (is (not= nil doc-one))
-             (is (not= nil doc-two)))))))
+             (is (not= nil (:last-modified-date doc-one)))
+             (is (not= nil doc-two))
+             (is (not= nil (:last-modified-date doc-two))))))))
