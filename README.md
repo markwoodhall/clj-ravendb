@@ -58,7 +58,7 @@ Returns a map with a sequence of results like:
 {:status 200,
  :results
  ({:id "employees/1",
-   :doc
+   :document
    {:Territories ["06897" "19713"],
     :HomePhone "(206) 555-9857",
     :ReportsTo "employees/1",
@@ -77,7 +77,7 @@ Returns a map with a sequence of results like:
     :Notes nil,
     :HiredAt "1992-05-01T00:00:00.0000000"}}
   {:id "employees/2",
-   :doc
+   :document
    {:Territories
     ["01581" "01730" "01833" "02116" "02139" "02184" "40222"],
     :HomePhone "(206) 555-9482",
