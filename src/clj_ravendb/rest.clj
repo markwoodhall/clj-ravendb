@@ -67,12 +67,18 @@
 
 (defn- put-document!
   "Creates or updates a document by its id where 'document'
-  is a map."
-  [client id document]
-  (bulk-operations! client [{:method "PUT" 
-                             :id id 
-                             :document document 
-                             :metadata {}}]))
+  is a map.
+
+  Optionally takes a map of options.
+  :request-builder is a custom request builder fn.
+  :response-parser is a customer response parser fn."
+  ([client id document]
+   (put-document! client id document {}))
+  ([client id document options]
+   (bulk-operations! client [{:method "PUT"
+                              :id id
+                              :document document
+                              :metadata {}}] options)))
 
 (defn- query-index
   "Query an index, where the 'query' takes the form:

@@ -61,13 +61,16 @@
   :response-parser is a customer response parser fn."
   [{:keys [put-document! rest-client] :as client} & args]
   (let [rest-put-document! (:put-document! rest-client)
-        {:keys [status] :as response} (apply rest-put-document! client args)
+        {:keys [status operations] :as response} (apply rest-put-document! client args)
         doc (second args)
-        doc-id (first args)]
+        doc-id (first args)
+        put (first (filter #(= (:id %) doc-id) operations))
+        etag (:etag put)
+        last-modified (new java.util.Date)]
     (if (= 200 status)
       (do
         (reset! client-cache (remove (fn [{:keys [id]}] (some #{id} doc-id)) @client-cache))
-        (swap! client-cache conj (merge {:id doc-id :cached? true} doc))))
+        (swap! client-cache conj (merge {:id doc-id :last-modified-date last-modified :etag (:etag put) :cached? true} doc))))
     response))
 
 (defn caching-client

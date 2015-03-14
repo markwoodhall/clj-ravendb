@@ -30,7 +30,9 @@
             _ (put-document! client doc-id {})
             doc (first (filter (fn [d]
                                  (= (:id d) doc-id)) @client-cache))]
-        (is (= doc-id (:id doc)))))
+        (is (= doc-id (:id doc)))
+        (is (not= nil (:etag doc)))
+        (is (not= nil (:last-modified-date doc)))))
     (testing "put documents get updated in the cache"
       (let [doc-id "Key1"
             _ (put-document! client doc-id {})

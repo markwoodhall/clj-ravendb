@@ -24,8 +24,12 @@
      :results mapped}))
 
 (defn bulk-operations
-  [{:keys [status]}]
-  {:status status})
+  [{:keys [status body]}]
+  {:status status
+   :operations (map (fn [i]
+                      {:etag (i "Etag")
+                       :method (i "Method")
+                       :id (i "Key")}) body)})
 
 (defn put-document
   [raw-response]
