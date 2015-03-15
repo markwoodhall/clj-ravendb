@@ -32,6 +32,7 @@
                                  (= (:id d) doc-id)) @client-cache))]
         (is (= doc-id (:id doc)))
         (is (not= nil (:etag doc)))
+        (is (= true (:cached? doc)))
         (is (not= nil (:last-modified-date doc)))))
     (testing "put documents get updated in the cache"
       (let [doc-id "Key1"

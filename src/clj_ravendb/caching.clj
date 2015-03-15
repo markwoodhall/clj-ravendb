@@ -51,6 +51,7 @@
                                           {:id id
                                            :last-modified-date (new java.util.Date)
                                            :etag (:etag (last (filter #(= (:id %) id) put-results)))
+                                           :cached? true
                                            :document document}) puts))))
     response))
 
