@@ -16,4 +16,20 @@
     (testing "Bulk operations with invalid operation
              throws an assertion error."
       (is (thrown? AssertionError (bulk-operations! client [{:method "PUT"}])))
-      (is (thrown? AssertionError (bulk-operations! client [{:method "DELETE"} {:method "PUT" :id "1" :document {} :metadata {}}]))))))
+      (is (thrown? AssertionError (bulk-operations! client [{:method "DELETE"} {:method "PUT" :id "1" :document {} :metadata {}}])))))
+
+  (deftest test-put-returns-correct-status-code
+    (testing "processing a PUT command returns the correct result"
+      (let [id "Key1"
+            document {:name "Test"}
+            actual (bulk-operations! client [{:method "PUT" :document document :id id :metadata {}}])
+            expected-status-code 200
+            operations (:operations actual)]
+        (is (= expected-status-code (actual :status)))
+        (is (not-empty operations))
+        (is (not= nil (:etag (first operations))))
+        (is (= id (:id (first operations))))
+        (is (= "PUT" (:method (first operations)))))))
+
+  (use-fixtures :each (fn [f] (f) (bulk-operations! client [{:method "DELETE"
+                                                             :id "Key1"}]))))

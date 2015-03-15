@@ -37,16 +37,21 @@
   Optionally takes a map of options.
   :request-builder is a custom request builder fn.
   :response-parser is a customer response parser fn."
-  [{:keys [bulk-operations! rest-client] :as client} & args]
+  [{:keys [rest-client] :as client} & args]
   (let [rest-bulk-operations! (:bulk-operations! rest-client)
-        operations (first args)
-        dels (map :id (filter #(= (:method %) "DELETE") operations))
-        puts (filter #(= (:method %) "PUT") operations)
-        {:keys [status] :as response} (apply rest-bulk-operations! client args)]
+        ops (first args)
+        dels (map :id (filter #(= (:method %) "DELETE") ops))
+        puts (filter #(= (:method %) "PUT") ops)
+        put-ids (map :id puts)
+        {:keys [status operations] :as response} (apply rest-bulk-operations! client args)]
     (if (= 200 status)
-      (do
-        (reset! client-cache (remove (fn [{:keys [id]}] (some #{id} dels)) @client-cache))
-        (swap! client-cache concat (map (fn [{:keys [id document]}] {:id id :document document}) puts))))
+      (let [put-results (filter #(= (:method %) "PUT") operations)]
+        (reset! client-cache (remove (fn [{:keys [id]}] (some #{id} (concat dels put-ids))) @client-cache))
+        (swap! client-cache concat (map (fn [{:keys [id document]}]
+                                          {:id id
+                                           :last-modified-date (new java.util.Date)
+                                           :etag (:etag (last (filter #(= (:id %) id) put-results)))
+                                           :document document}) puts))))
     response))
 
 (defn put-document!
@@ -60,18 +65,12 @@
   :request-builder is a custom request builder fn.
   :response-parser is a customer response parser fn."
   [{:keys [put-document! rest-client] :as client} & args]
-  (let [rest-put-document! (:put-document! rest-client)
-        {:keys [status operations] :as response} (apply rest-put-document! client args)
+  (let [doc-id (first args)
         doc (second args)
-        doc-id (first args)
-        put (first (filter #(= (:id %) doc-id) operations))
-        etag (:etag put)
-        last-modified (new java.util.Date)]
-    (if (= 200 status)
-      (do
-        (reset! client-cache (remove (fn [{:keys [id]}] (some #{id} doc-id)) @client-cache))
-        (swap! client-cache conj (merge {:id doc-id :last-modified-date last-modified :etag (:etag put) :cached? true} doc))))
-    response))
+        opts (if (= 3 (count args))
+               (nth args 3)
+               {})]
+    (bulk-operations! client [{:method "PUT" :id doc-id :document doc :metadata {}}] opts)))
 
 (defn caching-client
   "Gets a client for a RavenDB endpoint at the
