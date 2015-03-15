@@ -30,16 +30,19 @@
             _ (put-document! client doc-id {})
             doc (first (filter (fn [d]
                                  (= (:id d) doc-id)) @client-cache))]
-        (is (= doc-id (:id doc)))))
+        (is (= doc-id (:id doc)))
+        (is (not= nil (:etag doc)))
+        (is (= true (:cached? doc)))
+        (is (not= nil (:last-modified-date doc)))))
     (testing "put documents get updated in the cache"
       (let [doc-id "Key1"
             _ (put-document! client doc-id {})
             _ (put-document! client doc-id {:updated 1})
             doc (first (filter (fn [d]
                                  (= (:id d) doc-id)) @client-cache))
-            _ (println doc)]
+            _ (println @client-cache)]
         (is (and (= doc-id (:id doc))
-                 (= 1 (:updated doc))))))
+                 (= 1 (get-in doc [:document :updated]))))))
     (testing "bulk operations result in add and remove from the cache"
       (let [doc-id "Key1"
             doc-id-2 "Key2"

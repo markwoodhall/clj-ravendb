@@ -11,31 +11,15 @@
     (testing "processing a PUT command returns the correct result"
       (let [id "Key1"
             document {:name "Test"}
-            actual (put-document! client id document) expected 200]
+            actual (put-document! client id document)
+            expected-status-code 200
+            operations (:operations actual)]
         (pprint/pprint actual)
-        (is (= expected (actual :status))))))
-
-  (deftest test-put-document-uses-custom-req-builder
-    (testing "putting documents uses custom request builder"
-      (let [id "Key1"
-            document {:name "Test"}
-            req-builder (fn [client id document]
-                          (throw (Exception. "CustomRequestBuilderError")))]
-        (is (thrown-with-msg? Exception #"CustomRequestBuilderError"
-                              (put-document! client id document
-                                            {:request-builder req-builder
-                                             :response-parser res/put-document}))))))
-
-  (deftest test-put-document-uses-custom-res-parser
-    (testing "putting documents uses custom response parser"
-      (let [id "Key1"
-            document {:name "Test"}
-            res-parser (fn [raw-response]
-                          (throw (Exception. "CustomResponseParserError")))]
-        (is (thrown-with-msg? Exception #"CustomResponseParserError"
-                              (put-document! client id document
-                                            {:request-builder req/put-document
-                                             :response-parser res-parser}))))))
+        (is (= expected-status-code (actual :status)))
+        (is (not-empty operations))
+        (is (not= nil (:etag (first operations))))
+        (is (not= nil (:id (first operations))))
+        (is (not= nil (:method (first operations)))))))
 
   (use-fixtures :each (fn [f] (f) (bulk-operations! client [{:method "DELETE"
                                                              :id "Key1"}]))))
