@@ -67,3 +67,9 @@
   to the /stats RavenDB endpoint"
   [{:keys [address replications]}]
   {:urls (all-urls address replications "/stats")})
+
+(defn user-info
+  "Generates a map that represents a http request
+  to the /debug/user-info RavenDB endpoint"
+  [{:keys [address replications]}]
+  {:urls (all-urls address replications "/debug/user-info")})

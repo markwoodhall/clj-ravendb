@@ -3,8 +3,7 @@
             [clj-ravendb.client :refer :all]
             [clj-ravendb.requests :as req]
             [clj-ravendb.responses :as res]
-            [clj-ravendb.config :refer :all]
-            [clojure.pprint :as pprint]))
+            [clj-ravendb.config :refer :all]))
 
 (let [expected [:LastDocEtag :LastAttachmentEtag :CountOfIndexes
                 :ApproximateTaskCount :CountOfDocuments :StaleIndexes]]

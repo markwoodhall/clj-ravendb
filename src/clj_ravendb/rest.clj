@@ -184,6 +184,22 @@
    (let [request (request-builder client)]
      (response-parser (wrap-retry-replicas request get-req)))))
 
+(defn- user-info
+  "Queries the debug/user-info RavenDB endpoint
+  in order to provide debug information about
+  the current authentication (or not) user.
+
+  Optionally takes a map of options.
+  :request-builder is a custom request builder fn.
+  :response-parser is a customer response parser fn."
+  ([client]
+   (user-info client {}))
+  ([{:keys [master-only-writes?] :as client}
+    {:keys [request-builder response-parser]
+     :or {request-builder req/user-info response-parser res/user-info}}]
+   (let [request (request-builder client)]
+     (response-parser (wrap-retry-replicas request get-req)))))
+
 (defn rest-client
   "Gets a client for a RavenDB endpoint at the
   given url and database.
@@ -212,4 +228,5 @@
      :query-index query-index
      :watch-index watch-index
      :watch-documents watch-documents
-     :stats stats}))
+     :stats stats
+     :user-info user-info}))

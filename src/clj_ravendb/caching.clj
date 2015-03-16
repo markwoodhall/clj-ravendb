@@ -89,7 +89,7 @@
   :master-only-writes? is used to indicate that write operations only go to the master"
   [url database options]
   (let [rest-client (rest/rest-client url database options)
-        {:keys [put-index! query-index watch-index watch-documents stats]} rest-client
+        {:keys [put-index! query-index watch-index watch-documents stats user-info]} rest-client
         caching {:caching? true
                  :rest-client rest-client
                  :load-documents load-documents
@@ -99,5 +99,6 @@
                  :query-index query-index
                  :watch-index watch-index
                  :watch-documents watch-documents
-                 :stats stats}]
+                 :stats stats
+                 :user-info user-info}]
     (merge rest-client caching)))

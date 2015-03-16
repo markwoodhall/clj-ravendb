@@ -48,3 +48,7 @@
 (defn stats
   [{:keys [stats] :as client} & args]
   (apply stats client args))
+
+(defn user-info
+  [{:keys [user-info] :as client} & args]
+  (apply user-info client args))
