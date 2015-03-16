@@ -3,8 +3,7 @@
             [clj-ravendb.client :refer :all]
             [clj-ravendb.requests :as req]
             [clj-ravendb.responses :as res]
-            [clj-ravendb.config :refer :all]
-            [clojure.pprint :as pprint]))
+            [clj-ravendb.config :refer :all]))
 
 (let [client (client ravendb-url ravendb-database)
       idx {:name "DocumentsByName"
@@ -30,7 +29,6 @@
     (testing "putting an index returns the correct status code"
       (let [actual (put-index! client idx)
             expected 201]
-        (pprint/pprint actual)
         (is (= expected (actual :status))))))
 
   (deftest test-putting-index-uses-custom-req-builder

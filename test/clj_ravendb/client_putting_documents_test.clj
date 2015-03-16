@@ -3,8 +3,7 @@
             [clj-ravendb.client :refer :all]
             [clj-ravendb.requests :as req]
             [clj-ravendb.responses :as res]
-            [clj-ravendb.config :refer :all]
-            [clojure.pprint :as pprint]))
+            [clj-ravendb.config :refer :all]))
 
 (let [client (client ravendb-url ravendb-database)]
   (deftest test-put-returns-correct-status-code
@@ -14,7 +13,6 @@
             actual (put-document! client id document)
             expected-status-code 200
             operations (:operations actual)]
-        (pprint/pprint actual)
         (is (= expected-status-code (actual :status)))
         (is (not-empty operations))
         (is (not= nil (:etag (first operations))))

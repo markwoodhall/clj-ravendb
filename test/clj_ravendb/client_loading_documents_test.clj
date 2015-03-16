@@ -3,8 +3,7 @@
             [clj-ravendb.client :refer :all]
             [clj-ravendb.requests :as req]
             [clj-ravendb.responses :as res]
-            [clj-ravendb.config :refer :all]
-            [clojure.pprint :as pprint]))
+            [clj-ravendb.config :refer :all]))
 
 (let [client (client ravendb-url ravendb-database)]
   (deftest test-load-documents-with-no-document-ids-throws
@@ -18,7 +17,6 @@
       (let [doc-ids ["employees/1" "employees/2"]
             actual (load-documents client doc-ids)
             expected 200]
-        (pprint/pprint actual)
         (is (= expected (actual :status))))))
 
   (deftest test-load-documents-uses-custom-req-builder
@@ -54,7 +52,6 @@
                              (fn [i]
                                (and (= (i :id) "employees/2")
                                     (= (-> i :document :LastName) "Fuller"))) results))]
-        (pprint/pprint actual)
         (and (is (not= nil doc-one))
              (is (not= nil (:last-modified-date doc-one)))
              (is (not= nil (:etag doc-one)))

@@ -4,8 +4,7 @@
             [clj-ravendb.requests :as req]
             [clj-ravendb.responses :as res]
             [clj-ravendb.config :refer :all]
-            [clojure.core.async :refer [go chan thread <!! >!! <! >!]]
-            [clojure.pprint :as pprint]))
+            [clojure.core.async :refer [go chan thread <!! >!! <! >!]]))
 
 (let [client (client ravendb-url ravendb-database)]
   (deftest test-watching-document-puts-to-channel-on-document-change

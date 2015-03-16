@@ -10,7 +10,6 @@
     (deftest test-user-info-returns-correct-result
       (testing "user-info returns the correct results"
         (let [actual (:info (user-info client))]
-          (println actual)
           (doseq [k expected]
             (is (not (nil? (k actual)))))))))
 

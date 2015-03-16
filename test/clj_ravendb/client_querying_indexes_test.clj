@@ -3,8 +3,7 @@
             [clj-ravendb.client :refer :all]
             [clj-ravendb.requests :as req]
             [clj-ravendb.responses :as res]
-            [clj-ravendb.config :refer :all]
-            [clojure.pprint :as pprint]))
+            [clj-ravendb.config :refer :all]))
 
 (let [client (client ravendb-url ravendb-database)
       qry {:index "Orders/ByCompany" :Count 10}]
@@ -19,7 +18,6 @@
     (testing "querying an index returns the correct status code"
       (let [actual (query-index client qry)
             expected 200]
-        (pprint/pprint actual)
         (is (= expected (actual :status))))))
 
   (deftest test-query-index-returns-correct-results
@@ -34,7 +32,6 @@
                              (fn [i]
                                (and (= (-> i :Company) "companies/68")
                                     (= (-> i :Count) 10.0))) results))]
-        (pprint/pprint actual)
         (and (is (not= nil doc-one))
              (is (not= nil doc-two))))))
 
@@ -47,7 +44,6 @@
                                (and (= (-> i :Company) "companies/11")
                                     (= (-> i :Count) 10.0)
                                     (= (-> i :Total) 6089.9))) results))]
-        (pprint/pprint actual)
         (and (is (not= nil doc-one))
              (is (= 1 (count results)))))))
 

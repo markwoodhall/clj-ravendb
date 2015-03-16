@@ -4,11 +4,9 @@
             [clj-ravendb.caching :refer [client-cache]]
             [clj-ravendb.requests :as req]
             [clj-ravendb.responses :as res]
-            [clj-ravendb.config :refer :all]
-            [clojure.pprint :as pprint]))
+            [clj-ravendb.config :refer :all]))
 
-(let [client (client ravendb-url ravendb-database {:caching? true})
-      _ (pprint/pprint client)]
+(let [client (client ravendb-url ravendb-database {:caching? true})]
   (deftest test-load-documents-returns-correct-results
     (testing "documents loaded from cache have a :cached? flag"
       (let [doc-ids ["employees/1"]
@@ -39,8 +37,7 @@
             _ (put-document! client doc-id {})
             _ (put-document! client doc-id {:updated 1})
             doc (first (filter (fn [d]
-                                 (= (:id d) doc-id)) @client-cache))
-            _ (println @client-cache)]
+                                 (= (:id d) doc-id)) @client-cache))]
         (is (and (= doc-id (:id doc))
                  (= 1 (get-in doc [:document :updated]))))))
     (testing "bulk operations result in add and remove from the cache"
