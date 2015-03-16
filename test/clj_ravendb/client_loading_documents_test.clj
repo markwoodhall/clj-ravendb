@@ -35,7 +35,7 @@
     (testing "loading documents uses custom response parser"
       (let [doc-ids ["employees/1" "employees/2"]
             res-parser (fn [raw-response]
-                          (throw (Exception. "CustomResponseParserError")))]
+                         (throw (Exception. "CustomResponseParserError")))]
         (is (thrown-with-msg? Exception #"CustomResponseParserError"
                               (load-documents client doc-ids
                                               {:request-builder req/load-documents
@@ -58,6 +58,8 @@
         (and (is (not= nil doc-one))
              (is (not= nil (:last-modified-date doc-one)))
              (is (not= nil (:etag doc-one)))
+             (is (not= nil (get-in doc-one  [:document :Address :Region])))
              (is (not= nil doc-two))
              (is (not= nil (:last-modified-date doc-two)))
-             (is (not= nil (:etag doc-two))))))))
+             (is (not= nil (:etag doc-two)))
+             (is (not= nil (get-in doc-one  [:document :Address :Region]))))))))

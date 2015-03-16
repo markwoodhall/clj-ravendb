@@ -1,5 +1,12 @@
-(ns clj-ravendb.responses
-  (:require [clojure.data.json :as json]))
+(ns clj-ravendb.responses)
+
+(defn mapify
+  [col]
+  (into {}
+        (for[[k v] (dissoc col "@metadata")]
+          [(keyword k) (if (= clojure.lang.PersistentArrayMap (type v))
+                         (mapify v)
+                         v)])) )
 
 (defn load-replications
   [{:keys [body status]}]
@@ -17,9 +24,7 @@
                         {:id (metadata "@id")
                          :last-modified-date (metadata "Last-Modified")
                          :etag (metadata "@etag")
-                         :document (into {}
-                                         (for[[k v] (dissoc col "@metadata")]
-                                           [(keyword k) v]))})) results)]
+                         :document (mapify col)})) results)]
     {:status status
      :results mapped}))
 
@@ -43,12 +48,7 @@
   [{:keys [body status]}]
   (let [results (body "Results")
         stale? (body "IsStale")
-        mapped (map (fn
-                      [col]
-                      (let [metadata (col "@metadata")]
-                        (into {}
-                              (for[[k v] (dissoc col "@metadata")]
-                                [(keyword k) v])))) results)]
+        mapped (map mapify results)]
     {:status status
      :stale? stale?
      :results mapped}))
@@ -56,6 +56,4 @@
 (defn stats
   [{:keys [body status]}]
   {:status status
-   :results (into {}
-                  (for[[k v] body]
-                    [(keyword k) v]))})
+   :results (mapify body)})
