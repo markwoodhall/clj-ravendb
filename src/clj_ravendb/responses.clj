@@ -57,3 +57,8 @@
   [{:keys [body status]}]
   {:status status
    :results (mapify body)})
+
+(defn user-info
+  [{:keys [body status]}]
+  {:status status
+   :info (mapify body)})
