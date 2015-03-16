@@ -1,4 +1,4 @@
-(defproject clj-ravendb "0.5.0"
+(defproject clj-ravendb "0.6.0"
   :description "A Clojure library for consuming a RavenDB rest api."
   :url "https://github.com/markwoodhall/clj-ravendb"
   :license {:name "MIT License"
