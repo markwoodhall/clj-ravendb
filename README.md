@@ -66,12 +66,12 @@ Returns a map with a sequence of results like:
     :ReportsTo "employees/1",
     :LastName "Davolio",
     :Address
-    {"Line1" "507 - 20th Ave. E.\r\nApt. 2A",
-     "Line2" nil,
-     "City" "Seattle",
-     "Region" "WA",
-     "PostalCode" "98122",
-     "Country" "USA"},
+    {:Line1 "507 - 20th Ave. E.\r\nApt. 2A",
+     :Line2 nil,
+     :City "Seattle",
+     :Region "WA",
+     :PostalCode "98122",
+     :Country "USA"},
     :FirstName "Nancy",
     :Birthday "1948-12-08T00:00:00.0000000",
     :Title "Sales Representative",
@@ -88,12 +88,12 @@ Returns a map with a sequence of results like:
     :ReportsTo nil,
     :LastName "Fuller",
     :Address
-    {"Line1" "908 W. Capital Way",
-     "Line2" nil,
-     "City" "Tacoma",
-     "Region" "WA",
-     "PostalCode" "98401",
-     "Country" "USA"},
+    {:Line1 "908 W. Capital Way",
+     :Line2 nil,
+     :City "Tacoma",
+     :Region "WA",
+     :PostalCode "98401",
+     :Country "USA"},
     :FirstName "Andrew",
     :Birthday "1952-02-19T00:00:00.0000000",
     :Title "Vice President, Sales",
@@ -310,7 +310,7 @@ The client will be represented by a map that looks like:
 
 ```
 
-When this client is used to (put-document!), (put-index!) or for `bulk-operations!` if the master is down then one of the replications will be used for write operations.
+When this client is used to `put-document!`, `put-index!` or for `bulk-operations!` if the master is down then one of the replications will be used for write operations.
 
 ## Build & Test
 
