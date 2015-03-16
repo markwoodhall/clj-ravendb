@@ -52,3 +52,10 @@
     {:status status
      :stale? stale?
      :results mapped}))
+
+(defn stats
+  [{:keys [body status]}]
+  {:status status
+   :results (into {}
+                  (for[[k v] body]
+                    [(keyword k) v]))})

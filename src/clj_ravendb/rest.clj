@@ -168,6 +168,22 @@
   ([client query channel options]
    (watch client #(query-index client query) channel options)))
 
+(defn- stats
+  "Queries the stats RavenDB endpoint
+  in order to provide performance statistics at
+  the database level.
+
+  Optionally takes a map of options.
+  :request-builder is a custom request builder fn.
+  :response-parser is a customer response parser fn."
+  ([client]
+   (stats client {}))
+  ([{:keys [master-only-writes?] :as client}
+    {:keys [request-builder response-parser]
+     :or {request-builder req/stats response-parser res/stats}}]
+   (let [request (request-builder client)]
+     (response-parser (wrap-retry-replicas request get-req)))))
+
 (defn rest-client
   "Gets a client for a RavenDB endpoint at the
   given url and database.
@@ -195,4 +211,5 @@
      :put-index! put-index!
      :query-index query-index
      :watch-index watch-index
-     :watch-documents watch-documents}))
+     :watch-documents watch-documents
+     :stats stats}))

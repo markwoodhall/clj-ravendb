@@ -44,3 +44,7 @@
 (defn watch-index
   [{:keys [watch-index] :as client} & args]
   (apply watch-index client args))
+
+(defn stats
+  [{:keys [stats] :as client} & args]
+  (apply stats client args))

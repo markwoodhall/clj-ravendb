@@ -61,3 +61,9 @@
   [url]
   (let [request-url (str url "/docs/Raven/Replication/Destinations")]
     {:url request-url}))
+
+(defn stats
+  "Generates a map that represents a http request
+  to the /stats RavenDB endpoint"
+  [{:keys [address replications]}]
+  {:urls (all-urls address replications "/stats")})
