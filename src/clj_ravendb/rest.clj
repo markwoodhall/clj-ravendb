@@ -214,13 +214,17 @@
   :replicated? is used to find replicated endpoints.
   :master-only-writes? is used to indicate that write operations only go to the master"
   [url database {:keys [replicated? master-only-writes? enable-oauth? oauth-url api-key ssl-insecure?]
-                 :or {replicated? false master-only-writes? true enable-oauth? true oauth-url "https://amazon-useast-2-oauth.ravenhq.com" api-key "a670daab-d226-49ea-8afb-a065faedd628" ssl-insecure? false}}]
+                 :or {replicated? false master-only-writes? true enable-oauth? true ssl-insecure? false}}]
   (let [fragments (list url "Databases" database)
         address (clojure.string/join "/" fragments)
-        oauth (get-req (req/oauth-token {:address oauth-url :enable-oauth? enable-oauth? :api-key api-key :ssl-insecure? ssl-insecure?}))
+        oauth-header (:body (get-req (req/oauth-token {:address oauth-url :enable-oauth? enable-oauth? :api-key api-key :ssl-insecure? ssl-insecure?})))
         load-replications (fn []
                             (debug-do (println "Loading replication destinations from" address))
-                            (:results (res/load-replications (get-req (req/wrap-oauth-header (req/load-replications {:address address :ssl-insecure? ssl-insecure?}) enable-oauth? (:body oauth))))))
+                            (-> (req/load-replications {:address address :ssl-insecure? ssl-insecure?})
+                                (req/wrap-oauth-header enable-oauth? oauth-header)
+                                (get-req)
+                                (res/load-replications)
+                                (:results)))
         replications (if replicated?
                        (load-replications)
                        '())]
@@ -228,7 +232,7 @@
      :master-only-writes? master-only-writes?
      :enable-oauth? enable-oauth?
      :ssl-insecure? ssl-insecure?
-     :oauth-header (:body oauth)
+     :oauth-header oauth-header
      :address address
      :replications (map-replication-urls replications database)
      :load-documents load-documents

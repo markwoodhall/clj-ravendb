@@ -5,7 +5,7 @@
             [clj-ravendb.responses :as res]
             [clj-ravendb.config :refer :all]))
 
-(let [client (client ravendb-url ravendb-database {:ssl-insecure? true})]
+(let [client (client ravendb-url ravendb-database {:ssl-insecure? true :oauth-url oauth-url :api-key api-key})]
   (deftest test-bulk-operations-with-no-operations
     (testing "Bulk operations without specifying any operations
              throws an assertion error."

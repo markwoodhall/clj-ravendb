@@ -9,7 +9,8 @@
                          v)])) )
 
 (defn load-replications
-  [{:keys [body status]}]
+  [{:keys [body status] :as r}]
+  (println r)
   (let [results (body "Destinations")
         mapped (map (fn[i] (i "Url")) results)]
     {:status status

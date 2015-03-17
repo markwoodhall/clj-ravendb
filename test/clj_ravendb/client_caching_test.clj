@@ -6,7 +6,7 @@
             [clj-ravendb.responses :as res]
             [clj-ravendb.config :refer :all]))
 
-(let [client (client ravendb-url ravendb-database {:caching? true :ssl-insecure? true})]
+(let [client (client ravendb-url ravendb-database {:caching? true :ssl-insecure? true :oauth-url oauth-url :api-key api-key})]
   (deftest test-load-documents-returns-correct-results
     (testing "documents loaded from cache have a :cached? flag"
       (let [doc-ids ["employees/1"]
@@ -65,4 +65,6 @@
   (use-fixtures :each (fn [f] (f) (bulk-operations! client [{:method "DELETE"
                                                              :id "Key1"}
                                                             {:method "DELETE"
-                                                             :id "Key2"}]))))
+                                                             :id "Key2"}
+                                                            {:method "DELETE"
+                                                             :id "Key3"}]))))
