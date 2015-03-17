@@ -4,6 +4,8 @@ A clojure library designed to consume a RavenDB rest api.
 
 ## Status
 
+[[https://api.travis-ci.org/markwoodhall/clj-ravendb.svg?branch=master]]
+
 This is currently a work in progress and under active development, it is liable to substantial change and currently has the following features:
 
 * Load documents
@@ -12,6 +14,7 @@ This is currently a work in progress and under active development, it is liable 
 * Store new indexes
 * Query indexes
 * Create indexes
+* OAuth Support
 * Replication aware
 * Watch document(s) for changes
 * Watch index queries for changes
@@ -250,6 +253,14 @@ Watching for index changes:
 
 There are a number of "configuration" options that can be used when creating a client:
 
+### OAuth
+
+To create a client that supports OAuth:
+
+```clojure
+(def northwind (client "http://localhost:8080" "northwind" {:enable-oauth? true :oauth-url "http://localhost:8081/oauth" :api-key "API-KEY"}
+```
+
 ### Caching
 
 To create a client that supports caching:
@@ -276,12 +287,10 @@ When this option is used creating the client will also query the master url for 
 
 ```clojure
 
-{
-  :replicated? true
-  :master-only-write? true
-  :address "http://localhost:8080"
-  :replications ("http://localhost:8081" "http://localhost:8082")
-}
+{:replicated? true
+ :master-only-write? true
+ :address "http://localhost:8080"
+ :replications ("http://localhost:8081" "http://localhost:8082")}
 
 ```
 
@@ -301,12 +310,10 @@ The client will be represented by a map that looks like:
 
 ```clojure
 
-{
-  :replicated? true
-  :master-only-write? false
-  :address "http://localhost:8080"
-  :replications ("http://localhost:8081" "http://localhost:8082")
-}
+{:replicated? true
+ :master-only-write? false
+ :address "http://localhost:8080"
+ :replications ("http://localhost:8081" "http://localhost:8082")}
 
 ```
 
@@ -318,7 +325,7 @@ When this client is used to `put-document!`, `put-index!` or for `bulk-operation
 lein test
 ```
 
-The tests for this project assume an instance of RavenDB is running at http://localhost:8080. They also assume that the instance contains the sample northwind database. The sample northwind database is available [here](https://github.com/ayende/ravendb/blob/2.5/Raven.Studio/Assets/EmbeddedData/Northwind.dump)
+The tests for this project use a database hosted at [RavenHQ](http://www.ravenhq.com) and use an OAuth version of the client.
 
 ## License
 
