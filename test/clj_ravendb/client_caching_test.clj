@@ -6,7 +6,7 @@
             [clj-ravendb.responses :as res]
             [clj-ravendb.config :refer :all]))
 
-(let [client (client ravendb-url ravendb-database {:caching? true})]
+(let [client (client ravendb-url ravendb-database {:caching? true :ssl-insecure? true})]
   (deftest test-load-documents-returns-correct-results
     (testing "documents loaded from cache have a :cached? flag"
       (let [doc-ids ["employees/1"]

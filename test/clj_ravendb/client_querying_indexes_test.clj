@@ -5,7 +5,7 @@
             [clj-ravendb.responses :as res]
             [clj-ravendb.config :refer :all]))
 
-(let [client (client ravendb-url ravendb-database)
+(let [client (client ravendb-url ravendb-database {:ssl-insecure? true})
       qry {:index "Orders/ByCompany" :Count 10}]
   (deftest test-query-index-with-invalid-query
     (testing "Querying an index with an invalid query form."

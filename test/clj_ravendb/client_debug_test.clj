@@ -6,14 +6,14 @@
             [clj-ravendb.config :refer :all]))
 
 (let [expected [:Remark]]
-  (let [client (client ravendb-url ravendb-database)]
+  (let [client (client ravendb-url ravendb-database {:ssl-insecure? true})]
     (deftest test-user-info-returns-correct-result
       (testing "user-info returns the correct results"
         (let [actual (:info (user-info client))]
           (doseq [k expected]
             (is (not (nil? (k actual)))))))))
 
-  (let [client (client ravendb-url ravendb-database {:caching? true})]
+  (let [client (client ravendb-url ravendb-database {:caching? true :ssl-insecure? true})]
     (deftest test-user-info-returns-correct-result-when-using-cache-client
       (testing "user-info returns the correct results when using a cache client"
         (let [actual (:info (user-info client))]
