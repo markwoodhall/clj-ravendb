@@ -1,4 +1,7 @@
 (ns clj-ravendb.config)
 
-(def ravendb-url "http://192.168.0.40:8080")
-(def ravendb-database "northwind")
+(def ravendb-url "https://markwoodhall-qlke.ravenhq.com")
+(def ravendb-database "markwoodhall-northwind")
+
+(def oauth-url "https://amazon-useast-2-oauth.ravenhq.com")
+(def api-key "a670daab-d226-49ea-8afb-a065faedd628")

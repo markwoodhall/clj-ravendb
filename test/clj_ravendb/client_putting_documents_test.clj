@@ -5,7 +5,7 @@
             [clj-ravendb.responses :as res]
             [clj-ravendb.config :refer :all]))
 
-(let [client (client ravendb-url ravendb-database)]
+(let [client (client ravendb-url ravendb-database {:ssl-insecure? true :oauth-url oauth-url :api-key api-key})]
   (deftest test-put-returns-correct-status-code
     (testing "processing a PUT command returns the correct result"
       (let [id "Key1"

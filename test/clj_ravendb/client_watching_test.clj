@@ -6,7 +6,7 @@
             [clj-ravendb.config :refer :all]
             [clojure.core.async :refer [go chan thread <!! >!! <! >!]]))
 
-(let [client (client ravendb-url ravendb-database)]
+(let [client (client ravendb-url ravendb-database {:ssl-insecure? true :oauth-url oauth-url :api-key api-key})]
   (deftest test-watching-document-puts-to-channel-on-document-change
     (testing "Watching a document puts to a channel on document change"
       (let [id "TestDocToWatch"

@@ -15,11 +15,12 @@
   :response-parser is a customer response parser fn."
   ([client document-ids]
    (load-documents client document-ids {}))
-  ([client document-ids
+  ([{:keys [enable-oauth? oauth-header] :as client} document-ids
     {:keys [request-builder response-parser]
      :or {request-builder req/load-documents response-parser res/load-documents}}]
    {:pre [(not-empty document-ids)]}
    (-> (request-builder client document-ids)
+       (req/wrap-oauth-header enable-oauth? oauth-header)
        (wrap-retry-replicas post-req)
        (response-parser))))
 
@@ -32,12 +33,12 @@
   :response-parser is a customer response parser fn."
   ([client operations]
    (bulk-operations! client operations {}))
-  ([{:keys [master-only-writes?] :as client}
+  ([{:keys [master-only-writes? enable-oauth? oauth-header] :as client}
     operations
     {:keys [request-builder response-parser]
      :or {request-builder req/bulk-operations response-parser res/bulk-operations}}]
    {:pre [(valid/validate-bulk-operations operations)]}
-   (let [request (request-builder client operations)]
+   (let [request (req/wrap-oauth-header (request-builder client operations) enable-oauth? oauth-header)]
      (response-parser (if master-only-writes?
                         (no-retry-replicas request post-req)
                         (wrap-retry-replicas request post-req))))))
@@ -57,11 +58,13 @@
   :response-parser is a customer response parser fn."
   ([client index]
    (put-index! client index {}))
-  ([client index
+  ([{:keys [enable-oauth? oauth-header] :as client}
+    index
     {:keys [request-builder response-parser]
      :or {request-builder req/put-index response-parser res/put-index}}]
    {:pre [(:name index) (:alias index) (:where index) (:select index)]}
    (-> (request-builder client index)
+       (req/wrap-oauth-header enable-oauth? oauth-header)
        (put-req)
        (response-parser))))
 
@@ -97,14 +100,17 @@
   :response-parser is a customer response parser fn."
   ([client query]
    (query-index client query {}))
-  ([client query {:keys [max-attempts wait request-builder response-parser]
-                    :or {max-attempts 5 wait 100
-                         request-builder req/query-index
-                         response-parser res/query-index}}]
+  ([{:keys [enable-oauth? oauth-header] :as client}
+    query
+    {:keys [max-attempts wait request-builder response-parser]
+     :or {max-attempts 5 wait 100
+          request-builder req/query-index
+          response-parser res/query-index}}]
    {:pre [(:index query)]}
    (let [get-result #(-> (request-builder client query)
-                          (wrap-retry-replicas get-req)
-                          (response-parser))]
+                         (req/wrap-oauth-header enable-oauth? oauth-header)
+                         (wrap-retry-replicas get-req)
+                         (response-parser))]
      (loop [result (get-result) attempt 0]
        (if (or (not (:stale? result))
                (= attempt max-attempts))
@@ -178,10 +184,10 @@
   :response-parser is a customer response parser fn."
   ([client]
    (stats client {}))
-  ([{:keys [master-only-writes?] :as client}
+  ([{:keys [master-only-writes? enable-oauth? oauth-header] :as client}
     {:keys [request-builder response-parser]
      :or {request-builder req/stats response-parser res/stats}}]
-   (let [request (request-builder client)]
+   (let [request (req/wrap-oauth-header (request-builder client) enable-oauth? oauth-header)]
      (response-parser (wrap-retry-replicas request get-req)))))
 
 (defn- user-info
@@ -194,10 +200,10 @@
   :response-parser is a customer response parser fn."
   ([client]
    (user-info client {}))
-  ([{:keys [master-only-writes?] :as client}
+  ([{:keys [master-only-writes? enable-oauth? oauth-header] :as client}
     {:keys [request-builder response-parser]
      :or {request-builder req/user-info response-parser res/user-info}}]
-   (let [request (request-builder client)]
+   (let [request (req/wrap-oauth-header (request-builder client) enable-oauth? oauth-header)]
      (response-parser (wrap-retry-replicas request get-req)))))
 
 (defn rest-client
@@ -207,18 +213,26 @@
   Optionally takes a map of options.
   :replicated? is used to find replicated endpoints.
   :master-only-writes? is used to indicate that write operations only go to the master"
-  [url database {:keys [replicated? master-only-writes?]
-                 :or {replicated? false master-only-writes? true}}]
+  [url database {:keys [replicated? master-only-writes? enable-oauth? oauth-url api-key ssl-insecure?]
+                 :or {replicated? false master-only-writes? true enable-oauth? true ssl-insecure? false}}]
   (let [fragments (list url "Databases" database)
         address (clojure.string/join "/" fragments)
+        oauth-header (:body (get-req (req/oauth-token {:address oauth-url :enable-oauth? enable-oauth? :api-key api-key :ssl-insecure? ssl-insecure?})))
         load-replications (fn []
                             (debug-do (println "Loading replication destinations from" address))
-                            (:results (res/load-replications (get-req (req/load-replications address)))))
+                            (-> (req/load-replications {:address address :ssl-insecure? ssl-insecure?})
+                                (req/wrap-oauth-header enable-oauth? oauth-header)
+                                (get-req)
+                                (res/load-replications)
+                                (:results)))
         replications (if replicated?
                        (load-replications)
                        '())]
     {:replicated? replicated?
      :master-only-writes? master-only-writes?
+     :enable-oauth? enable-oauth?
+     :ssl-insecure? ssl-insecure?
+     :oauth-header oauth-header
      :address address
      :replications (map-replication-urls replications database)
      :load-documents load-documents

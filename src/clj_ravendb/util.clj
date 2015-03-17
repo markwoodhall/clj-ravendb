@@ -9,16 +9,16 @@
 (def not-nil? (complement nil?))
 
 (defn post-req
-  [{:keys [url body]}]
+  [{:keys [url body headers ssl-insecure?]}]
   (debug-do (println "Sending HTTP POST to" url "with JSON body " body))
-  (http/post url {:body body :as :json-string-keys}))
+  (http/post url {:body body :headers headers :as :json-string-keys :insecure? ssl-insecure?}))
 
 (defn put-req
-  [{:keys [url body]}]
+  [{:keys [url body headers ssl-insecure?]}]
   (debug-do (println "Sending HTTP PUT to" url "with JSON body " body))
-  (http/put url {:body body :as :json-string-keys}))
+  (http/put url {:body body :headers headers :as :json-string-keys :insecure? ssl-insecure?}))
 
 (defn get-req
-  [{:keys [url]}]
+  [{:keys [url headers ssl-insecure?]}]
   (debug-do (println "Sending HTTP GET to" url))
-  (http/get url {:as :json-string-keys}))
+  (http/get url {:headers headers :as :json-string-keys :insecure? ssl-insecure?}))
