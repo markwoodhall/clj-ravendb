@@ -13,8 +13,9 @@
             document {:test 2 :name "WatchedDocument"}
             ch (chan)
             watcher (watch-documents client ["TestDocToWatch"] ch {:wait 0})
-            _ (Thread/sleep 1000)
+            _ (Thread/sleep 2000)
             _ (put-document! client id document)
+            _ (Thread/sleep 2000)
             actual (first (:results (<!! ch)))
             actual (dissoc actual :last-modified-date)
             actual (dissoc actual :etag)]
@@ -22,13 +23,14 @@
         (is (= actual {:id id :document document})))))
 
   (deftest test-watching-index-puts-to-channel-on-index-change
-    (testing "Watching a index puts to a channel on index change"
+    (testing "Watching an index puts to a channel on index change"
       (let [id "TestDocToWatch"
             document {:test 2 :name "WatchedDocument"}
             ch (chan)
             watcher (watch-index client {:index "WatchedDocuments"} ch {:wait 0})
-            _ (Thread/sleep 1000)
+            _ (Thread/sleep 2000)
             _ (put-document! client id document)
+            _ (Thread/sleep 2000)
             actual (first (:results (<!! ch)))]
         ((:stop watcher))
         (is (= actual document)))))
