@@ -6,13 +6,14 @@
             [clj-ravendb.config :refer :all]
             [clojure.core.async :refer [go chan thread <!! >!! <! >!]]))
 
-(let [client (client ravendb-url ravendb-database {:ssl-insecure? true :oauth-url oauth-url :api-key api-key})]
+(let [client (client ravendb-url ravendb-database {:ssl-insecure? true :oauth-url oauth-url :api-key api-key})
+      id (str "TestDocToWatch" (System/currentTimeMillis))
+      index-name (str "WatchedDocuments" (System/currentTimeMillis))]
   (deftest test-watching-document-puts-to-channel-on-document-change
     (testing "Watching a document puts to a channel on document change"
-      (let [id "TestDocToWatch"
-            document {:test 2 :name "WatchedDocument"}
+      (let [document {:test 2 :name "WatchedDocument"}
             ch (chan)
-            watcher (watch-documents client ["TestDocToWatch"] ch {:wait 0})
+            watcher (watch-documents client [id] ch {:wait 0})
             _ (Thread/sleep 2000)
             _ (put-document! client id document)
             _ (Thread/sleep 2000)
@@ -24,10 +25,9 @@
 
   (deftest test-watching-index-puts-to-channel-on-index-change
     (testing "Watching an index puts to a channel on index change"
-      (let [id "TestDocToWatch"
-            document {:test 2 :name "WatchedDocument"}
+      (let [document {:test 2 :name "WatchedDocument"}
             ch (chan)
-            watcher (watch-index client {:index "WatchedDocuments"} ch {:wait 0})
+            watcher (watch-index client {:index index-name} ch {:wait 0})
             _ (Thread/sleep 2000)
             _ (put-document! client id document)
             _ (Thread/sleep 2000)
@@ -36,14 +36,14 @@
         (is (= actual document)))))
 
   (use-fixtures :each (fn [f]
-                        (put-index! client {:name "WatchedDocuments"
+                        (put-index! client {:name index-name
                                             :alias "doc"
                                             :where "doc.name ==\"WatchedDocument\""
                                             :select "new { doc.name }"})
                         (bulk-operations! client [{:method "PUT"
-                                                   :id "TestDocToWatch"
+                                                   :id id
                                                    :document {:test 1 :name "WatchedDocument"}
                                                    :metadata {}}])
                         (f)
                         (bulk-operations! client [{:method "DELETE"
-                                                   :id "TestDocToWatch"}]))))
+                                                   :id id}]))))
