@@ -1,6 +1,6 @@
 # clj-ravendb
 
-A clojure library designed to consume a RavenDB rest api.
+A clojure library designed to consume a RavenDB HTTP api.
 
 ## Status
 
