@@ -267,7 +267,7 @@ To create a client that supports caching:
 
 ```clojure
 
-(def northwind (client "http://localhost:8080" "northwind" {:caching? true}))
+(def northwind (client "http://localhost:8080" "northwind" {:caching :aggressive}))
 
 ```
 

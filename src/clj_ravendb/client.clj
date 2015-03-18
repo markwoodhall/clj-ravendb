@@ -12,10 +12,11 @@
   :caching? is used to indicate if documents should be cached locally"
   ([url database]
    (client url database {}))
-  ([url database {:keys [caching?] :as options}]
-   (if caching?
-     (caching-client url database options)
-     (rest-client url database options))))
+  ([url database {:keys [caching] :as options
+                  :or {caching :none}}]
+   (case caching
+     :aggressive (caching-client url database options)
+     :none (rest-client url database options))))
 
 (defn load-documents
   [{:keys [load-documents] :as client} & args]

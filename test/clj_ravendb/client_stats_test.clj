@@ -14,7 +14,7 @@
           (doseq [k expected]
             (is (not (nil? (k actual)))))))))
 
-  (let [client (client ravendb-url ravendb-database {:caching? true :ssl-insecure? true :oauth-url oauth-url :api-key api-key})]
+  (let [client (client ravendb-url ravendb-database {:caching :aggressive :ssl-insecure? true :oauth-url oauth-url :api-key api-key})]
     (deftest test-stats-returns-correct-result-when-using-cache-client
       (testing "stats returns the correct results when using a cache client"
         (let [actual (:results (stats client))]

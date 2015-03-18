@@ -87,10 +87,10 @@
   Optionally takes a map of options.
   :replicated? is used to find replicated endpoints.
   :master-only-writes? is used to indicate that write operations only go to the master"
-  [url database options]
+  [url database {:keys [caching] :as options}]
   (let [rest-client (rest/rest-client url database options)
         {:keys [put-index! query-index watch-index watch-documents stats user-info]} rest-client
-        caching {:caching? true
+        caching {:caching caching
                  :rest-client rest-client
                  :load-documents load-documents
                  :bulk-operations! bulk-operations!
