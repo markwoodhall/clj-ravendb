@@ -6,24 +6,21 @@
             [clj-ravendb.config :refer :all]))
 
 (let [client (client ravendb-url ravendb-database {:ssl-insecure? true :oauth-url oauth-url :api-key api-key})
-      idx {:name "DocumentsByName"
-           :alias "doc"
-           :where "doc.name ==\"Test\""
-           :select "new { doc.name }"}]
+      idx {:index "DocumentsByName"
+           :where [[:== :name "Test"]]
+           :select [:name]}]
   (deftest test-put-index-with-invalid-index-throws
     (testing "Putting an index with an invalid form."
       (is (thrown? AssertionError
                    (put-index! client {})))
       (is (thrown? AssertionError
-                   (put-index! client {:name "Test"})))
+                   (put-index! client {:index "Test"})))
       (is (thrown? AssertionError
                    (put-index! client {:select "Test"})))
       (is (thrown? AssertionError
                    (put-index! client {:where "Test"})))
       (is (thrown? AssertionError
-                   (put-index! client {:name "Test" :alias "Alias"})))
-      (is (thrown? AssertionError
-                   (put-index! client {:name "Test" :alias "Alias" :where "Where"})))))
+                   (put-index! client {:index "Test" :where "Where"})))))
 
   (deftest test-put-index-returns-correct-status-code
     (testing "putting an index returns the correct status code"

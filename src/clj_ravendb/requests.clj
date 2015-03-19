@@ -1,5 +1,6 @@
 (ns clj-ravendb.requests
   (:require [clojure.data.json :as json]
+            [clojure.string :refer [join]]
             [cheshire.core :refer [generate-string]]))
 
 (defn- all-urls
@@ -64,14 +65,16 @@
 (defn put-index
   "Generates a map that represents a http request
   to the indexes endpoint in order to put an index."
-  [{:keys [address ssl-insecure?]} {:keys [name alias where select]}]
-  (let [request-url (str address "/indexes/" name)]
+  [{:keys [address ssl-insecure?]} {:keys [index where select]}]
+  (let [request-url (str address "/indexes/" index)
+        where (join " && " (map #(str "doc." (name (second %)) (name (first %)) \" (nth % 2) \") where))
+        select (str "new { " (join "," (map #(str "doc." (name %)) select)) " }")]
     {:url request-url
      :ssl-insecure? ssl-insecure?
-     :body (json/write-str {:Map (str
-                                   "from " alias " in docs"
-                                   " where " where
-                                   " select " select)})}))
+     :body (str "{Map:'"
+              "from doc in docs" \return\newline
+              "where " where \return\newline
+              "select " select "'}")}))
 
 (defn load-replications
   "Generates a map that represents a http request

@@ -176,10 +176,9 @@ Returns a map with a sequence of results like:
 Creating an index:
 
 ```clojure
-(put-index! northwind {:name "DocumentsByName"
-                       :alias "doc"
-                       :where "doc.name ==\"Test\""
-                       :select "new { doc.name }"})
+(put-index! northwind {:index "DocumentsByName"
+                       :where [[:== :name "Test"]]
+                       :select [:name]}
 ```
 
 Returns a map with a key to indicate the HTTP status:
@@ -195,7 +194,7 @@ Watching for document changes:
 ```clojure
 ;; Watching documents makes use of core.async channels.
 ;; You can either pass in a channel or have watch-documents create one.
-;; It creates a future that continuosly calls load-document and monitors
+;; It creates a future that continuously calls load-document and monitors
 ;; the results, each time they are different they are put on the channel.
 (def watcher (watch-document northwind ["Companies/80", "Companies/79"]))
 (let [ch (chan)]

@@ -36,10 +36,9 @@
         (is (= actual document)))))
 
   (use-fixtures :each (fn [f]
-                        (put-index! client {:name index-name
-                                            :alias "doc"
-                                            :where "doc.name ==\"WatchedDocument\""
-                                            :select "new { doc.name }"})
+                        (put-index! client {:index index-name
+                                            :where [[:== :name "WatchedDocument"]]
+                                            :select [:name]})
                         (bulk-operations! client [{:method "PUT"
                                                    :id id
                                                    :document {:test 1 :name "WatchedDocument"}
