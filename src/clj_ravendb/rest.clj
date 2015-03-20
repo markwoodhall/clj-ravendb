@@ -47,7 +47,7 @@
   "Creates or updates an index, where an index takes
   the form:
   idx {:index index-name
-       :where [[:== :field "value"]]
+       :where [[:== :field \"value\"]]
        :select [:field]}
 
   Optionally takes a map of options.
