@@ -46,12 +46,9 @@
 (defn- put-index!
   "Creates or updates an index, where an index takes
   the form:
-  idx {
-    :name index-name
-    :alias document-alias
-    :where where-clause
-    :select projection
-  }
+  idx {:index index-name
+       :where [[:== :field "value"]]
+       :select [:field]}
 
   Optionally takes a map of options.
   :request-builder is a custom request builder fn.
