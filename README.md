@@ -176,9 +176,9 @@ Returns a map with a sequence of results like:
 Creating an index:
 
 ```clojure
-(put-index! northwind {:index "MultiClause" ;; the index name
-                       :from :Products ;; if :from is not specified then all doc collections will be covered.
-                       :where [[:== :Name "Chocolade"] [:== :UnitsInStock 15]] ;; the where clauses
+(put-index! northwind {:index "ExpensiveSweetAndSavouryProductsWithLowStockAndRunningOut" ;; the index name
+                       :from :Products  ;; if :from is not specified then all doc collections will be covered.
+                       :where [[:> :PricePerUser 20] [:< :UnitsInStock 10] [:== :UnitsOnOrder 0] [:== :Category "categories/2"]] ;; the where clauses
                        :select [:Name]} ;; the fields to select
 ```
 
