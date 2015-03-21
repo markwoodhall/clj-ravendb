@@ -177,7 +177,7 @@ Creating an index:
 
 ```clojure
 (put-index! northwind {:index "MultiClause" ;; the index name
-                       :from :Products ;; if :from is not then all doc collections will be covered.
+                       :from :Products ;; if :from is not specified then all doc collections will be covered.
                        :where [[:== :Name "Chocolade"] [:== :UnitsInStock 15]] ;; the where clauses
                        :select [:Name]} ;; the fields to select
 ```
