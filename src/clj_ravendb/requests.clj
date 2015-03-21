@@ -65,14 +65,23 @@
 (defn put-index
   "Generates a map that represents a http request
   to the indexes endpoint in order to put an index."
-  [{:keys [address ssl-insecure?]} {:keys [index where select]}]
+  [{:keys [address ssl-insecure?]} {:keys [index from where select]
+                                    :or {from "docs"}}]
   (let [request-url (str address "/indexes/" index)
-        where (join " && " (map #(str "doc." (name (second %)) (name (first %)) \" (nth % 2) \") where))
+        from (if (= "docs" from)
+               from
+               (str "docs." (name from)))
+        where (join " && " (map (fn [w]
+                                  (let [value (nth w 2)
+                                        esc-value (if (= java.lang.String (class value))
+                                                    (str \" value \")
+                                                    value)]
+                                    (str "doc." (name (second w)) (name (first w)) esc-value))) where))
         select (str "new { " (join "," (map #(str "doc." (name %)) select)) " }")]
     {:url request-url
      :ssl-insecure? ssl-insecure?
      :body (str "{Map:'"
-              "from doc in docs" \return\newline
+              "from doc in " from \return\newline
               "where " where \return\newline
               "select " select "'}")}))
 
