@@ -6,9 +6,9 @@
             [clj-ravendb.config :refer :all]))
 
 (let [client (client ravendb-url ravendb-database {:ssl-insecure? true :oauth-url oauth-url :api-key api-key})
-      idx {:index "MultiClause"
+      idx {:index "ExpensiveSweetAndSavouryProductsWithLowStockAndRunningOut"
            :from :Products
-           :where [[:== :Name "Chocolade"] [:== :UnitsInStock 15]]
+           :where [[:> :PricePerUser 20] [:< :UnitsInStock 10] [:== :UnitsOnOrder 0] [:== :Category "categories/2"]]
            :select [:Name]}]
   (deftest test-put-index-with-invalid-index-throws
     (testing "Putting an index with an invalid form."
@@ -28,15 +28,15 @@
       (let [actual (put-index! client idx)
             expected 201]
         (is (= expected (actual :status))))))
-  
+
   (deftest test-query-put-index-returns-correct-results
     (testing "querying an index returns the correct results"
-      (let [actual (query-index client {:index "MultiClause"})
-            results (actual :results)
+      (let [actual (query-index client {:index "ExpensiveSweetAndSavouryProductsWithLowStockAndRunningOut"})
+            results (sort-by :UnitsInStock (actual :results))
             doc-one (first (filter
                              (fn [i]
-                               (and (= (-> i :Name) "Chocolade")
-                                    (= (-> i :UnitsInStock) 15))) results))]
+                               (and (= (-> i :Name) "Chef Anton's Gumbo Mix")
+                                    (= (-> i :UnitsInStock) 0))) results))]
         (and (is (not= nil doc-one))))))
 
   (deftest test-putting-index-uses-custom-req-builder
