@@ -176,10 +176,10 @@ Returns a map with a sequence of results like:
 Creating an index:
 
 ```clojure
-(put-index! northwind {:index "MultiClause"
-                       :from :Products ;; :from does not need to be specified, if it is not then all document collections will be covered.
-                       :where [[:== :Name "Chocolade"] [:== :UnitsInStock 15]]
-                       :select [:Name]}
+(put-index! northwind {:index "MultiClause" ;; the index name
+                       :from :Products ;; :if :from is not then all doc collections will be covered.
+                       :where [[:== :Name "Chocolade"] [:== :UnitsInStock 15]] ;; the where clauses
+                       :select [:Name]} ;; the fields to select
 ```
 
 Returns a map with a key to indicate the HTTP status:
