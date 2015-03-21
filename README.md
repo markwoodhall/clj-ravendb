@@ -325,7 +325,7 @@ When this client is used to `put-document!`, `put-index!` or for `bulk-operation
 lein test
 ```
 
-The tests for this project run agaist a cloud hosted RavenDB 3.0 instace at [RavenHQ](http://www.ravenhq.com) and use an OAuth version of the client.
+The tests for this project run agaist a cloud hosted RavenDB 3.0 instance at [RavenHQ](http://www.ravenhq.com) and use an OAuth version of the client.
 
 All functonality has been tested against RavenDB 2.5 as well. 
 
