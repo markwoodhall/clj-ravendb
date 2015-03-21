@@ -327,7 +327,7 @@ lein test
 
 The tests for this project run agaist a cloud hosted RavenDB 3.0 instance at [RavenHQ](http://www.ravenhq.com) and use an OAuth version of the client.
 
-All functonality has been tested against RavenDB 2.5 as well. 
+All functionality has been tested against RavenDB 2.5 as well. 
 
 ## License
 
