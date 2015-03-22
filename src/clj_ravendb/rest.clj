@@ -65,6 +65,23 @@
        (put-req)
        (response-parser))))
 
+(defn- delete-index!
+  "Deletes an index matching the index-name.
+
+  Optionally takes a map of options.
+  :request-builder is a custom request builder fn.
+  :response-parser is a customer response parser fn."
+  ([client index-name]
+   (delete-index! client index-name {}))
+  ([{:keys [enable-oauth? oauth-header] :as client}
+    index-name
+    {:keys [request-builder response-parser]
+     :or {request-builder req/delete-index response-parser res/delete-index}}]
+   (-> (request-builder client index-name)
+       (req/wrap-oauth-header enable-oauth? oauth-header)
+       (del-req)
+       (response-parser))))
+
 (defn- put-document!
   "Creates or updates a document by its id where 'document'
   is a map.
@@ -236,6 +253,7 @@
      :bulk-operations! bulk-operations!
      :put-document! put-document!
      :put-index! put-index!
+     :delete-index! delete-index!
      :query-index query-index
      :watch-index watch-index
      :watch-documents watch-documents

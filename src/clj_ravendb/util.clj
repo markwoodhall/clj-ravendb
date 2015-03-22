@@ -22,3 +22,8 @@
   [{:keys [url headers ssl-insecure?]}]
   (debug-do (println "Sending HTTP GET to" url))
   (http/get url {:headers headers :as :json-string-keys :insecure? ssl-insecure?}))
+
+(defn del-req
+  [{:keys [url headers ssl-insecure?]}]
+  (debug-do (println "Sending HTTP DELETE to" url))
+  (http/delete url {:headers headers :as :json-string-keys :insecure? ssl-insecure?}))

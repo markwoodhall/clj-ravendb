@@ -44,5 +44,6 @@
                                                    :document {:test 1 :name "WatchedDocument"}
                                                    :metadata {}}])
                         (f)
+                        (delete-index! client index-name)
                         (bulk-operations! client [{:method "DELETE"
                                                    :id id}]))))

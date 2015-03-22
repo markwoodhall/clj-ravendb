@@ -45,6 +45,10 @@
   [{:keys [status]}]
   {:status status})
 
+(defn delete-index
+  [{:keys [status]}]
+  {:status status})
+
 (defn query-index
   [{:keys [body status]}]
   (let [results (body "Results")

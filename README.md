@@ -14,6 +14,7 @@ This is currently a work in progress and under active development, it is liable 
 * Store new indexes
 * Query indexes
 * Create indexes
+* Delete indexes
 * OAuth Support
 * Replication aware
 * Watch document(s) for changes
@@ -189,6 +190,21 @@ Returns a map with a key to indicate the HTTP status:
 {:status 200}
 
 ```
+
+Deleting an index:
+
+```clojure
+(delet-index! northwind "ExpensiveSweetAndSavouryProductsWithLowStockAndRunningOut")
+```
+
+Returns a map with a key to indicate the HTTP status:
+
+```clojure
+
+{:status 204}
+
+```
+
 
 Watching for document changes:
 

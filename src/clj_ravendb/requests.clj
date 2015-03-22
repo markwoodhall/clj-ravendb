@@ -85,6 +85,14 @@
               "where " where \return\newline
               "select " select "'}")}))
 
+(defn delete-index
+  "Generates a map that represents a http request
+  to the indexes/indexName endpoint in order to delete the index."
+  [{:keys [address ssl-insecure?]} index-name]
+  (let [request-url (str address "/indexes/" index-name)]
+    {:url request-url
+     :ssl-insecure? ssl-insecure?}))
+
 (defn load-replications
   "Generates a map that represents a http request
   to the replication endpoint in order to find replication endpoints."

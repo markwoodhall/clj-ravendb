@@ -34,6 +34,10 @@
   [{:keys [put-index!] :as client} & args]
   (apply put-index! client args))
 
+(defn delete-index!
+  [{:keys [delete-index!] :as client} & args]
+  (apply delete-index! client args))
+
 (defn bulk-operations!
   [{:keys [bulk-operations!] :as client} & args]
   (apply bulk-operations! client args))

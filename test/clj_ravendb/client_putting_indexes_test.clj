@@ -31,7 +31,8 @@
 
   (deftest test-query-put-index-returns-correct-results
     (testing "querying an index returns the correct results"
-      (let [actual (query-index client {:index "ExpensiveSweetAndSavouryProductsWithLowStockAndRunningOut"})
+      (let [_ (put-index! client idx)
+            actual (query-index client {:index "ExpensiveSweetAndSavouryProductsWithLowStockAndRunningOut"})
             results (sort-by :UnitsInStock (actual :results))
             doc-one (first (filter
                              (fn [i]
@@ -55,4 +56,8 @@
         (is (thrown-with-msg? Exception #"CustomResponseParserError"
                               (put-index! client idx
                                          {:request-builder req/put-index
-                                          :response-parser res-parser})))))))
+                                          :response-parser res-parser}))))))
+  
+  (use-fixtures :each (fn [f]
+                        (f)
+                        (delete-index! client "ExpensiveSweetAndSavouryProductsWithLowStockAndRunningOut"))))
