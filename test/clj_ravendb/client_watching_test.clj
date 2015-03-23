@@ -11,7 +11,7 @@
       index-name (str "WatchedDocuments" (System/currentTimeMillis))]
   (deftest test-watching-document-puts-to-channel-on-document-change
     (testing "Watching a document puts to a channel on document change"
-      (let [document {:test 2 :name "WatchedDocument"}
+      (let [document {:test 2 :name id}
             ch (chan)
             watcher (watch-documents client [id] ch {:wait 0})
             _ (Thread/sleep 2000)
@@ -25,7 +25,7 @@
 
   (deftest test-watching-index-puts-to-channel-on-index-change
     (testing "Watching an index puts to a channel on index change"
-      (let [document {:test 2 :name "WatchedDocument"}
+      (let [document {:test 2 :name id}
             ch (chan)
             watcher (watch-index client {:index index-name} ch {:wait 0})
             _ (Thread/sleep 2000)
@@ -37,11 +37,11 @@
 
   (use-fixtures :each (fn [f]
                         (put-index! client {:index index-name
-                                            :where [[:== :name "WatchedDocument"]]
+                                            :where [[:== :name id]]
                                             :select [:name]})
                         (bulk-operations! client [{:method "PUT"
                                                    :id id
-                                                   :document {:test 1 :name "WatchedDocument"}
+                                                   :document {:test 1 :name id}
                                                    :metadata {}}])
                         (f)
                         (delete-index! client index-name)
