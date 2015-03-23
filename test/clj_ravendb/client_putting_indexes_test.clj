@@ -32,8 +32,7 @@
 
   (deftest test-query-put-index-returns-correct-results
     (testing "querying an index returns the correct results"
-      (let [_ (put-index! client idx)
-            actual (query-index client {:index idx-name})
+      (let [actual (query-index client {:index idx-name} {:wait 1000})
             results (sort-by :UnitsInStock (actual :results))
             doc-one (first (filter
                              (fn [i]
@@ -60,5 +59,6 @@
                                           :response-parser res-parser}))))))
   
   (use-fixtures :each (fn [f]
+                        (put-index! client idx)
                         (f)
                         (delete-index! client idx-name))))
