@@ -6,7 +6,8 @@
             [clj-ravendb.config :refer :all]))
 
 (let [client (client ravendb-url ravendb-database {:ssl-insecure? true :oauth-url oauth-url :api-key api-key})
-      idx {:index "ExpensiveSweetAndSavouryProductsWithLowStockAndRunningOut"
+      idx-name (str "ExpensiveSweetAndSavouryProductsWithLowStockAndRunningOut" (System/currentTimeMillis))
+      idx {:index idx-name
            :from :Products
            :where [[:> :PricePerUser 20] [:< :UnitsInStock 10] [:== :UnitsOnOrder 0] [:== :Category "categories/2"]]
            :select [:Name]}]
@@ -32,7 +33,7 @@
   (deftest test-query-put-index-returns-correct-results
     (testing "querying an index returns the correct results"
       (let [_ (put-index! client idx)
-            actual (query-index client {:index "ExpensiveSweetAndSavouryProductsWithLowStockAndRunningOut"})
+            actual (query-index client {:index idx-name})
             results (sort-by :UnitsInStock (actual :results))
             doc-one (first (filter
                              (fn [i]
@@ -60,4 +61,4 @@
   
   (use-fixtures :each (fn [f]
                         (f)
-                        (delete-index! client "ExpensiveSweetAndSavouryProductsWithLowStockAndRunningOut"))))
+                        (delete-index! client idx-name))))
