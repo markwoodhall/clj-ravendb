@@ -27,6 +27,7 @@
     (testing "Watching an index puts to a channel on index change"
       (let [document {:test 2 :name id}
             ch (chan)
+            _ (Thread/sleep 4000)
             watcher (watch-index client {:index index-name} ch {:wait 0})
             _ (Thread/sleep 4000)
             _ (put-document! client id document)
