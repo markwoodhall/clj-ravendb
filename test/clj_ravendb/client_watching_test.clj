@@ -32,7 +32,7 @@
             _ (Thread/sleep 4000)
             _ (put-document! client id document)
             _ (Thread/sleep 4000)
-            actual (first (filter (fn [r] (= (:name r) id)) (:results (<!! ch))))]
+            actual (first (filter (fn [r] (= (:name r) id)) (map :document (:results (<!! ch)))))]
         ((:stop watcher))
         (is (= actual document)))))
 

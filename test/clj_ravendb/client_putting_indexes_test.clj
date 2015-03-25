@@ -33,7 +33,7 @@
   (deftest test-query-put-index-returns-correct-results
     (testing "querying an index returns the correct results"
       (let [actual (query-index client {:index idx-name} {:wait 1000})
-            results (sort-by :UnitsInStock (actual :results))
+            results (sort-by :UnitsInStock (map :document (actual :results)))
             doc-one (first (filter
                              (fn [i]
                                (and (= (-> i :Name) "Chef Anton's Gumbo Mix")

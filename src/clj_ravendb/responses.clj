@@ -53,7 +53,13 @@
   [{:keys [body status]}]
   (let [results (body "Results")
         stale? (body "IsStale")
-        mapped (map mapify results)]
+        mapped (map (fn
+                 [col]
+                 (let [metadata (col "@metadata")]
+                   {:id (metadata "@id")
+                    :last-modified-date (metadata "Last-Modified")
+                    :etag (metadata "@etag")
+                    :document (mapify col)})) results)]
     {:status status
      :stale? stale?
      :results mapped}))

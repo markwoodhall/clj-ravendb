@@ -160,17 +160,17 @@ Returns a map with a sequence of results like:
 {:status 200,
  :stale? false,
  :results
- ({:Company "companies/38", :Count 10.0, :Total 6146.3}
-  {:Company "companies/49", :Count 10.0, :Total 7176.215}
-  {:Company "companies/11", :Count 10.0, :Total 6089.9}
-  {:Company "companies/30", :Count 10.0, :Total 11446.36}
-  {:Company "companies/84", :Count 10.0, :Total 9182.43}
-  {:Company "companies/56", :Count 10.0, :Total 12496.2}
-  {:Company "companies/55", :Count 10.0, :Total 15177.4625}
-  {:Company "companies/86", :Count 10.0, :Total 9588.425}
-  {:Company "companies/59", :Count 10.0, :Total 23128.86}
-  {:Company "companies/68", :Count 10.0, :Total 19343.779}
-  {:Company "companies/80", :Count 10.0, :Total 10812.15})}
+ ({:id "companies/38", :etag "01000000-0000-0001-0000-000000000069" last-modified-date "2013-11-12T14:48:11.2943076Z" :document {:Company "companies/38", :Count 10.0, :Total 6146.3}}
+  {:id "companies/49", :etag "01000000-0000-0001-0000-000000000060" last-modified-date "2013-11-12T14:48:11.2943076Z" :document {:Company "companies/49", :Count 10.0, :Total 7176.215}}
+  {:id "companies/11", :etag "01000000-0000-0001-0000-000000000068" last-modified-date "2013-11-12T14:48:11.2943076Z" :document {:Company "companies/11", :Count 10.0, :Total 6089.9}}
+  {:id "companies/30", :etag "01000000-0000-0001-0000-000000000067" last-modified-date "2013-11-12T14:48:11.2943076Z" :document {:Company "companies/30", :Count 10.0, :Total 11446.36}}
+  {:id "companies/84", :etag "01000000-0000-0001-0000-000000000066" last-modified-date "2013-11-12T14:48:11.2943076Z" :document {:Company "companies/84", :Count 10.0, :Total 9182.43}}
+  {:id "companies/56", :etag "01000000-0000-0001-0000-000000000065" last-modified-date "2013-11-12T14:48:11.2943076Z" :document {:Company "companies/56", :Count 10.0, :Total 12496.2}}
+  {:id "companies/55", :etag "01000000-0000-0001-0000-000000000046" last-modified-date "2013-11-12T14:48:11.2943076Z" :document {:Company "companies/55", :Count 10.0, :Total 15177.4625}}
+  {:id "companies/86", :etag "01000000-0000-0001-0000-000000000064" last-modified-date "2013-11-12T14:48:11.2943076Z" :document {:Company "companies/86", :Count 10.0, :Total 9588.425}}
+  {:id "companies/59", :etag "01000000-0000-0001-0000-000000000063" last-modified-date "2013-11-12T14:48:11.2943076Z" :document {:Company "companies/59", :Count 10.0, :Total 23128.86}}
+  {:id "companies/68", :etag "01000000-0000-0001-0000-000000000062" last-modified-date "2013-11-12T14:48:11.2943076Z" :document {:Company "companies/68", :Count 10.0, :Total 19343.779}}
+  {:id "companies/80", :etag "01000000-0000-0001-0000-000000000061" last-modified-date "2013-11-12T14:48:11.2943076Z" :document {:Company "companies/80", :Count 10.0, :Total 10812.15}})}
 
 ```
 
