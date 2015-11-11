@@ -207,7 +207,7 @@
 (defn- user-info
   "Queries the debug/user-info RavenDB endpoint
   in order to provide debug information about
-  the current authentication (or not) user.
+  the current authenticated (or not) user.
 
   Optionally takes a map of options.
   :request-builder is a custom request builder fn.
