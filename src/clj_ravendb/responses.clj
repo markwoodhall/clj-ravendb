@@ -53,6 +53,7 @@
   [{:keys [body status]}]
   (let [results (body "Results")
         stale? (body "IsStale")
+        total (body "TotalResults")
         mapped (map (fn
                  [col]
                  (let [metadata (col "@metadata")]
@@ -62,6 +63,7 @@
                     :document (mapify col)})) results)]
     {:status status
      :stale? stale?
+     :total-results total
      :results mapped}))
 
 (defn stats

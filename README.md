@@ -159,6 +159,7 @@ Returns a map with a sequence of results like:
 ```clojure
 {:status 200,
  :stale? false,
+ :total-results 10,
  :results
  ({:id "companies/38", :etag "01000000-0000-0001-0000-000000000069" last-modified-date "2013-11-12T14:48:11.2943076Z" :document {:Company "companies/38", :Count 10.0, :Total 6146.3}}
   {:id "companies/49", :etag "01000000-0000-0001-0000-000000000060" last-modified-date "2013-11-12T14:48:11.2943076Z" :document {:Company "companies/49", :Count 10.0, :Total 7176.215}}
@@ -343,7 +344,7 @@ lein test
 
 The tests for this project run agaist a cloud hosted RavenDB 3.0 instance at [RavenHQ](http://www.ravenhq.com) and use an OAuth version of the client.
 
-All functionality has been tested against RavenDB 2.5 as well. 
+All functionality has been tested against RavenDB 2.5 as well.
 
 ## License
 

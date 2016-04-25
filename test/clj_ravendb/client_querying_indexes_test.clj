@@ -7,6 +7,7 @@
 
 (let [client (client ravendb-url ravendb-database {:ssl-insecure? true :oauth-url oauth-url :api-key api-key})
       qry {:index "Orders/ByCompany" :Count 10}]
+
   (deftest test-query-index-with-invalid-query
     (testing "Querying an index with an invalid query form."
       (is (thrown? AssertionError
@@ -19,6 +20,11 @@
       (let [actual (query-index client qry)
             expected 200]
         (is (= expected (actual :status))))))
+
+  (deftest test-query-index-returns-total-results
+    (testing "querying an index returns the total results"
+      (let [actual (query-index client qry)]
+        (is (number? (actual :total-results))))))
 
   (deftest test-query-index-returns-correct-results
     (testing "querying an index returns the correct results"
