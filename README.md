@@ -149,6 +149,9 @@ Querying an index:
 ;; Sort Descending
 (query-index northwind { :index "ByCompany" :Count 10 :sort-by :-Total })
 
+;; Paging
+(query-index northwind { :index "ByCompany" :Count 10 :sort-by :Total :page-size 10 :start 1})
+
 ;; By default if the index is stale (query-index) will retry 5 times, waiting
 ;; 100 milliseconds between each try.
 

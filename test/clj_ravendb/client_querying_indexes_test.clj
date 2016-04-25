@@ -59,6 +59,17 @@
         (and (is (= (:Company doc-one) "companies/86"))
              (is (= (:Company doc-two) "companies/84"))))))
 
+  (deftest test-query-index-returns-correct-results-using-paging
+    (testing "querying an index returns the correct results using paging"
+      (let [results1 (:results (query-index client (-> (assoc qry :sort-by :-Total)
+                                                       (assoc :page-size 1)
+                                                       (assoc :start 0))))
+            results2 (:results (query-index client (-> (assoc qry :sort-by :-Total)
+                                                       (assoc :page-size 1)
+                                                       (assoc :start 1))))]
+        (and (is (= (get-in (first results1) [:document :Company]) "companies/86"))
+             (is (= (get-in (first results2) [:document :Company]) "companies/84"))))))
+
   (deftest test-query-index-with-multiple-clauses-returns-correct-results
     (testing "querying an index with multiple clauses returns the correct results"
       (let [actual (query-index client (assoc qry :Total 6089.9))
