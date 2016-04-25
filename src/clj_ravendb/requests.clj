@@ -33,12 +33,16 @@
 (defn query-index
   "Generates a map that represents a http request
   to the indexes endpoint in order to query an index."
-  [{:keys [address replications ssl-insecure?]} qry]
-  (let [request-url (str "/indexes/" (qry :index) "?query=")
-        criteria (clojure.string/join " AND " (vec (for [[k v] (dissoc qry :index)]
-                                                     (str (name k) ":" v))))]
+  [{:keys [address replications ssl-insecure?]} {:keys [index sort-by] :as qry}]
+  (let [request-url (str "/indexes/" index "?query=")
+        criteria (clojure.string/join " AND " (vec (for [[k v] (-> (dissoc qry :index)
+                                                                   (dissoc :sort-by))]
+                                                     (str (name k) ":" v))))
+        sort-criteria (if sort-by
+                        (str "&sort=" (name sort-by))
+                        "")]
     {:ssl-insecure? ssl-insecure?
-     :urls (all-urls address replications (str request-url criteria))}))
+     :urls (all-urls address replications (str request-url criteria sort-criteria))}))
 
 (defn bulk-operations
   "Generates a map that represents a http request

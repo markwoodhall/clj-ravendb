@@ -41,6 +41,24 @@
         (and (is (not= nil doc-one))
              (is (not= nil doc-two))))))
 
+  (deftest test-query-index-returns-correct-results-in-correct-order
+    (testing "querying an index returns the correct results in the correct order"
+      (let [actual (query-index client (assoc qry :sort-by :Total))
+            results (actual :results)
+            doc-one (:document (first results))
+            doc-two (:document (second results))]
+        (and (is (= (:Company doc-one) "companies/80"))
+             (is (= (:Company doc-two) "companies/30"))))))
+
+  (deftest test-query-index-returns-correct-results-in-correct-descending-order
+    (testing "querying an index returns the correct results in the correct descending order"
+      (let [actual (query-index client (assoc qry :sort-by :-Total))
+            results (actual :results)
+            doc-one (:document (first results))
+            doc-two (:document (second results))]
+        (and (is (= (:Company doc-one) "companies/86"))
+             (is (= (:Company doc-two) "companies/84"))))))
+
   (deftest test-query-index-with-multiple-clauses-returns-correct-results
     (testing "querying an index with multiple clauses returns the correct results"
       (let [actual (query-index client (assoc qry :Total 6089.9))
