@@ -143,6 +143,12 @@ Querying an index:
 
 (query-index northwind { :index "ByCompany" :Count 10 })
 
+;; Sort
+(query-index northwind { :index "ByCompany" :Count 10 :sort-by :Total })
+
+;; Sort Descending
+(query-index northwind { :index "ByCompany" :Count 10 :sort-by :-Total })
+
 ;; By default if the index is stale (query-index) will retry 5 times, waiting
 ;; 100 milliseconds between each try.
 
