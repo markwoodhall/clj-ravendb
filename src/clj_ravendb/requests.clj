@@ -33,12 +33,9 @@
 (defn query-index
   "Generates a map that represents a http request
   to the indexes endpoint in order to query an index."
-  [{:keys [address replications ssl-insecure?]} {:keys [index sort-by page-size start] :as qry}]
+  [{:keys [address replications ssl-insecure?]} {:keys [index sort-by page-size start query]}]
   (let [request-url (str "/indexes/" index "?query=")
-        criteria (clojure.string/join " AND " (vec (for [[k v] (-> (dissoc qry :index)
-                                                                   (dissoc :sort-by)
-                                                                   (dissoc :page-size)
-                                                                   (dissoc :start))]
+        criteria (clojure.string/join " AND " (vec (for [[k v] query]
                                                      (str (name k) ":" v))))
         page-criteria (if page-size
                         (str "&pageSize=" page-size)

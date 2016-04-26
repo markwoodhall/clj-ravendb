@@ -6,7 +6,7 @@
             [clj-ravendb.config :refer :all]))
 
 (let [client (client ravendb-url ravendb-database {:ssl-insecure? true :oauth-url oauth-url :api-key api-key})
-      qry {:index "Orders/ByCompany" :Count 10}]
+      qry {:index "Orders/ByCompany" :query { :Count 10}}]
 
   (deftest test-query-index-with-invalid-query
     (testing "Querying an index with an invalid query form."
@@ -72,7 +72,7 @@
 
   (deftest test-query-index-with-multiple-clauses-returns-correct-results
     (testing "querying an index with multiple clauses returns the correct results"
-      (let [actual (query-index client (assoc qry :Total 6089.9))
+      (let [actual (query-index client (assoc qry :query {:Count 10 :Total 6089.9}))
             results (actual :results)
             doc-one (first (filter
                              (fn [i]
