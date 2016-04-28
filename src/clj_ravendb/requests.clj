@@ -1,6 +1,5 @@
 (ns clj-ravendb.requests
-  (:require [clojure.data.json :as json]
-            [clojure.string :refer [join]]
+  (:require [clojure.string :refer [join]]
             [cheshire.core :refer [generate-string]]))
 
 (defn- all-urls
@@ -28,7 +27,7 @@
   [{:keys [address replications enable-oauth? oauth-header ssl-insecure?]} document-ids]
   {:ssl-insecure? ssl-insecure?
    :urls (all-urls address replications "/Queries")
-   :body (json/write-str document-ids)})
+   :body (generate-string document-ids)})
 
 (defn query-index
   "Generates a map that represents a http request
@@ -56,7 +55,7 @@
   (let [request-url (str address "/bulk_docs")]
     {:urls (all-urls address replications "/bulk_docs")
      :ssl-insecure? ssl-insecure?
-     :body (json/write-str (map (fn [{:keys [method id document metadata]}]
+     :body (generate-string (map (fn [{:keys [method id document metadata]}]
                                   {:Method method
                                    :Key id
                                    :Document document
