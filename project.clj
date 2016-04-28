@@ -4,6 +4,6 @@
   :license {:name "MIT License"
             :url "http://opensource.org/licenses/mit-license.php"}
   :dependencies [[org.clojure/clojure "1.8.0"]
-                 [clj-http "2.1.0"]
-                 [cheshire "5.4.0"]
+                 [clj-http "3.0.1"]
+                 [cheshire "5.6.1"]
                  [org.clojure/core.async "0.2.374"]])
