@@ -9,8 +9,8 @@
       idx-name (str "ExpensiveSweetAndSavouryProductsWithLowStockAndRunningOut" (System/currentTimeMillis))
       idx {:index idx-name
            :from :Products
-           :where [[:> :PricePerUser 20] [:< :UnitsInStock 10] [:== :UnitsOnOrder 0] [:== :Category "categories/2"]]
-           :select [:Name]}]
+           :where [[:> :PricePerUnit 20] [:< :UnitsInStock 10] [:== :UnitsOnOrder 0] [:== :Category "categories/2"]]
+           :select [:Name :PricePerUnit]}]
   (deftest test-put-index-with-invalid-index-throws
     (testing "Putting an index with an invalid form."
       (is (thrown? AssertionError
@@ -27,6 +27,12 @@
   (deftest test-put-index-returns-correct-status-code
     (testing "putting an index returns the correct status code"
       (let [actual (put-index! client idx)
+            expected 201]
+        (is (= expected (actual :status))))))
+
+  (deftest test-put-index-with-analyzed-field-returns-correct-status-code
+    (testing "putting an index with analyzed fields returns the correct status code"
+      (let [actual (put-index! client (assoc idx :fields {:PricePerUser {:Indexing :Analyzed :Analyzer :StandardAnalyzer :Storage :Yes}}))
             expected 201]
         (is (= expected (actual :status))))))
 
@@ -57,7 +63,7 @@
                               (put-index! client idx
                                          {:request-builder req/put-index
                                           :response-parser res-parser}))))))
-  
+
   (use-fixtures :each (fn [f]
                         (put-index! client idx)
                         (f)

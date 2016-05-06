@@ -73,7 +73,7 @@
 (defn put-index
   "Generates a map that represents a http request
   to the indexes endpoint in order to put an index."
-  [{:keys [address ssl-insecure?]} {:keys [index from where select]
+  [{:keys [address ssl-insecure?]} {:keys [index from where select fields]
                                     :or {from "docs"}}]
   (let [request-url (str address "/indexes/" index)
         from (if (= "docs" from)
@@ -85,13 +85,33 @@
                                                     (str \" value \")
                                                     value)]
                                     (str "doc." (name (second w)) (name (first w)) esc-value))) where))
-        select (str "new { " (join "," (map #(str "doc." (name %)) select)) " }")]
+        select (str "new { " (join "," (map #(str "doc." (name %)) select)) " }")
+        field-names (map name (keys fields))
+        field-names (if field-names
+                 field-names
+                 [])
+        indexes (reduce merge (map #(if (not= :No (:Indexing (apply (key %) %)))
+                                     {(keyword (key %)) (name (:Indexing (apply (key %) %)))}) fields))
+        stores (reduce merge (map #(if (= :Yes (:Storage (apply (key %) %)))
+                                     {(keyword (key %)) "Yes"}) fields))
+        analyzers (reduce merge (map #(if (:Analyzer (apply (key %) %))
+                                     {(keyword (key %)) (name (:Analyzer (apply (key %) %)))}) fields))
+        index  {:Fields field-names
+                :Map (str " from doc in " from
+                          " where " where
+                          " select " select)}
+        index (if (empty? indexes)
+                index
+                (assoc index :Indexes indexes))
+        index (if (empty? stores)
+                index
+                (assoc index :Stores stores))
+        index (if (empty? analyzers)
+                index
+                (assoc index :Analyzers analyzers))]
     {:url request-url
      :ssl-insecure? ssl-insecure?
-     :body (str "{Map:'"
-              "from doc in " from \return\newline
-              "where " where \return\newline
-              "select " select "'}")}))
+     :body (generate-string index)}))
 
 (defn delete-index
   "Generates a map that represents a http request
