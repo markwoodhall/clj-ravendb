@@ -11,9 +11,9 @@ A Clojure library designed to consume a RavenDB HTTP api.
 This is currently a work in progress and under active development, it is liable to substantial change and currently has the following features:
 
 * Load documents
-* Store new documents
+* Create documents
+* Update documents 
 * Delete documents
-* Store new indexes
 * Query indexes
     * Range queries
 * Create indexes
