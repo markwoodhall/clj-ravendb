@@ -6,7 +6,13 @@
             [clj-ravendb.config :refer :all]))
 
 (let [client (client ravendb-url ravendb-database {:ssl-insecure? true :oauth-url oauth-url :api-key api-key})
-      qry {:index "Orders/ByCompany" :query {:Count 10}}]
+      qry {:index "Orders/ByCompany" :query {:Count 10}}
+      range-index-name "RangeIndexTest"
+      range-index {:index range-index-name
+                   :from :Products
+                   :where [[:> :PricePerUnit 20] [:< :UnitsInStock 10] [:== :UnitsOnOrder 0] [:== :Category "categories/2"]]
+                   :select [:Name :PricePerUnit]
+                   :fields {:PricePerUnit {:Indexing :Analyzed :Analyzer :StandardAnalyzer :Storage :Yes}}}]
 
   (deftest test-query-index-with-invalid-query
     (testing "Querying an index with an invalid query form."
@@ -40,6 +46,17 @@
                                     (= (-> i :document :Count) 10.0))) results))]
         (and (is (not= nil doc-one))
              (is (not= nil doc-two))))))
+
+  (deftest test-range-query-index-returns-correct-results
+    (testing "range querying an index returns the total results"
+      (let [actual (query-index client {:index range-index-name :query {:PricePerUnit [:range 0 24]}})
+            results (:results actual)
+            total-results (:total-results actual)
+            doc-one (first (filter
+                             (fn [i]
+                               (= (-> i :document :Name) "Chef Anton's Gumbo Mix")) results))]
+        (and (is (not= nil doc-one))
+             (is (= 1 total-results))))))
 
   (deftest test-query-index-returns-correct-results-in-correct-order
     (testing "querying an index returns the correct results in the correct order"
@@ -96,4 +113,9 @@
                          (throw (Exception. "CustomResponseParserError")))]
         (is (thrown-with-msg? Exception #"CustomResponseParserError"
                               (query-index client qry {:request-builder req/query-index
-                                                       :response-parser res-parser})))))))
+                                                       :response-parser res-parser}))))))
+
+  (use-fixtures :each (fn [f]
+                        (put-index! client range-index)
+                        (f)
+                        (delete-index! client range-index-name))))

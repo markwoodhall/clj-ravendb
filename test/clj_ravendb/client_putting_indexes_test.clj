@@ -7,10 +7,17 @@
 
 (let [client (client ravendb-url ravendb-database {:ssl-insecure? true :oauth-url oauth-url :api-key api-key})
       idx-name (str "ExpensiveSweetAndSavouryProductsWithLowStockAndRunningOut" (System/currentTimeMillis))
+      analyzed-idx-name (str "ExpensiveSweetAndSavouryProductsWithLowStockAndRunningOut" (System/currentTimeMillis))
       idx {:index idx-name
            :from :Products
            :where [[:> :PricePerUnit 20] [:< :UnitsInStock 10] [:== :UnitsOnOrder 0] [:== :Category "categories/2"]]
-           :select [:Name :PricePerUnit]}]
+           :select [:Name :PricePerUnit]}
+      analyzed-idx {:index analyzed-idx-name
+                    :from :Products
+                    :where [[:> :PricePerUnit 20] [:< :UnitsInStock 10] [:== :UnitsOnOrder 0] [:== :Category "categories/2"]]
+                    :select [:Name :PricePerUnit]
+                    :fields {:PricePerUnit {:Indexing :Analyzed :Analyzer :StandardAnalyzer :Storage :Yes}}}]
+
   (deftest test-put-index-with-invalid-index-throws
     (testing "Putting an index with an invalid form."
       (is (thrown? AssertionError
@@ -30,12 +37,6 @@
             expected 201]
         (is (= expected (actual :status))))))
 
-  (deftest test-put-index-with-analyzed-field-returns-correct-status-code
-    (testing "putting an index with analyzed fields returns the correct status code"
-      (let [actual (put-index! client (assoc idx :fields {:PricePerUser {:Indexing :Analyzed :Analyzer :StandardAnalyzer :Storage :Yes}}))
-            expected 201]
-        (is (= expected (actual :status))))))
-
   (deftest test-query-put-index-returns-correct-results
     (testing "querying an index returns the correct results"
       (let [actual (query-index client {:index idx-name} {:wait 1000})
@@ -45,6 +46,12 @@
                                (and (= (-> i :Name) "Chef Anton's Gumbo Mix")
                                     (= (-> i :UnitsInStock) 0))) results))]
         (and (is (not= nil doc-one))))))
+
+  (deftest test-put-index-with-analyzed-field-returns-correct-status-code
+    (testing "putting an index with analyzed fields returns the correct status code"
+      (let [actual (put-index! client analyzed-idx)
+            expected 201]
+        (is (= expected (actual :status))))))
 
   (deftest test-putting-index-uses-custom-req-builder
     (testing "putting indexes uses custom request builder"
@@ -67,4 +74,5 @@
   (use-fixtures :each (fn [f]
                         (put-index! client idx)
                         (f)
+                        (delete-index! client analyzed-idx-name)
                         (delete-index! client idx-name))))

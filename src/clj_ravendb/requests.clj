@@ -35,7 +35,13 @@
   [{:keys [address replications ssl-insecure?]} {:keys [index sort-by page-size start query]}]
   (let [request-url (str "/indexes/" index "?query=")
         criteria (clojure.string/join " AND " (vec (for [[k v] query]
-                                                     (str (name k) ":" v))))
+                                                     (let [value (if (sequential? v)
+                                                                   (case (first v)
+                                                                     :range (let [from (second v)
+                                                                                  to (nth v 2)]
+                                                                              (str "[" from " TO " to "]")))
+                                                                   v)]
+                                                       (str (name k) ":" value)))))
         page-criteria (if page-size
                         (str "&pageSize=" page-size)
                         "")
