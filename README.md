@@ -15,6 +15,7 @@ This is currently a work in progress and under active development, it is liable 
 * Delete documents
 * Store new indexes
 * Query indexes
+    * Range queries
 * Create indexes
 * Delete indexes
 * OAuth Support
@@ -154,6 +155,9 @@ Querying an index:
 ;; Paging
 (query-index northwind { :index "ByCompany" :query {:Count 10} :sort-by :Total :page-size 10 :start 1})
 
+;; Range
+(query-index northwind { :index "ByCompany" :query {:Count [:range 10 90}})
+
 ;; By default if the index is stale (query-index) will retry 5 times, waiting
 ;; 100 milliseconds between each try.
 
@@ -189,10 +193,19 @@ Returns a map with a sequence of results like:
 Creating an index:
 
 ```clojure
+
 (put-index! northwind {:index "ExpensiveSweetAndSavouryProductsWithLowStockAndRunningOut" ;; the index name
                        :from :Products  ;; if :from is not specified then all doc collections will be covered.
-                       :where [[:> :PricePerUser 20] [:< :UnitsInStock 10] [:== :UnitsOnOrder 0] [:== :Category "categories/2"]] ;; the where clauses
+                       :where [[:> :PricePerUnit 20] [:< :UnitsInStock 10] [:== :UnitsOnOrder 0] [:== :Category "categories/2"]] ;; the where clauses
                        :select [:Name]} ;; the fields to select
+
+;; Specify an analyzed field
+(put-index! northwind {:index "ExpensiveSweetAndSavouryProductsWithLowStockAndRunningOut" ;; the index name
+                       :from :Products  ;; if :from is not specified then all doc collections will be covered.
+                       :where [[:> :PricePerUnit 20] [:< :UnitsInStock 10] [:== :UnitsOnOrder 0] [:== :Category "categories/2"]] ;; the where clauses
+                       :select [:Name :PricePerUnit] ;; the fields to select
+                       :fields [:PricePerUnit {:Indexing :Analyzed :Analyzer :StandardAnalyzer :Storage :Yes}]} ;; PricePerUnit will now be analyzed and usable in for example a range query
+
 ```
 
 Returns a map with a key to indicate the HTTP status:
