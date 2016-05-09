@@ -12,7 +12,7 @@ This is currently a work in progress and under active development, it is liable 
 
 * Load documents
 * Create documents
-* Update documents 
+* Update documents
 * Delete documents
 * Query indexes
     * Range queries
