@@ -144,19 +144,22 @@ Querying an index:
 
 ```clojure
 
-(query-index northwind { :index "ByCompany" :query {:Count 10}})
+(query-index northwind {:index "ByCompany" :query {:Count 10}})
 
 ;; Sort
-(query-index northwind { :index "ByCompany" :query {:Count 10} :sort-by :Total })
+(query-index northwind {:index "ByCompany" :query {:Count 10} :sort-by :Total })
 
 ;; Sort Descending
-(query-index northwind { :index "ByCompany" :query {:Count 10} :sort-by :-Total })
+(query-index northwind {:index "ByCompany" :query {:Count 10} :sort-by :-Total })
 
 ;; Paging
-(query-index northwind { :index "ByCompany" :query {:Count 10} :sort-by :Total :page-size 10 :start 1})
+(query-index northwind {:index "ByCompany" :query {:Count 10} :sort-by :Total :page-size 10 :start 1})
 
 ;; Range
-(query-index northwind { :index "ByCompany" :query {:Count [:range 10 90}})
+(query-index northwind {:index "ByCompany" :query {:Count [:range 10 90}})
+
+;; Raw lucene
+(query-index northwind {:index "ByCompany" :query "Count:10 AND Value:5"})
 
 ;; By default if the index is stale (query-index) will retry 5 times, waiting
 ;; 100 milliseconds between each try.
