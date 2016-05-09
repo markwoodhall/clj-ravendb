@@ -21,6 +21,20 @@
     {"Authorization" (str "Bearer " (generate-string token))}
     {}))
 
+(defn- build-query-index-criteria
+  [query]
+  (let [as-range #(let [from (second %)
+                        to (nth % 2)]
+                    (str "[" from " TO " to "]"))
+        get-value #(if (sequential? %)
+                     (case (first %)
+                       :range (as-range %))
+                     %)
+        fragments (vec (for [[k v] query]
+                         (let [value (get-value v)]
+                           (str (name k) ":" value))))]
+    (clojure.string/join " AND " fragments)))
+
 (defn load-documents
   "Generates a map that represents a http request
   to the queries endpoint in order to load documents"
@@ -34,14 +48,7 @@
   to the indexes endpoint in order to query an index."
   [{:keys [address replications ssl-insecure?]} {:keys [index sort-by page-size start query]}]
   (let [request-url (str "/indexes/" index "?query=")
-        criteria (clojure.string/join " AND " (vec (for [[k v] query]
-                                                     (let [value (if (sequential? v)
-                                                                   (case (first v)
-                                                                     :range (let [from (second v)
-                                                                                  to (nth v 2)]
-                                                                              (str "[" from " TO " to "]")))
-                                                                   v)]
-                                                       (str (name k) ":" value)))))
+        criteria (build-query-index-criteria query)
         page-criteria (if page-size
                         (str "&pageSize=" page-size)
                         "")
