@@ -26,3 +26,10 @@
           actual (query-index client qry)]
       (is (= expected actual)))))
 
+(deftest test-query-index-with-raw-lucene
+  (testing "query index with raw lucene returns correct request"
+    (let [client {:address "localhost" :replications [] :ssl-insecure? true}
+          qry {:index "IndexName" :query "count:10 AND value:30"}
+          expected {:ssl-insecure? true :urls ["localhost/indexes/IndexName?query=count:10 AND value:30"]}
+          actual (query-index client qry)]
+      (is (= expected actual)))))

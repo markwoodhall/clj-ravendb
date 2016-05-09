@@ -23,17 +23,19 @@
 
 (defn- build-query-index-criteria
   [query]
-  (let [as-range #(let [from (second %)
-                        to (nth % 2)]
-                    (str "[" from " TO " to "]"))
-        get-value #(if (sequential? %)
-                     (case (first %)
-                       :range (as-range %))
-                     %)
-        fragments (vec (for [[k v] query]
-                         (let [value (get-value v)]
-                           (str (name k) ":" value))))]
-    (clojure.string/join " AND " fragments)))
+  (if (string? query)
+    query
+    (let [as-range #(let [from (second %)
+                          to (nth % 2)]
+                      (str "[" from " TO " to "]"))
+          get-value #(if (sequential? %)
+                       (case (first %)
+                         :range (as-range %))
+                       %)
+          fragments (vec (for [[k v] query]
+                           (let [value (get-value v)]
+                             (str (name k) ":" value))))]
+      (clojure.string/join " AND " fragments))))
 
 (defn load-documents
   "Generates a map that represents a http request
