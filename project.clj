@@ -3,6 +3,9 @@
   :url "https://github.com/markwoodhall/clj-ravendb"
   :license {:name "MIT License"
             :url "http://opensource.org/licenses/mit-license.php"}
+  :codox {:metadata {:doc/format :markdown}
+          :namespaces [clj-ravendb.rest]
+          :source-uri "https://github.com/markwoodhall/clj-ravendb{classpath}#L{line}"}
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [clj-http "3.0.1"]
                  [cheshire "5.6.1"]
