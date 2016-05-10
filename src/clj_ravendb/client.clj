@@ -25,6 +25,16 @@
      :none (rest-client url database options))))
 
 (defn load-documents
+  "Loads a collection of documents represented
+  by the given document ids.
+
+  Invoke using the following:
+
+  `(load-document client [\"docId1\" \"docId2\"] options)`
+
+  Optionally takes a map of options.
+  :request-builder is a custom request builder fn.
+  :response-parser is a customer response parser fn."
   [{:keys [load-documents] :as client} & args]
   (apply load-documents client args))
 

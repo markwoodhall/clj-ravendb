@@ -8,12 +8,6 @@
             [clojure.core.async :refer [go chan close! timeout <!! >!! <! >!]]))
 
 (defn- load-documents
-  "Loads a collection of documents represented
-  by the given document ids.
-
-  Optionally takes a map of options.
-  :request-builder is a custom request builder fn.
-  :response-parser is a customer response parser fn."
   ([client document-ids]
    (load-documents client document-ids {}))
   ([{:keys [enable-oauth? oauth-header] :as client} document-ids
