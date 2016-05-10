@@ -33,15 +33,6 @@
                         (wrap-retry-replicas request post-req))))))
 
 (defn- put-index!
-  "Creates or updates an index, where an index takes
-  the form:
-  idx {:index index-name
-       :where [[:== :field \"value\"]]
-       :select [:field]}
-
-  Optionally takes a map of options.
-  :request-builder is a custom request builder fn.
-  :response-parser is a customer response parser fn."
   ([client index]
    (put-index! client index {}))
   ([{:keys [enable-oauth? oauth-header] :as client}
@@ -55,11 +46,6 @@
        (response-parser))))
 
 (defn- delete-index!
-  "Deletes an index matching the index-name.
-
-  Optionally takes a map of options.
-  :request-builder is a custom request builder fn.
-  :response-parser is a customer response parser fn."
   ([client index-name]
    (delete-index! client index-name {}))
   ([{:keys [enable-oauth? oauth-header] :as client}
@@ -72,12 +58,6 @@
        (response-parser))))
 
 (defn- put-document!
-  "Creates or updates a document by its id where 'document'
-  is a map.
-
-  Optionally takes a map of options.
-  :request-builder is a custom request builder fn.
-  :response-parser is a customer response parser fn."
   ([client id document]
    (put-document! client id document {}))
   ([client id document options]
@@ -87,20 +67,6 @@
                               :metadata {}}] options)))
 
 (defn- query-index
-  "Query an index, where the 'query' takes the form:
-  qry {
-    :index index-name
-    :x 1
-    :y 2
-  }.
-
-  Optionally takes a map of options.
-  :max-attempts is the maximum number of times to try
-  and hit a non stale index.
-  :wat is the time interval to wait before trying to
-  hit a non stale index.
-  :request-builder is a custom request builder fn.
-  :response-parser is a customer response parser fn."
   ([client query]
    (query-index client query {}))
   ([{:keys [enable-oauth? oauth-header] :as client}
@@ -150,12 +116,6 @@
               (close! channel))})))
 
 (defn- watch-documents
-  "Watch a collections of documents for changes
-  and place the changed document(s) on a channel
-  when there are differences.
-
-  Options is a map and can contain,
-  :wait - milliseconds to wait between watch calls."
   ([client document-ids]
    (watch-documents client document-ids (chan)))
   ([client document-ids channel]
@@ -164,12 +124,6 @@
    (watch client #(load-documents client document-ids) channel options)))
 
 (defn- watch-index
-  "Watch the results of an index query for changes
-  and place the changed result(s) on a channel
-  when there are differences.
-
-  Options is a map and can contain,
-  :wait - milliseconds to wait between watch calls."
   ([client query]
    (watch-index client query (chan)))
   ([client query channel]
@@ -178,13 +132,6 @@
    (watch client #(query-index client query) channel options)))
 
 (defn- stats
-  "Queries the stats RavenDB endpoint
-  in order to provide performance statistics at
-  the database level.
-
-  Optionally takes a map of options.
-  :request-builder is a custom request builder fn.
-  :response-parser is a customer response parser fn."
   ([client]
    (stats client {}))
   ([{:keys [master-only-writes? enable-oauth? oauth-header] :as client}
@@ -194,13 +141,6 @@
      (response-parser (wrap-retry-replicas request get-req)))))
 
 (defn- user-info
-  "Queries the debug/user-info RavenDB endpoint
-  in order to provide debug information about
-  the current authenticated (or not) user.
-
-  Optionally takes a map of options.
-  :request-builder is a custom request builder fn.
-  :response-parser is a customer response parser fn."
   ([client]
    (user-info client {}))
   ([{:keys [master-only-writes? enable-oauth? oauth-header] :as client}
