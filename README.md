@@ -305,6 +305,13 @@ To create a client that supports OAuth:
 (def northwind (client "http://localhost:8080" "northwind" {:enable-oauth? true :oauth-url "http://localhost:8081/oauth" :api-key "API-KEY"}
 ```
 
+Depending on the usage pattern for the client it is possible that the oauth token will expire.
+By default `clj-ravendb` will request a new token every 10 minutes. This can be configured using the `:oauth-expiry-seconds` option. For example:
+
+```clojure
+(def northwind (client "http://localhost:8080" "northwind" {:enable-oauth? true :oauth-url "http://localhost:8081/oauth" :oauth-expiry-seconds 1200 :api-key "API-KEY"}
+```
+
 ### Caching
 
 To create a client that supports caching:
