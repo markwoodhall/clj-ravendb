@@ -4,6 +4,7 @@
             [clj-ravendb.validation :as valid]
             [clj-ravendb.requests :as req]
             [clj-ravendb.responses :as res]
+            [clojure.core.memoize :refer [ttl]]
             [clojure.core.async :refer [go chan close! timeout <!! >!! <! >!]]))
 
 (defn- load-documents
@@ -227,11 +228,13 @@
   Optionally takes a map of options.
   :replicated? is used to find replicated endpoints.
   :master-only-writes? is used to indicate that write operations only go to the master"
-  [url database {:keys [replicated? master-only-writes? enable-oauth? oauth-url api-key ssl-insecure?]
-                 :or {replicated? false master-only-writes? true enable-oauth? true ssl-insecure? false}}]
+  [url database {:keys [replicated? master-only-writes? enable-oauth? oauth-url oauth-expiry-seconds api-key ssl-insecure?]
+                 :or {replicated? false master-only-writes? true enable-oauth? true oauth-expiry-seconds 600 ssl-insecure? false}}]
   (let [fragments (list url "Databases" database)
         address (clojure.string/join "/" fragments)
-        oauth-header (:body (get-req (req/oauth-token {:address oauth-url :enable-oauth? enable-oauth? :api-key api-key :ssl-insecure? ssl-insecure?})))
+        oauth-header (ttl
+                       #(:body (get-req (req/oauth-token {:address oauth-url :enable-oauth? enable-oauth? :api-key api-key :ssl-insecure? ssl-insecure?})))
+                       :ttl/threshold (* oauth-expiry-seconds 1000))
         load-replications (fn []
                             (debug-do (println "Loading replication destinations from" address))
                             (-> (req/load-replications {:address address :ssl-insecure? ssl-insecure?})

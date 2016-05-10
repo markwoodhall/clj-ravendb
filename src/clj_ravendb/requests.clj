@@ -168,4 +168,4 @@
 
 (defn wrap-oauth-header
   [request enable-oauth? oauth-header]
-  (merge request {:headers (oauth-headers enable-oauth? oauth-header)}))
+  (merge request {:headers (oauth-headers enable-oauth? (oauth-header))}))
