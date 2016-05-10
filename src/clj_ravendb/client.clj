@@ -55,6 +55,16 @@
   (apply delete-index! client args))
 
 (defn bulk-operations!
+  "Handles a given set of bulk operations that
+  correspond to RavenDB batch req.
+
+  Invoke using the following:
+
+  `(bulk-operations! client [{:method \"DELETE\" :id \"Key1\"} {:method \"PUT\" :document {} :id \"Key2\" :metadata {}}] options)`
+
+  Optionally takes a map of options.
+  :request-builder is a custom request builder fn.
+  :response-parser is a customer response parser fn."
   [{:keys [bulk-operations!] :as client} & args]
   (apply bulk-operations! client args))
 

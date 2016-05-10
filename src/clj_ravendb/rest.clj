@@ -20,12 +20,6 @@
        (response-parser))))
 
 (defn- bulk-operations!
-  "Handles a given set of bulk operations that
-  correspond to RavenDB batch req.
-
-  Optionally takes a map of options.
-  :request-builder is a custom request builder fn.
-  :response-parser is a customer response parser fn."
   ([client operations]
    (bulk-operations! client operations {}))
   ([{:keys [master-only-writes? enable-oauth? oauth-header] :as client}
