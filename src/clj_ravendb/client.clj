@@ -49,13 +49,14 @@
 (defn put-index!
   "Creates or updates an index, where an index takes
   the form:
-  idx {:index index-name
-       :where [[:== :field \"value\"]]
-       :select [:field]}
+
+  `(let [idx {:index index-name
+             :where [[:== :field \"value\"]]
+             :select [:field]}])`
 
   Invoke using the following:
 
-  `(put-index client idx options)
+  `(put-index client idx options)`
 
   Optionally takes a map of options.
   :request-builder is a custom request builder fn.
