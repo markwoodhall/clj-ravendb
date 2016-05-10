@@ -1,4 +1,10 @@
 (ns clj-ravendb.client
+  "The client namespace is the main entry point for the library
+  and allows creation of a RavenDB client using the `client` function.
+
+  The API documentation is available [here](http://markwoodhall.github.io/clj-ravendb).
+  "
+  {:author "Mark Woodhall"}
   (:require [clj-ravendb.rest :refer [rest-client]]
             [clj-ravendb.caching :refer [caching-client]]))
 
