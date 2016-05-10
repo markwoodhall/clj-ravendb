@@ -14,14 +14,21 @@
 
   Optionally takes a map of options.
 
-  *`:replicated?` is used to find replicated endpoints
-  *`:master-only-writes?` is used to indicate that write operations only go to the master
-  *`:caching?` is used to indicate if documents should be cached locally
-  *`:enable-oauth?` is used to enable oauth with RavenDB
-  *`:oauth-url` is the oauth url to use
-  *`:oauth-expiry-seconds` is the number of seconds to use an oauth token before requesting a new one
-  *`:api-key` the api key to use for oauth autentication
-  *`:ssl-insecure? use insecure underlying http requests"
+  `:replicated?` is used to find replicated endpoints
+
+  `:master-only-writes?` is used to indicate that write operations only go to the master
+
+  `:caching?` is used to indicate if documents should be cached locally
+
+  `:enable-oauth?` is used to enable oauth with RavenDB
+
+  `:oauth-url` is the oauth url to use
+
+  `:oauth-expiry-seconds` is the number of seconds to use an oauth token before requesting a new one
+
+  `:api-key` the api key to use for oauth autentication
+
+  `:ssl-insecure? use insecure underlying http requests"
   ([url database]
    (client url database {}))
   ([url database {:keys [caching] :as options
@@ -41,6 +48,7 @@
   Optionally takes a map of options.
 
   `:request-builder` is a custom request builder fn.
+
   `:response-parser` is a customer response parser fn."
   [{:keys [load-documents] :as client} & args]
   (apply load-documents client args))
@@ -56,6 +64,7 @@
   Optionally takes a map of options.
 
   `:request-builder` is a custom request builder fn.
+
   `:response-parser` is a customer response parser fn."
   [{:keys [put-document!] :as client} & args]
   (apply put-document! client args))
@@ -74,9 +83,12 @@
 
   `:max-attempts` is the maximum number of times to try
   and hit a non stale index.
+
   `:wait` is the time interval to wait before trying to
   hit a non stale index.
+
   `:request-builder` is a custom request builder fn.
+
   `:response-parser` is a customer response parser fn."
   [{:keys [query-index] :as client} & args]
   (apply query-index client args))
@@ -96,6 +108,7 @@
   Optionally takes a map of options.
 
   `:request-builder` is a custom request builder fn.
+
   `:response-parser` is a customer response parser fn."
   [{:keys [put-index!] :as client} & args]
   (apply put-index! client args))
@@ -110,6 +123,7 @@
   Optionally takes a map of options.
 
   `:request-builder` is a custom request builder fn.
+
   `:response-parser` is a customer response parser fn."
   [{:keys [delete-index!] :as client} & args]
   (apply delete-index! client args))
@@ -125,6 +139,7 @@
   Optionally takes a map of options.
 
   `:request-builder` is a custom request builder fn.
+
   `:response-parser` is a customer response parser fn."
   [{:keys [bulk-operations!] :as client} & args]
   (apply bulk-operations! client args))
@@ -170,6 +185,7 @@
   Optionally takes a map of options.
 
   `:request-builder` is a custom request builder fn.
+
   `:response-parser` is a customer response parser fn."
   [{:keys [stats] :as client} & args]
   (apply stats client args))
@@ -182,6 +198,7 @@
   Optionally takes a map of options.
 
   `:request-builder` is a custom request builder fn.
+
   `:response-parser` is a customer response parser fn."
   [{:keys [user-info] :as client} & args]
   (apply user-info client args))
