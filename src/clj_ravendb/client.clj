@@ -28,7 +28,7 @@
 
   `:api-key` the api key to use for oauth autentication
 
-  `:ssl-insecure? use insecure underlying http requests"
+  `:ssl-insecure?` use insecure underlying http requests"
   ([url database]
    (client url database {}))
   ([url database {:keys [caching] :as options
