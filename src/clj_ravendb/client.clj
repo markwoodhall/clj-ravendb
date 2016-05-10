@@ -13,14 +13,14 @@
   given url and database.
 
   Optionally takes a map of options.
-  `:replicated?` is used to find replicated endpoints
-  `:master-only-writes?` is used to indicate that write operations only go to the master
-  `:caching?` is used to indicate if documents should be cached locally
-  `:enable-oauth?` is used to enable oauth with RavenDB
-  `:oauth-url` is the oauth url to use
-  `:oauth-expiry-seconds` is the number of seconds to use an oauth token before requesting a new one
-  `:api-key` the api key to use for oauth autentication
-  `:ssl-insecure? use insecure underlying http requests"
+  *`:replicated?` is used to find replicated endpoints
+  *`:master-only-writes?` is used to indicate that write operations only go to the master
+  *`:caching?` is used to indicate if documents should be cached locally
+  *`:enable-oauth?` is used to enable oauth with RavenDB
+  *`:oauth-url` is the oauth url to use
+  *`:oauth-expiry-seconds` is the number of seconds to use an oauth token before requesting a new one
+  *`:api-key` the api key to use for oauth autentication
+  *`:ssl-insecure? use insecure underlying http requests"
   ([url database]
    (client url database {}))
   ([url database {:keys [caching] :as options
