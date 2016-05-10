@@ -13,6 +13,7 @@
   given url and database.
 
   Optionally takes a map of options.
+
   *`:replicated?` is used to find replicated endpoints
   *`:master-only-writes?` is used to indicate that write operations only go to the master
   *`:caching?` is used to indicate if documents should be cached locally
@@ -38,6 +39,7 @@
   `(load-document client [\"docId1\" \"docId2\"] options)`
 
   Optionally takes a map of options.
+
   `:request-builder` is a custom request builder fn.
   `:response-parser` is a customer response parser fn."
   [{:keys [load-documents] :as client} & args]
@@ -52,6 +54,7 @@
   `(put-document! client \"MyDocId\" {})`
 
   Optionally takes a map of options.
+
   `:request-builder` is a custom request builder fn.
   `:response-parser` is a customer response parser fn."
   [{:keys [put-document!] :as client} & args]
@@ -68,6 +71,7 @@
   `(query-index client qry options)`
 
   Optionally takes a map of options.
+
   `:max-attempts` is the maximum number of times to try
   and hit a non stale index.
   `:wait` is the time interval to wait before trying to
@@ -90,6 +94,7 @@
   `(put-index! client idx options)`
 
   Optionally takes a map of options.
+
   `:request-builder` is a custom request builder fn.
   `:response-parser` is a customer response parser fn."
   [{:keys [put-index!] :as client} & args]
@@ -103,6 +108,7 @@
   `(delete-index! client \"MyIndexName\")`
 
   Optionally takes a map of options.
+
   `:request-builder` is a custom request builder fn.
   `:response-parser` is a customer response parser fn."
   [{:keys [delete-index!] :as client} & args]
@@ -117,6 +123,7 @@
   `(bulk-operations! client [{:method \"DELETE\" :id \"Key1\"} {:method \"PUT\" :document {} :id \"Key2\" :metadata {}}] options)`
 
   Optionally takes a map of options.
+
   `:request-builder` is a custom request builder fn.
   `:response-parser` is a customer response parser fn."
   [{:keys [bulk-operations!] :as client} & args]
@@ -132,6 +139,7 @@
   `(watch-documents client [\"doc1\" \"doc2\"])`
 
   Options is a map and can contain,
+
   `:wait` - milliseconds to wait between watch calls."
   [{:keys [watch-documents] :as client} & args]
   (apply watch-documents client args))
@@ -149,6 +157,7 @@
      (watch-index client qry))`
 
   Options is a map and can contain,
+
   `:wait` - milliseconds to wait between watch calls."
   [{:keys [watch-index] :as client} & args]
   (apply watch-index client args))
@@ -159,6 +168,7 @@
   the database level.
 
   Optionally takes a map of options.
+
   `:request-builder` is a custom request builder fn.
   `:response-parser` is a customer response parser fn."
   [{:keys [stats] :as client} & args]
@@ -170,6 +180,7 @@
   the current authenticated (or not) user.
 
   Optionally takes a map of options.
+
   `:request-builder` is a custom request builder fn.
   `:response-parser` is a customer response parser fn."
   [{:keys [user-info] :as client} & args]
