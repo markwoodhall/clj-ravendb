@@ -2,6 +2,8 @@
 
 A Clojure library designed to consume a RavenDB HTTP api.
 
+[API Docs](http://markwoodhall.github.io/clj-ravendb/)
+
 ## Status
 
 [![Build Status](https://api.travis-ci.org/markwoodhall/clj-ravendb.svg?branch=master)](https://api.travis-ci.org/repositories/markwoodhall/clj-ravendb)
