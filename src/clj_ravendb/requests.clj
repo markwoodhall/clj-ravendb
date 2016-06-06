@@ -9,15 +9,13 @@
   urls))
 
 (defn- get-token-headers
-  [enable-oauth? api-key]
-  (if enable-oauth?
-    {"Api-Key" api-key
-     "grant_type" "client_credentials"}
-    {}))
+  [api-key]
+  {"Api-Key" api-key
+   "grant_type" "client_credentials"})
 
 (defn- oauth-headers
-  [enable-oauth? token]
-  (if enable-oauth?
+  [token]
+  (if token
     {"Authorization" (str "Bearer " (generate-string token))}
     {}))
 
@@ -40,7 +38,7 @@
 (defn load-documents
   "Generates a map that represents a http request
   to the queries endpoint in order to load documents"
-  [{:keys [address replications enable-oauth? oauth-header ssl-insecure?]} document-ids]
+  [{:keys [address replications ssl-insecure?]} document-ids]
   {:ssl-insecure? ssl-insecure?
    :urls (all-urls address replications "/Queries")
    :body (generate-string document-ids)})
@@ -161,11 +159,11 @@
 (defn oauth-token
   "Generates a map that represents a http request
   to the /ApiKeys/OAuth/AccessToken RavenDB endpoint"
-  [{:keys [address replications enable-oauth? api-key ssl-insecure?]}]
-  {:headers (get-token-headers enable-oauth? api-key)
+  [{:keys [address replications api-key ssl-insecure?]}]
+  {:headers (get-token-headers api-key)
    :ssl-insecure? ssl-insecure?
    :url (str address "/OAuth/AccessToken")})
 
 (defn wrap-oauth-header
-  [request enable-oauth? oauth-header]
-  (merge request {:headers (oauth-headers enable-oauth? (oauth-header))}))
+  [request oauth-header]
+  (merge request {:headers (oauth-headers (oauth-header))}))

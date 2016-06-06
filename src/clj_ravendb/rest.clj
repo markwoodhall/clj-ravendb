@@ -15,7 +15,7 @@
      :or {request-builder req/load-documents response-parser res/load-documents}}]
    {:pre [(not-empty document-ids)]}
    (-> (request-builder client document-ids)
-       (req/wrap-oauth-header enable-oauth? oauth-header)
+       (req/wrap-oauth-header oauth-header)
        (wrap-retry-replicas post-req)
        (response-parser))))
 
@@ -27,7 +27,7 @@
     {:keys [request-builder response-parser]
      :or {request-builder req/bulk-operations response-parser res/bulk-operations}}]
    {:pre [(valid/validate-bulk-operations operations)]}
-   (let [request (req/wrap-oauth-header (request-builder client operations) enable-oauth? oauth-header)]
+   (let [request (req/wrap-oauth-header (request-builder client operations) oauth-header)]
      (response-parser (if master-only-writes?
                         (no-retry-replicas request post-req)
                         (wrap-retry-replicas request post-req))))))
@@ -41,7 +41,7 @@
      :or {request-builder req/put-index response-parser res/put-index}}]
    {:pre [(:index index) (:where index) (:select index)]}
    (-> (request-builder client index)
-       (req/wrap-oauth-header enable-oauth? oauth-header)
+       (req/wrap-oauth-header oauth-header)
        (put-req)
        (response-parser))))
 
@@ -53,7 +53,7 @@
     {:keys [request-builder response-parser]
      :or {request-builder req/delete-index response-parser res/delete-index}}]
    (-> (request-builder client index-name)
-       (req/wrap-oauth-header enable-oauth? oauth-header)
+       (req/wrap-oauth-header oauth-header)
        (del-req)
        (response-parser))))
 
@@ -77,7 +77,7 @@
           response-parser res/query-index}}]
    {:pre [(:index query)]}
    (let [get-result #(-> (request-builder client query)
-                         (req/wrap-oauth-header enable-oauth? oauth-header)
+                         (req/wrap-oauth-header oauth-header)
                          (wrap-retry-replicas get-req)
                          (response-parser))]
      (loop [result (get-result) attempt 0]
@@ -137,7 +137,7 @@
   ([{:keys [master-only-writes? enable-oauth? oauth-header] :as client}
     {:keys [request-builder response-parser]
      :or {request-builder req/stats response-parser res/stats}}]
-   (let [request (req/wrap-oauth-header (request-builder client) enable-oauth? oauth-header)]
+   (let [request (req/wrap-oauth-header (request-builder client) oauth-header)]
      (response-parser (wrap-retry-replicas request get-req)))))
 
 (defn- user-info
@@ -146,7 +146,7 @@
   ([{:keys [master-only-writes? enable-oauth? oauth-header] :as client}
     {:keys [request-builder response-parser]
      :or {request-builder req/user-info response-parser res/user-info}}]
-   (let [request (req/wrap-oauth-header (request-builder client) enable-oauth? oauth-header)]
+   (let [request (req/wrap-oauth-header (request-builder client) oauth-header)]
      (response-parser (wrap-retry-replicas request get-req)))))
 
 (defn rest-client
@@ -161,12 +161,13 @@
   (let [fragments (list url "Databases" database)
         address (clojure.string/join "/" fragments)
         oauth-header (ttl
-                       #(:body (get-req (req/oauth-token {:address oauth-url :enable-oauth? enable-oauth? :api-key api-key :ssl-insecure? ssl-insecure?})))
+                       #(if enable-oauth? 
+                          (:body (get-req (req/oauth-token {:address oauth-url :api-key api-key :ssl-insecure? ssl-insecure?}))))
                        :ttl/threshold (* oauth-expiry-seconds 1000))
         load-replications (fn []
                             (debug-do (println "Loading replication destinations from" address))
                             (-> (req/load-replications {:address address :ssl-insecure? ssl-insecure?})
-                                (req/wrap-oauth-header enable-oauth? oauth-header)
+                                (req/wrap-oauth-header oauth-header)
                                 (get-req)
                                 (res/load-replications)
                                 (:results)))
