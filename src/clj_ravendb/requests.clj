@@ -86,8 +86,8 @@
 (defn put-index
   "Generates a map that represents a http request
   to the indexes endpoint in order to put an index."
-  [{:keys [address ssl-insecure?]} {:keys [index from where select fields]
-                                    :or {from "docs"}}]
+  [{:keys [address ssl-insecure?]} {:keys [index from where select fields group group-select]
+                                    :or {from "docs" group [] group-select []}}]
   (let [request-url (str address "/indexes/" index)
         from (if (= "docs" from)
                from
@@ -99,6 +99,7 @@
                                                     value)]
                                     (str "doc." (name (second w)) (name (first w)) esc-value))) where))
         select (str "new { " (join "," (map #(str "doc." (name %)) select)) " }")
+        group-select-str (str "new { " (join "," (map #(str "g." (name %)) group-select)) " }")
         field-names (map name (keys fields))
         field-names (if field-names
                  field-names
@@ -109,10 +110,17 @@
                                      {(keyword (key %)) "Yes"}) fields))
         analyzers (reduce merge (map #(if (:Analyzer (apply (key %) %))
                                      {(keyword (key %)) (name (:Analyzer (apply (key %) %)))}) fields))
+        group (reduce (fn [x y] (str x "," y)) "" (map #(str "result." (name %)) group))
         index  {:Fields field-names
                 :Map (str " from doc in " from
                           " where " where
                           " select " select)}
+        index (if (and (empty? group)
+                       (empty? group-select))
+                index
+                (assoc index :Reduce (str " from result in results "
+                                          " group result by new { " group " } into g"
+                                          " select " group-select-str)))
         index (if (empty? indexes)
                 index
                 (assoc index :Indexes indexes))
