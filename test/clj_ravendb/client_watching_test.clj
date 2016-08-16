@@ -17,11 +17,10 @@
             _ (Thread/sleep 4000)
             _ (put-document! client id document)
             _ (Thread/sleep 4000)
-            actual (first (:results (<!! ch)))
-            actual (dissoc actual :last-modified-date)
-            actual (dissoc actual :etag)]
+            actual (:document (first (:results (<!! ch))))
+            actual (dissoc actual :metadata)]
         ((:stop watcher))
-        (is (= actual {:id id :document document})))))
+        (is (= actual document)))))
 
   (deftest test-watching-index-puts-to-channel-on-index-change
     (testing "Watching an index puts to a channel on index change"
@@ -32,7 +31,7 @@
             _ (Thread/sleep 4000)
             _ (put-document! client id document)
             _ (Thread/sleep 4000)
-            actual (first (filter (fn [r] (= (:name r) id)) (map :document (:results (<!! ch)))))]
+            actual (dissoc (first (filter (fn [r] (= (:name r) id)) (map :document (:results (<!! ch))))) :metadata)]
         ((:stop watcher))
         (is (= actual document)))))
 

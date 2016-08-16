@@ -2,11 +2,13 @@
 
 (defn mapify
   [col]
-  (into {}
-        (for[[k v] (dissoc col "@metadata")]
-          [(keyword k) (if (= clojure.lang.PersistentArrayMap (type v))
-                         (mapify v)
-                         v)])) )
+  (let [metadata (col "@metadata")
+        col (assoc col "metadata" metadata)]
+    (into {}
+          (for[[k v] (dissoc col "@metadata")]
+            [(keyword k) (if (= clojure.lang.PersistentArrayMap (type v))
+                           (mapify v)
+                           v)]))))
 
 (defn load-replications
   [{:keys [body status] :as r}]
