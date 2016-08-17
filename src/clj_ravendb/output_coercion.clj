@@ -22,12 +22,12 @@
                         (str "doc." (name (second w)) (name (first w)) esc-value))) where)))
 
 (defn- to-lambda-or-escape-str
-  [ele]
+  [prefix ele]
   (if (sequential? ele)
     (let [f (first ele)]
       (if (some #{f} [:Sum :Count])
-        (str "g." (name f) "(x => x." (name (second ele)) ")")
-        (str "g." (name f) "." (name (second ele)))))
+        (str prefix "." (name f) "(x => x." (name (second ele)) ")")
+        (str prefix "." (name f) "." (name (second ele)))))
     (escape ele)))
 
 (defn- to-select-str
@@ -36,7 +36,7 @@
        (if ele
          (if (keyword? ele)
            (str "." (name ele))
-           (str "=" (to-lambda-or-escape-str ele))))))
+           (str "=" (to-lambda-or-escape-str prefix ele))))))
 
 (defn build-select-str
   [select prefix]
