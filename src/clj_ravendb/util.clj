@@ -27,3 +27,9 @@
   [{:keys [url headers ssl-insecure?]}]
   (debug-do (println "Sending HTTP DELETE to" url))
   (http/delete url {:headers headers :as :json-string-keys :insecure? ssl-insecure?}))
+
+(defn as-seq
+  [i]
+  (if (sequential? i)
+    i
+    [i]))
