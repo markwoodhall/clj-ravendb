@@ -63,8 +63,8 @@
   ([client id document options]
    (bulk-operations! client [{:method "PUT"
                               :id id
-                              :document document
-                              :metadata {}}] options)))
+                              :document (dissoc document :metadata)
+                              :metadata (get document :metadata {})}] options)))
 
 (defn- query-index
   ([client query]
@@ -161,7 +161,7 @@
   (let [fragments (list url "Databases" database)
         address (clojure.string/join "/" fragments)
         oauth-header (ttl
-                       #(if enable-oauth? 
+                       #(if enable-oauth?
                           (:body (get-req (req/oauth-token {:address oauth-url :api-key api-key :ssl-insecure? ssl-insecure?}))))
                        :ttl/threshold (* oauth-expiry-seconds 1000))
         load-replications (fn []
