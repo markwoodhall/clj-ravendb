@@ -87,14 +87,14 @@
 (defn put-index
   "Generates a map that represents a http request
   to the indexes endpoint in order to put an index."
-  [{:keys [address ssl-insecure?]} {:keys [index from where select fields group group-select]
-                                    :or {from "docs" group [] group-select []}}]
+  [{:keys [address ssl-insecure?]} {:keys [index from where select fields group project]
+                                    :or {from "docs" group [] project []}}]
   (let [request-url (str address "/indexes/" index)
         from (build-from-str from)
         where (build-where-str where)
         select (build-select-str select "doc")
         group-str (build-select-str group "result")
-        group-select-str (build-select-str group-select "g")
+        project-str (build-select-str project "g")
         field-names (map name (keys fields))
         field-names (if field-names
                  field-names
@@ -110,11 +110,11 @@
                           " where " where
                           " select " select)}
         index (if (and (empty? group)
-                       (empty? group-select))
+                       (empty? project))
                 index
                 (assoc index :Reduce (str " from result in results "
                                           " group result by " group-str " into g"
-                                          " select " group-select-str)))
+                                          " select " project-str)))
         index (if (empty? indexes)
                 index
                 (assoc index :Indexes indexes))
