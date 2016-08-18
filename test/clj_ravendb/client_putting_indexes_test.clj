@@ -7,11 +7,15 @@
 
 (let [client (client ravendb-url ravendb-database {:ssl-insecure? true :oauth-url oauth-url :api-key api-key})
       idx-name (str "ExpensiveSweetAndSavouryProductsWithLowStockAndRunningOut" (System/currentTimeMillis))
+      idx-name-no-where (str "NoWhere" (System/currentTimeMillis))
       analyzed-idx-name (str "ExpensiveSweetAndSavouryProductsWithLowStockAndRunningOut" (System/currentTimeMillis))
       idx {:index idx-name
            :from :Products
            :where [[:> :PricePerUnit 20] [:< :UnitsInStock 10] [:== :UnitsOnOrder 0] [:== :Category "categories/2"]]
            :select [:Name :PricePerUnit]}
+      idx-no-where {:index idx-name-no-where
+                    :from :Products
+                    :select [:Name :PricePerUnit]}
       analyzed-idx {:index analyzed-idx-name
                     :from :Products
                     :where [[:> :PricePerUnit 20] [:< :UnitsInStock 10] [:== :UnitsOnOrder 0] [:== :Category "categories/2"]]
@@ -34,6 +38,12 @@
   (deftest test-put-index-returns-correct-status-code
     (testing "putting an index returns the correct status code"
       (let [actual (put-index! client idx)
+            expected 201]
+        (is (= expected (actual :status))))))
+
+  (deftest test-put-index-with-no-where-returns-correct-status-code
+    (testing "putting an index with no where returns the correct status code"
+      (let [actual (put-index! client idx-no-where)
             expected 201]
         (is (= expected (actual :status))))))
 
@@ -75,4 +85,5 @@
                         (put-index! client idx)
                         (f)
                         (delete-index! client analyzed-idx-name)
+                        (delete-index! client idx-name-no-where)
                         (delete-index! client idx-name))))

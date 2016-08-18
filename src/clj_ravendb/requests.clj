@@ -88,7 +88,7 @@
   "Generates a map that represents a http request
   to the indexes endpoint in order to put an index."
   [{:keys [address ssl-insecure?]} {:keys [index from where select fields group project]
-                                    :or {from "docs" group [] project []}}]
+                                    :or {from "docs" where [] group [] project []}}]
   (let [request-url (str address "/indexes/" index)
         from (build-from-str from)
         where (build-where-str where)
@@ -107,7 +107,9 @@
                                      {(keyword (key %)) (name (:Analyzer (apply (key %) %)))}) fields))
         index  {:Fields field-names
                 :Map (str " from doc in " from
-                          " where " where
+                          (if (empty? where)
+                            ""
+                            (str" where " where))
                           " select " select)}
         index (if (and (empty? group)
                        (empty? project))

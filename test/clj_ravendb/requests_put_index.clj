@@ -14,6 +14,16 @@
           expected  "{\"Fields\":[],\"Map\":\" from doc in docs.Products where doc.PricePerUnit>20 && doc.UnitsInStock<10 && doc.UnitsOnOrder==0 && doc.Category==\\\"categories/2\\\" select new { doc.Name,doc.PricePerUnit }\"}"]
       (is (= expected actual))))
 
+  (testing "put-index returns correct index string for map index with no where clause"
+    (let [client {:address "localhost" :replications [] :ssl-insecure? true}
+          expected ""
+          index {:index "Test"
+                 :from :Products
+                 :select [:Name :PricePerUnit]}
+          actual (:body (put-index client index))
+          expected  "{\"Fields\":[],\"Map\":\" from doc in docs.Products select new { doc.Name,doc.PricePerUnit }\"}"]
+      (is (= expected actual))))
+
   (testing "put-index returns correct index string for projected select"
     (let [client {:address "localhost" :replications [] :ssl-insecure? true}
           expected ""

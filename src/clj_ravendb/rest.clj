@@ -39,7 +39,7 @@
     index
     {:keys [request-builder response-parser]
      :or {request-builder req/put-index response-parser res/put-index}}]
-   {:pre [(:index index) (:where index) (:select index)]}
+   {:pre [(:index index) (:select index)]}
    (-> (request-builder client index)
        (req/wrap-oauth-header oauth-header)
        (put-req)
