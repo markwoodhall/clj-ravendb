@@ -27,7 +27,8 @@
     (let [f (first ele)]
       (if (some #{f} [:Sum :Count])
         (str prefix "." (name f) "(x => x." (name (second ele)) ")")
-        (str prefix "." (name f) "." (name (second ele)))))
+        (str prefix "." (name f) (if (second ele)
+                                   (str "." (name (second ele)))))))
     (escape ele)))
 
 (defn- to-select-str

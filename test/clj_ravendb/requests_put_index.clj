@@ -9,9 +9,9 @@
           index {:index "Test"
                  :from :Products
                  :where [[:> :PricePerUnit 20] [:< :UnitsInStock 10] [:== :UnitsOnOrder 0] [:== :Category "categories/2"]]
-                 :select [:Name :PricePerUnit]}
+                 :select [:Name :PricePerUnit [:Quantity [:Quantity]]]}
           actual (:body (put-index client index))
-          expected  "{\"Fields\":[],\"Map\":\" from doc in docs.Products where doc.PricePerUnit>20 && doc.UnitsInStock<10 && doc.UnitsOnOrder==0 && doc.Category==\\\"categories/2\\\" select new { doc.Name,doc.PricePerUnit }\"}"]
+          expected  "{\"Fields\":[],\"Map\":\" from doc in docs.Products where doc.PricePerUnit>20 && doc.UnitsInStock<10 && doc.UnitsOnOrder==0 && doc.Category==\\\"categories/2\\\" select new { doc.Name,doc.PricePerUnit,Quantity=doc.Quantity }\"}"]
       (is (= expected actual))))
 
   (testing "put-index returns correct index string for map index with no where clause"
