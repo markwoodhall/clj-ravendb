@@ -39,10 +39,6 @@
                         (put-index! client {:index index-name
                                             :where [[:== :name id]]
                                             :select [:name]})
-                        (bulk-operations! client [{:method "PUT"
-                                                   :id id
-                                                   :document {:test 1 :name id}
-                                                   :metadata {}}])
                         (f)
                         (delete-index! client index-name)
                         (bulk-operations! client [{:method "DELETE"
