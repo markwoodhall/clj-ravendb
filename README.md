@@ -384,6 +384,6 @@ All functionality has been tested against RavenDB 2.5 as well.
 
 ## License
 
-Copyright © 2016 Mark Woodhall
+Copyright © 2017 Mark Woodhall
 
 Released under the MIT License: http://www.opensource.org/licenses/mit-license.php
