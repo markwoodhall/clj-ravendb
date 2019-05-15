@@ -1,9 +1,9 @@
 (ns clj-ravendb.client-debug-test
-  (:require [clojure.test :refer :all]
-            [clj-ravendb.client :refer :all]
+  (:require [clojure.test :refer [deftest testing is]]
+            [clj-ravendb.client :refer [client user-info]]
             [clj-ravendb.requests :as req]
             [clj-ravendb.responses :as res]
-            [clj-ravendb.config :refer :all]))
+            [clj-ravendb.config :refer [oauth-url api-key ravendb-url ravendb-database]]))
 
 (let [expected [:Remark]]
   (let [client (client ravendb-url ravendb-database {:ssl-insecure? true :oauth-url oauth-url :api-key api-key})]

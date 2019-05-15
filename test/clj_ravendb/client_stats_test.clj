@@ -1,9 +1,9 @@
 (ns clj-ravendb.client-stats-test
-  (:require [clojure.test :refer :all]
-            [clj-ravendb.client :refer :all]
+  (:require [clojure.test :refer [deftest testing is]]
+            [clj-ravendb.client :refer [client stats]]
             [clj-ravendb.requests :as req]
             [clj-ravendb.responses :as res]
-            [clj-ravendb.config :refer :all]))
+            [clj-ravendb.config :refer [ravendb-url ravendb-database oauth-url api-key]]))
 
 (let [expected [:LastDocEtag :LastAttachmentEtag :CountOfIndexes
                 :ApproximateTaskCount :CountOfDocuments :StaleIndexes]]

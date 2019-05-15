@@ -1,6 +1,6 @@
 (ns clj-ravendb.rest
-  (:require [clj-ravendb.util :refer :all]
-            [clj-ravendb.replication :refer :all]
+  (:require [clj-ravendb.util :refer [post-req put-req get-req del-req debug-do]]
+            [clj-ravendb.replication :refer [no-retry-replicas wrap-retry-replicas map-replication-urls]]
             [clj-ravendb.validation :as valid]
             [clj-ravendb.requests :as req]
             [clj-ravendb.responses :as res]

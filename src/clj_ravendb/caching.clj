@@ -1,7 +1,6 @@
 (ns clj-ravendb.caching
   (:require [clojure.set :refer [difference]]
-            [clj-ravendb.rest :as rest]
-            [clj-ravendb.util :refer :all]))
+            [clj-ravendb.rest :as rest]))
 
 (def client-cache (atom []))
 

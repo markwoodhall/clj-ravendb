@@ -1,10 +1,10 @@
 (ns clj-ravendb.client-caching-test
-  (:require [clojure.test :refer :all]
-            [clj-ravendb.client :refer :all]
+  (:require [clojure.test :refer [deftest testing is use-fixtures]]
+            [clj-ravendb.client :refer [client load-documents put-document! bulk-operations!]]
             [clj-ravendb.caching :refer [client-cache]]
             [clj-ravendb.requests :as req]
             [clj-ravendb.responses :as res]
-            [clj-ravendb.config :refer :all]))
+            [clj-ravendb.config :refer [ravendb-url ravendb-database oauth-url api-key]]))
 
 (let [client (client ravendb-url ravendb-database {:caching :aggressive :ssl-insecure? true :oauth-url oauth-url :api-key api-key})]
   (deftest test-load-documents-returns-correct-results

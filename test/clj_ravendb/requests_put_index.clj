@@ -1,5 +1,5 @@
 (ns clj-ravendb.requests-put-index
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [testing deftest is]]
             [clj-ravendb.requests :refer [put-index]]))
 
 (deftest put-index-output

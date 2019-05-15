@@ -1,9 +1,9 @@
 (ns clj-ravendb.client-putting-indexes-test
-  (:require [clojure.test :refer :all]
-            [clj-ravendb.client :refer :all]
+  (:require [clojure.test :refer [deftest testing is use-fixtures]]
+            [clj-ravendb.client :refer [client put-index! delete-index! query-index]]
             [clj-ravendb.requests :as req]
             [clj-ravendb.responses :as res]
-            [clj-ravendb.config :refer :all]))
+            [clj-ravendb.config :refer [ravendb-url ravendb-database oauth-url api-key]]))
 
 (let [client (client ravendb-url ravendb-database {:ssl-insecure? true :oauth-url oauth-url :api-key api-key})
       idx-name (str "ExpensiveSweetAndSavouryProductsWithLowStockAndRunningOut" (System/currentTimeMillis))

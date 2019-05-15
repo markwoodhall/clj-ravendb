@@ -1,9 +1,9 @@
 (ns clj-ravendb.client-watching-test
-  (:require [clojure.test :refer :all]
-            [clj-ravendb.client :refer :all]
+  (:require [clojure.test :refer [deftest testing is use-fixtures]]
+            [clj-ravendb.client :refer [client watch-documents put-document! watch-index delete-index! put-index! bulk-operations!]]
             [clj-ravendb.requests :as req]
             [clj-ravendb.responses :as res]
-            [clj-ravendb.config :refer :all]
+            [clj-ravendb.config :refer [ravendb-url ravendb-database oauth-url api-key]]
             [clojure.core.async :refer [go chan thread <!! >!! <! >!]]))
 
 (let [client (client ravendb-url ravendb-database {:ssl-insecure? true :oauth-url oauth-url :api-key api-key})

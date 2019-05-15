@@ -1,5 +1,5 @@
 (ns clj-ravendb.replication
-  (:require [clj-ravendb.util :refer :all]))
+  (:require [clj-ravendb.util :as u]))
 
 (defn no-retry-replicas
   "Given a request containing a list of urls capable of servicing
@@ -17,7 +17,7 @@
     (let [response (try
                      (handle (merge {:url (first urls)} request))
                      (catch java.net.ConnectException ce
-                       (debug-do (println "Failed to execute request using " (first urls)))))]
+                       (u/debug-do (println "Failed to execute request using " (first urls)))))]
       (if (not (nil? response))
         response
         (recur (rest urls))))))

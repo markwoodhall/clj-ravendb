@@ -1,5 +1,5 @@
 (ns clj-ravendb.requests-query-index
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest testing is]]
             [clj-ravendb.requests :refer [query-index]]))
 
 (deftest test-query-index-with-one-clause
